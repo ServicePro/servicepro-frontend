@@ -1,0 +1,112 @@
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.provider-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* LEFT PANEL */
+.provider-left {
+  flex: 1;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.provider-left h1 {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.provider-left p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.provider-left ul li {
+  margin: 10px 0;
+}
+
+/* RIGHT PANEL */
+.provider-right {
+  flex: 1;
+  background: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.provider-card {
+  width: 500px;
+  background: white;
+  padding: 35px;
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+}
+
+.provider-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 6px rgba(99,102,241,0.3);
+  outline: none;
+}
+
+textarea {
+  height: 90px;
+  resize: none;
+}
+
+/* BUTTON */
+.submit-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* LOGIN */
+.login-link {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.login-link span {
+  color: #6366f1;
+  cursor: pointer;
+  font-weight: bold;
+}
