@@ -1,4 +1,4 @@
-/* Reset and base styles */
+/* 
 * {
   margin: 0;
   padding: 0;
@@ -9,7 +9,7 @@ body {
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Main container */
+
 .auth-container {
   display: flex !important;
   height: 100vh !important;
@@ -19,7 +19,7 @@ body {
   left: 0 !important;
 }
 
-/* LEFT SIDE */
+
 .auth-left {
   flex: 1 !important;
   background: linear-gradient(135deg, #10b981, #06b6d4, #3b82f6) !important;
@@ -50,7 +50,7 @@ body {
   font-size: 16px !important;
 }
 
-/* RIGHT SIDE */
+
 .auth-right {
   flex: 1 !important;
   background: #f1f5f9 !important;
@@ -78,7 +78,7 @@ body {
   margin-bottom: 20px !important;
 }
 
-/* INPUT */
+
 .input-group {
   margin-bottom: 15px !important;
 }
@@ -97,7 +97,7 @@ body {
   outline: none !important;
 }
 
-/* BUTTON */
+
 .primary-btn {
   width: 100% !important;
   padding: 13px !important;
@@ -115,7 +115,7 @@ body {
   opacity: 0.95 !important;
 }
 
-/* LOGIN LINK */
+
 .bottom-text {
   margin-top: 20px !important;
   text-align: center !important;
@@ -127,37 +127,190 @@ body {
   font-weight: bold !important;
   cursor: pointer !important;
 }
-                placeholder="Enter your email"
-                required
-              />
-            </div>
+               */
 
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                required
-              />
-            </div>
+               /* Background */
+.register-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #dbeafe, #f8fafc);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-            <button type="submit" className="auth-btn">
-              Sign In
-            </button>
-          </form>
+/* Card */
+.register-card {
+  width: 400px;
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  text-align: center;
+}
 
-          <div className="auth-links">
-            <p>
-              Don't have an account?{" "}
-              <span onClick={() => onNavigate("register")}>Register</span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+/* Logo */
+.logo {
+  font-size: 30px;
+  background: #3b82f6;
+  color: white;
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Headings */
+h2 {
+  color: #3b82f6;
+  margin-top: 10px;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 5px 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 15px;
+}
+
+/* Inputs */
+label {
+  display: block;
+  text-align: left;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+input:not([type="checkbox"]) {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+/* Focus */
+input:not([type="checkbox"]):focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 5px rgba(59,130,246,0.3);
+}
+
+/* Password rules */
+.password-rules {
+  text-align: left;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+.rule-ok {
+  color: #16a34a;
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+.rule-fail {
+  color: #dc2626;
+  font-size: 12px;
+  margin: 2px 0;
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 12px;
+  margin: 3px 0 0 2px;
+  text-align: left;
+}
+
+.field-ok {
+  color: #16a34a;
+  font-size: 12px;
+  margin: 3px 0 0 2px;
+  text-align: left;
+}
+
+/* Terms */
+.terms-inline {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-top: 15px;
+  font-size: 13px;
+  color: #374151;
+  cursor: pointer;
+}
+
+.terms-inline input {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.terms-inline span {
+  margin: 0 !important;
+  line-height: 1.4;
+}
+
+.link {
+  color: #2563eb;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Button */
+.btn-primary {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Divider */
+.divider {
+  margin: 15px 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Google */
+.btn-google {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Bottom text */
+.bottom-text {
+  font-size: 13px;
+  margin-top: 10px;
 }
