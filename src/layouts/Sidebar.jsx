@@ -1,14 +1,5 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-
-// Mock provider data - replace with real auth context later
-const providerData = {
-  name: 'Alex Johnson',
-  role: 'Service Provider',
-  category: 'Home Repair & Plumbing',
-  avatar: 'AJ',
-  rating: 4.8,
-};
+import React, { useState, useEffect } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 
 const navItems = [
   {
@@ -22,7 +13,7 @@ const navItems = [
   {
     group: 'Bookings',
     items: [
-      { to: '/provider/appointments',     icon: '📅', label: 'Appointments', badge: 3 },
+      { to: '/provider/appointments',     icon: '📅', label: 'Appointments' },
     ],
   },
   {
@@ -34,6 +25,35 @@ const navItems = [
 ];
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const [providerData, setProviderData] = useState({
+    name: 'Service Provider',
+    role: 'Provider',
+    avatar: 'SP',
+  });
+
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        setProviderData({
+          name: user.name || 'Service Provider',
+          role: user.role === 'provider' ? 'Service Provider' : 'Provider',
+          avatar: (user.name || 'S').charAt(0).toUpperCase(),
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching user data from local storage', err);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
   return (
     <aside className="sidebar">
       {/* Logo */}
@@ -52,7 +72,7 @@ const Sidebar = () => {
         </div>
         <div className="sidebar-profile-info">
           <div className="sidebar-profile-name">{providerData.name}</div>
-          <div className="sidebar-profile-role">Service Provider</div>
+          <div className="sidebar-profile-role">{providerData.role}</div>
         </div>
       </div>
 
@@ -86,7 +106,7 @@ const Sidebar = () => {
           <span className="sidebar-nav-icon">⚙️</span>
           <span>Settings</span>
         </div>
-        <div className="sidebar-footer-item logout">
+        <div className="sidebar-footer-item logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
           <span className="sidebar-nav-icon">🚪</span>
           <span>Logout</span>
         </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 
@@ -11,18 +11,34 @@ const pageTitles = {
   '/provider/analytics':       { title: 'Analytics',        breadcrumb: 'Insights / Analytics' },
 };
 
-// Mock provider data
-const providerData = {
-  name: 'Alex Johnson',
-  avatar: 'AJ',
-};
-
 const Layout = () => {
   const location = useLocation();
   const matchKey = Object.keys(pageTitles).find(
     (k) => location.pathname.startsWith(k)
   );
   const pageInfo = pageTitles[matchKey] || { title: 'ServicePro', breadcrumb: '' };
+
+  const [providerData, setProviderData] = useState({
+    name: 'Service Provider',
+    role: 'Provider',
+    avatar: 'SP',
+  });
+
+  useEffect(() => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        setProviderData({
+          name: user.name || 'Service Provider',
+          role: user.role === 'provider' ? 'Service Provider' : 'Provider',
+          avatar: (user.name || 'S').charAt(0).toUpperCase(),
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching user data from local storage', err);
+    }
+  }, []);
 
   return (
     <div className="app-layout">
@@ -48,7 +64,7 @@ const Layout = () => {
               <div className="avatar avatar-sm">{providerData.avatar}</div>
               <div>
                 <div className="header-user-name">{providerData.name}</div>
-                <div className="header-user-role">Service Provider</div>
+                <div className="header-user-role">{providerData.role}</div>
               </div>
             </div>
           </div>
