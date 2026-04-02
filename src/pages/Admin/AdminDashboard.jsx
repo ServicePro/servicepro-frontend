@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./admin.css";
 
 export default function AdminDashboard() {
+  const admin = JSON.parse(localStorage.getItem("user") || "{}");
   const [pendingProviders, setPendingProviders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +53,7 @@ export default function AdminDashboard() {
   return (
     <div className="admin-container">
       <h1>Admin Dashboard</h1>
+      <p style={{ color: "#6b7280", marginBottom: "24px" }}>Welcome, {admin.name || "Admin"}!</p>
       <h2>Pending Provider Approvals</h2>
 
       {pendingProviders.length === 0 ? (
