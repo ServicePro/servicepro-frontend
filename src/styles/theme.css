@@ -1,0 +1,13 @@
+:root {
+  --primary: #F28C28;       /* main brand (buttons) */
+  --primary-dark: #E97451;  /* hover / darker */
+  --accent: #FFAC1C;        /* highlights / badges */
+
+  --dark: #0a1f44;          /* background */
+  --light: #f6f8fc;         /* section bg */
+  --white: #ffffff;
+
+  --text: #333;
+  --text-light: #666;
+}
+
