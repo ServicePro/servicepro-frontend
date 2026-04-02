@@ -1,13 +1,16 @@
 :root {
-  --primary: #F28C28;       /* main brand (buttons) */
-  --primary-dark: #E97451;  /* hover / darker */
-  --accent: #FFAC1C;        /* highlights / badges */
+  --primary: #F97316;
+  --primary-dark: #EA580C;
+  --accent: #FDBA74;
 
-  --dark: #0a1f44;          /* background */
-  --light: #f6f8fc;         /* section bg */
+  --dark: #0F172A;
+  --light: #F8FAFC;
   --white: #ffffff;
 
-  --text: #333;
-  --text-light: #666;
-}
+  --text: #1E293B;
+  --text-light: #64748B;
+  --text-white: rgba(255,255,255,0.85);
 
+  --border: #E2E8F0;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
