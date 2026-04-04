@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import {
-  FaCheckCircle,
-  FaSearch
+    FaCheckCircle,
+    FaSearch
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import "./Landing.css";
+import styles from "./Landing.module.css";
 
 const LandingPage = () => {
   const [providers, setProviders] = useState([]);
@@ -17,25 +18,40 @@ const LandingPage = () => {
     .catch(err => console.error(err));
 }, []);
 
+useEffect(() => {
+  const fetchProviders = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/providers");
+      const data = await res.json();
+      setProviders(data);
+    } catch (error) {
+      console.error("API Error:", error);
+      setProviders([]); // fallback
+    }
+  };
+
+  fetchProviders();
+}, []);
+
   return (
     <MainLayout>
       {/* HERO */}
       {/* HERO WITH VIDEO */}
-<section id="hero" className="hero video-hero">
+<section id="hero" className={styles["video-hero"]}>
 
   {/* VIDEO */}
-  <video autoPlay loop muted playsInline className="bg-video">
+  <video autoPlay loop muted playsInline className={styles["bg-video"]}>
     <source src="https://storage.cloud.google.com/servicepro-assets/videos/HeroVideo.mp4" type="video/mp4" />
   </video>
 
   {/* OVERLAY */}
-  <div className="video-overlay"></div>
+  <div className={styles["video-overlay"]}></div>
 
-  <div className="container hero-inner">
+  <div className={`${styles["container"]} ${styles["hero-inner"]}`}>
     
     {/* LEFT */}
-    <div className="hero-left">
-      <span className="badge">
+    <div className={styles["hero-left"]}>
+      <span className={styles["badge"]}>
         <FaCheckCircle /> Trusted by 50,000+ customers
       </span>
 
@@ -44,21 +60,22 @@ const LandingPage = () => {
         <span>Home Services</span> Experts Near You
       </h1>
 
-      <p className="subtext">
+      <p className={styles["subtext"]}>
         Book trusted professionals instantly. Fast, secure, and reliable.
       </p>
 
-      <div className="search-box">
+      <div className={styles["search-box"]}>
         <input placeholder="Search services (e.g. plumber, cleaner...)" />
         <button><FaSearch /></button>
       </div>
 
-      <div className="hero-buttons">
-        <button className="btn primary">Get Started →</button>
-        <button className="btn outline">Browse Services</button>
+      <div className={styles["hero-buttons"]}>
+        <Link to="/register" className="btn primary">Get Started →</Link>
+        <Link to="/provider-register" className="btn outline">Become a Provider</Link>
+        <Link to="/services" className="btn outline">Browse Services</Link>
       </div>
 
-      <div className="features">
+      <div className={styles["features"]}>
         <span><FaCheckCircle /> Verified</span>
         <span><FaCheckCircle /> Secure</span>
         <span><FaCheckCircle /> Guaranteed</span>
@@ -66,14 +83,14 @@ const LandingPage = () => {
     </div>
 
     {/* RIGHT SIDE (NEW 🔥) */}
-    <div className="hero-right">
-      <div className="hero-card">
+    <div className={styles["hero-right"]}>
+      <div className={styles["hero-card"]}>
 
-        <h3 className="card-title">Top Rated Providers</h3>
+        <h3 className={styles["card-title"]}>Top Rated Providers</h3>
 
         {["Sarah", "Mike", "Emma"].map((name, i) => (
-          <div key={i} className="mini-card">
-            <div className="avatar">{name[0]}</div>
+          <div key={i} className={styles["mini-card"]}>
+            <div className={styles["avatar"]}>{name[0]}</div>
             <div>
               <p>{name}</p>
               <small>4.{8 + i} ⭐</small>
@@ -89,16 +106,16 @@ const LandingPage = () => {
 </section>
 
  {/* ================= SERVICES CATEGORY (NEW) ================= */}
-<section id="services" className="section light services-section">
-  <div className="container center">
+<section id="services" className={`section light ${styles["services-section"]}`}>
+  <div className={`${styles["container"]} ${styles["services-container"]} ${styles["center"]}`}>
 
-    <p className="section-tag">WHAT WE OFFER</p>
+    <p className={styles["section-tag"]}>WHAT WE OFFER</p>
     <h2 className="section-title">All Services, One Platform</h2>
-    <p className="subtext">
+    <p className={styles["subtext"]}>
       Browse from our wide range of verified home service professionals.
     </p>
 
-    <div className="grid-4 services-grid">
+    <div className={styles["services-grid"]}>
 
       {[
         { name: "Plumbing", desc: "Leak fix, pipes & more", icon: "🔧" },
@@ -110,8 +127,8 @@ const LandingPage = () => {
         { name: "Helper", desc: "Moving, errands & more", icon: "🙌" },
         { name: "Cleaner", desc: "Deep & regular cleaning", icon: "🧹" },
       ].map((item, i) => (
-        <div key={i} className="service-box">
-          <div className="service-icon">{item.icon}</div>
+        <div key={i} className={styles["service-box"]}>
+          <div className={styles["service-icon"]}>{item.icon}</div>
           <h3>{item.name}</h3>
           <p>{item.desc}</p>
         </div>
@@ -123,16 +140,16 @@ const LandingPage = () => {
 
 
 {/* ================= HOW IT WORKS (NEW) ================= */}
-<section id="how-it-works" className="section how-section">
-  <div className="container center">
+<section id="how-it-works" className={`section ${styles["how-section"]}`}>
+  <div className={`${styles["container"]} ${styles["center"]}`}>
 
-    <p className="section-tag purple">SIMPLE PROCESS</p>
+    <p className={styles["section-tag"]}>SIMPLE PROCESS</p>
     <h2 className="section-title">How It Works</h2>
-    <p className="subtext">
+    <p className={styles["subtext"]}>  
       Get your service done in 4 easy steps. No stress, no guesswork.
     </p>
 
-    <div className="steps-wrapper">
+    <div className={styles["steps-wrapper"]}>
 
       {[
         {
@@ -156,10 +173,10 @@ const LandingPage = () => {
           icon: "✅",
         },
       ].map((step, i) => (
-        <div key={i} className="step-card">
+        <div key={i} className={styles["step-card"]}>
 
-          <div className="step-icon-box">{step.icon}</div>
-          <div className="step-number">0{i + 1}</div>
+          <div className={styles["step-icon-box"]}>{step.icon}</div>
+          <div className={styles["step-number"]}>0{i + 1}</div>
 
           <h3>{step.title}</h3>
           <p>{step.desc}</p>
@@ -172,15 +189,15 @@ const LandingPage = () => {
 </section>   
 
 {/* ================= WHY SERVICEPRO ================= */}
-<section id="why-servicepro" className="section light why-pro-section">
-  <div className="container center">
+<section id="why-servicepro" className={`section light ${styles["why-pro-section"]}`}>
+  <div className={`${styles["container"]} ${styles["center"]}`}>
 
-    <p className="section-tag">WHY SERVICEPRO</p>
+    <p className={styles["section-tag"]}>WHY SERVICEPRO</p>
     <h2 className="section-title">
       The Smarter Way to Get <br /> Things Done at Home
     </h2>
 
-    <div className="grid-4 why-grid">
+    <div className={styles["why-grid"]}>
 
       {[
         {
@@ -204,8 +221,8 @@ const LandingPage = () => {
           icon: "🎧",
         },
       ].map((item, i) => (
-        <div key={i} className="why-pro-card">
-          <div className="why-icon">{item.icon}</div>
+        <div key={i} className={styles["why-pro-card"]}>
+          <div className={styles["why-icon"]}>{item.icon}</div>
           <h3>{item.title}</h3>
           <p>{item.desc}</p>
         </div>
@@ -217,35 +234,35 @@ const LandingPage = () => {
 
 
 {/* ================= TOP PROVIDERS ================= */}
-<section id="providers" className="section providers-section">
-  <div className="container center">
+<section id="providers" className={`section ${styles["providers-section"]}`}>
+  <div className={`${styles["container"]} ${styles["center"]}`}>
 
-    <p className="section-tag">FEATURED PROFESSIONALS</p>
+    <p className={styles["section-tag"]}>FEATURED PROFESSIONALS</p>
     <h2 className="section-title">Meet Our Top Providers</h2>
-    <p className="subtext">
+    <p className={styles["subtext"]}>
       Handpicked, background-verified professionals with proven track records.
     </p>
 
-    <div className="grid-4 providers-grid">
+    <div className={styles["providers-grid"]}>
 
-      {providers.map((pro) => (
-        <div key={pro._id} className="provider-card">
+      {Array.isArray(providers) && providers.map((pro) => (
+        <div key={pro._id} className={styles["provider-card"]}>
 
-          <div className="provider-img">
+          <div className={styles["provider-img"]}>
             <img src={pro.image} alt={pro.name} />
-            <span className="badge-top">{pro.badge}</span>
+            <span className={styles["badge-top"]}>{pro.badge}</span>
           </div>
 
-          <div className="provider-info">
+          <div className={styles["provider-info"]}>
             <h3>{pro.name}</h3>
-            <p className="role">{pro.service}</p>
+            <p className={styles["role"]}>{pro.service}</p>
 
-            <div className="provider-meta">
+            <div className={styles["provider-meta"]}>
               ⭐ {pro.rating} ({pro.reviews})
-              <span className="price">${pro.price}/hr</span>
+              <span className={styles["price"]}>${pro.price}/hr</span>
             </div>
 
-            <button className="btn primary">Book Now</button>
+            <Link to="/booking" className="btn primary">Book Now</Link>
           </div>
 
         </div>
@@ -256,29 +273,29 @@ const LandingPage = () => {
 </section>
 
 {/* ================= TRUST & SAFETY ================= */}
-<section id="trust-safety" className="trust-section">
-  <div className="container trust-wrapper">
+<section id="trust-safety" className={styles["trust-section"]}>
+  <div className={`${styles["container"]} ${styles["trust-wrapper"]}`}>
 
     {/* LEFT */}
-    <div className="trust-left">
-      <p className="section-tag light">TRUST & SAFETY</p>
+    <div className={styles["trust-left"]}>
+      <p className={styles["section-tag"]}>TRUST & SAFETY</p>
 
       <h2>
         Your Safety Is Our <br /> Top Priority
       </h2>
 
-      <p className="subtext">
+      <p className={styles["subtext"]}>
         We take every measure to ensure that every interaction on ServicePro is safe,
         secure, and trustworthy for both customers and professionals.
       </p>
 
-      <div className="trust-badge">
+      <div className={styles["trust-badge"]}>
         ✅ Trusted by 12,000+ families across 50+ cities
       </div>
     </div>
 
     {/* RIGHT */}
-    <div className="trust-right">
+    <div className={styles["trust-right"]}>
 
       {[
         {
@@ -302,8 +319,8 @@ const LandingPage = () => {
           desc: "Your personal data is never shared or sold to third parties.",
         },
       ].map((item, i) => (
-        <div key={i} className="trust-card">
-          <div className="trust-icon">✔</div>
+        <div key={i} className={styles["trust-card"]}>
+          <div className={styles["trust-icon"]}>✔</div>
           <div>
             <h4>{item.title}</h4>
             <p>{item.desc}</p>
@@ -316,20 +333,20 @@ const LandingPage = () => {
 </section>
 
 {/* ================= PRICING ================= */}
-<section id="pricing" className="section light pricing-section">
-  <div className="container center">
+<section id="pricing" className={`section light ${styles["pricing-section"]}`}>
+  <div className={`${styles["container"]} ${styles["center"]}`}>
 
-    <p className="section-tag">TRANSPARENT PRICING</p>
+    <p className={styles["section-tag"]}>TRANSPARENT PRICING</p>
     <h2 className="section-title">Simple, Honest Pricing</h2>
-    <p className="subtext">
+    <p className={styles["subtext"]}>
       No hidden charges. No surprises. What you see is what you pay.
     </p>
 
-    <div className="price-badge">
+    <div className={styles["price-badge"]}>
       💰 No hidden charges — guaranteed
     </div>
 
-    <div className="grid-4 pricing-grid">
+    <div className={styles["pricing-grid"]}>
 
       {[
         {
@@ -376,10 +393,10 @@ const LandingPage = () => {
       ].map((plan, i) => (
         <div
           key={i}
-          className={`pricing-card ${plan.popular ? "popular" : ""}`}
+          className={`${styles["pricing-card"]} ${plan.popular ? styles["popular"] : ""}`}
         >
 
-          {plan.popular && <span className="popular-badge">Most Popular</span>}
+          {plan.popular && <span className={styles["popular-badge"]}>Most Popular</span>}
 
           <h3>{plan.name}</h3>
           <h2>{plan.price}</h2>
@@ -391,7 +408,7 @@ const LandingPage = () => {
             ))}
           </ul>
 
-          <button className="btn primary">Book Now</button>
+          <Link to="/booking" className="btn primary">Book Now</Link>
 
         </div>
       ))}
@@ -401,13 +418,13 @@ const LandingPage = () => {
 </section>
 
 {/* ================= TESTIMONIALS ================= */}
-<section id="testimonials" className="section light testimonials-section">
-  <div className="container center">
+<section id="testimonials" className={`section light ${styles["testimonials-section"]}`}>
+  <div className={`${styles["container"]} ${styles["center"]}`}>
 
-    <p className="section-tag">CUSTOMER REVIEWS</p>
+    <p className={styles["section-tag"]}>CUSTOMER REVIEWS</p>
     <h2 className="section-title">What Our Customers Say</h2>
 
-    <div className="grid-3 testimonial-grid">
+    <div className={styles["testimonial-grid"]}>
 
       {[
         {
@@ -426,12 +443,12 @@ const LandingPage = () => {
           role: "Working Professional",
         },
       ].map((t, i) => (
-        <div key={i} className="testimonial-card">
-          <div className="stars">⭐⭐⭐⭐⭐</div>
+        <div key={i} className={styles["testimonial-card"]}>
+          <div className={styles["stars"]}>⭐⭐⭐⭐⭐</div>
           <p>"{t.text}"</p>
 
-          <div className="user">
-            <div className="avatar">{t.name[0]}</div>
+          <div className={styles["user"]}>
+            <div className={styles["avatar"]}>{t.name[0]}</div>
             <div>
               <h4>{t.name}</h4>
               <small>{t.role}</small>
@@ -443,7 +460,7 @@ const LandingPage = () => {
     </div>
 
     {/* STATS */}
-    <div className="stats">
+    <div className={styles["stats"]}>
       <div><h2>12,000+</h2><p>Happy Customers</p></div>
       <div><h2>3,500+</h2><p>Verified Providers</p></div>
       <div><h2>4.9★</h2><p>Average Rating</p></div>
@@ -454,16 +471,16 @@ const LandingPage = () => {
 </section>
 
 {/* ================= SMART TECH ================= */}
-<section id="smart-tech" className="section smart-section">
-  <div className="container center">
+<section id="smart-tech" className={`section ${styles["smart-section"]}`}>
+  <div className={`${styles["container"]} ${styles["center"]}`}>
 
-    <p className="section-tag">SMART TECHNOLOGY</p>
-    <h2 className="section-title">Real-Time, Every Time</h2>
-    <p className="subtext">
+    <p className={styles["section-tag"]}>SMART TECHNOLOGY</p>
+    <h2 className="section-title center">Real-Time, Every Time</h2>
+    <p className={styles["subtext"]}>
       Powered by modern tech to give you the most seamless service experience possible.
     </p>
 
-    <div className="grid-4 smart-grid">
+    <div className={`grid-4 ${styles["smart-grid"]}`}>
 
       {[
         { title: "Live Tracking", desc: "Track your professional in real-time.", icon: "📍" },
@@ -471,8 +488,8 @@ const LandingPage = () => {
         { title: "Instant Booking", desc: "Confirm bookings in seconds.", icon: "📅" },
         { title: "Smart Notifications", desc: "Real-time alerts and updates.", icon: "🔔" },
       ].map((item, i) => (
-        <div key={i} className="smart-card">
-          <div className="smart-icon">{item.icon}</div>
+        <div key={i} className={styles["smart-card"]}>
+          <div className={styles["smart-icon"]}>{item.icon}</div>
           <h3>{item.title}</h3>
           <p>{item.desc}</p>
         </div>
@@ -483,16 +500,16 @@ const LandingPage = () => {
 </section>
 
 {/* ================= FAQ ================= */}
-<section id="faq" className="section light faq-section">
-  <div className="container">
+<section id="faq" className={`section light ${styles["faq-section"]}`}>
+  <div className={styles["container"]}>
 
-    <p className="section-tag center">FAQs</p>
+    <p className={`${styles["section-tag"]} center`}>FAQs</p>
     <h2 className="section-title center">Frequently Asked Questions</h2>
-    <p className="subtext center">
+    <p className={`${styles["subtext"]} center`}>
       Everything you need to know about ServicePro.
     </p>
 
-    <div className="faq-list">
+    <div className={styles["faq-list"]}>
 
       {[
         {
@@ -518,16 +535,16 @@ const LandingPage = () => {
       ].map((item, i) => (
         <div
           key={i}
-          className={`faq-item ${activeFAQ === i ? "active" : ""}`}
+          className={`${styles["faq-item"]} ${activeFAQ === i ? styles["active"] : ""}`}
           onClick={() => setActiveFAQ(activeFAQ === i ? null : i)}
         >
-          <div className="faq-question">
+          <div className={styles["faq-question"]}>
             {item.q}
             <span>{activeFAQ === i ? "▲" : "▼"}</span>
           </div>
 
           {activeFAQ === i && (
-            <div className="faq-answer">{item.a}</div>
+            <div className={styles["faq-answer"]}>{item.a}</div>
           )}
         </div>
       ))}
@@ -537,23 +554,23 @@ const LandingPage = () => {
 </section>
 
 {/* ================= JOIN AS PROFESSIONAL ================= */}
-<section id="join-professional" className="section join-section">
-  <div className="container join-wrapper">
+<section id="join-professional" className={`section ${styles["join-section"]}`}>
+  <div className={`${styles["container"]} ${styles["join-wrapper"]}`}>
 
     {/* LEFT */}
-    <div className="join-left">
-      <p className="section-tag">FOR PROFESSIONALS</p>
+    <div className={styles["join-left"]}>
+      <p className={styles["section-tag"]}>FOR PROFESSIONALS</p>
 
       <h2>
         Join as a <br />
         <span>Service Professional</span>
       </h2>
 
-      <p className="subtext">
+      <p className={styles["subtext"]}>
         Turn your skills into a steady income. Join 3,500+ professionals already earning with ServicePro.
       </p>
 
-      <button className="btn primary join-btn">
+      <button className={`btn primary ${styles["join-btn"]}`}>
         Start Earning Today →
       </button>
 
@@ -561,7 +578,7 @@ const LandingPage = () => {
     </div>
 
     {/* RIGHT */}
-    <div className="join-right">
+    <div className={styles["join-right"]}>
 
       {[
         {
@@ -581,8 +598,8 @@ const LandingPage = () => {
           desc: "Earn reviews and climb rankings.",
         },
       ].map((item, i) => (
-        <div key={i} className="join-card">
-          <div className="join-icon">★</div>
+        <div key={i} className={styles["join-card"]}>
+          <div className={styles["join-icon"]}>★</div>
           <h4>{item.title}</h4>
           <p>{item.desc}</p>
         </div>
@@ -593,13 +610,13 @@ const LandingPage = () => {
 </section>
 
 {/* ================= FINAL CTA ================= */}
-<section className="cta-banner">
-  <div className="container cta-wrapper">
+<section className={styles["cta-banner"]}>
+  <div className={`${styles["container"]} ${styles["cta-wrapper"]}`}>
 
     {/* LEFT CONTENT */}
-    <div className="cta-left">
+    <div className={styles["cta-left"]}>
 
-      <span className="cta-badge">⚡ Same-day service available</span>
+      <span className={styles["cta-badge"]}>⚡ Same-day service available</span>
 
       <h2>
         Need Help Today? <br />
@@ -610,9 +627,9 @@ const LandingPage = () => {
         Join thousands of happy homeowners. Verified professionals, transparent pricing, guaranteed satisfaction.
       </p>
 
-      <div className="cta-buttons">
-        <button className="btn primary">Book a Service →</button>
-        <button className="btn outline">Browse Services</button>
+      <div className={styles["cta-buttons"]}>
+        <Link to="/booking" className="btn primary">Book a Service →</Link>
+        <Link to="/services" className="btn outline">Browse Services</Link>
       </div>
 
       <small>
@@ -622,7 +639,7 @@ const LandingPage = () => {
     </div>
 
     {/* RIGHT IMAGE */}
-    <div className="cta-right">
+    <div className={styles["cta-right"]}>
       <img src="https://storage.cloud.google.com/servicepro-assets/images/service-common.png" alt="Service" />
     </div>
 
@@ -631,7 +648,7 @@ const LandingPage = () => {
 
 
       {/* FOOTER */}
-      <footer className="footer">
+      <footer className={styles["footer"]}>
         <p>© 2026 ServicePro. All rights reserved.</p>
       </footer>
     </MainLayout>

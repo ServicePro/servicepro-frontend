@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
-import "../styles/provider.css"
+import "../styles/provider.css";
 
 const ManageServices = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import appointmentsApi from '../api/appointmentsApi';
-import "../styles/provider.css"
+import "../styles/provider.css";
 
 const statusFilters = ['All', 'Pending', 'Confirmed', 'Completed', 'Cancelled'];
 

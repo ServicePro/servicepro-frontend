@@ -51,7 +51,7 @@ const Navbar = () => {
         {/* LEFT - LOGO */}
         <div className="nav-left">
           <img
-            src="../../../public/videos/logo.png"
+            src="/videos/logo.png"
             alt="ServicePro"
             className="logo-img"
             onError={(e) => (e.target.style.display = "none")}

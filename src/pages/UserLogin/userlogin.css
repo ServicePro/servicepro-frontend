@@ -162,10 +162,6 @@ body {
   box-shadow: 0 0 6px rgba(16,185,129,0.4) !important;
   outline: none !important;
 }
-  margin: 10px 0;
-  font-size: 16px;
-}
-
 
 .auth-right {
   flex: 1 !important;
@@ -249,7 +245,7 @@ body {
   color: #10b981;
   font-weight: bold;
   cursor: pointer;
-} */
+}
 
 .login-container {
   display: flex;

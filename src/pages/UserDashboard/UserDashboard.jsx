@@ -1,12 +1,43 @@
-import React from "react";
+import Navbar from "../../components/userDashboard/UserNavbar";
+import Categories from "../../components/userDashboard/Categories";
+import FeaturedServices from "../../components/userDashboard/FeaturedServices";
+import SearchBar from "../../components/userDashboard/SearchBar";
+import Footer from "../../components/userDashboard/UserFooter";
 
-export default function UserDashboard() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+import "./UserDashboard.css";
 
+const UserDashboard = () => {
   return (
-    <div style={{ padding: "60px 40px", fontFamily: "Arial, sans-serif" }}>
-      <h1>User Dashboard</h1>
-      <p style={{ color: "#6b7280", marginTop: "8px" }}>Welcome, {user.name || "User"}!</p>
+    <div className="dashboard">
+
+      {/* NAVBAR */}
+      <Navbar />
+
+      {/* HERO SECTION */}
+      <section className="dashboard-hero">
+        <div className="hero-content">
+          <h1>Welcome back, John 👋</h1>
+          <p>
+            What service do you need today? Search for local professionals.
+          </p>
+
+          <div className="hero-search">
+            <SearchBar />
+          </div>
+        </div>
+      </section>
+
+      {/* MAIN CONTENT */}
+      <main className="dashboard-content">
+        <Categories />
+        <FeaturedServices />
+      </main>
+
+      {/* FOOTER */}
+      <Footer />
+
     </div>
   );
-}
+};
+
+export default UserDashboard;
