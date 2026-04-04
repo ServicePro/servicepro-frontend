@@ -1,90 +1,3 @@
-// import React, { useState } from "react";
-// import "./userlogin.css";
-
-// export default function UserLogin({ onNavigate }) {
-//   const [formData, setFormData] = useState({
-//     email: "",
-//     password: "",
-//   });
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleLogin = (e) => {
-//     e.preventDefault();
-//     // Add login logic here
-//     alert("Login functionality to be implemented!");
-//   };
-
-//   return (
-//     <div className="auth-container">
-//       {/* LEFT SIDE */}
-//       <div className="auth-left">
-//         <div className="brand">
-//           <h1>ServiceHub</h1>
-//           <p>Your trusted service marketplace</p>
-//         </div>
-
-//         <div className="features">
-//           <p>✔ Find trusted professionals</p>
-//           <p>✔ Easy booking system</p>
-//           <p>✔ Secure & reliable platform</p>
-//         </div>
-//       </div>
-
-//       {/* RIGHT SIDE */}
-//       <div className="auth-right">
-//         <div className="auth-form">
-//           <h2>Welcome Back</h2>
-//           <p>Sign in to your account</p>
-
-//           <form onSubmit={handleLogin}>
-//             <div className="form-group">
-//               <label htmlFor="email">Email</label>
-//               <input
-//                 type="email"
-//                 id="email"
-//                 name="email"
-//                 value={formData.email}
-//                 onChange={handleChange}
-//                 placeholder="Enter your email"
-//                 required
-//               />
-//             </div>
-
-//             <div className="form-group">
-//               <label htmlFor="password">Password</label>
-//               <input
-//                 type="password"
-//                 id="password"
-//                 name="password"
-//                 value={formData.password}
-//                 onChange={handleChange}
-//                 placeholder="Enter your password"
-//                 required
-//               />
-//             </div>
-
-//             <button type="submit" className="auth-btn">
-//               Sign In
-//             </button>
-//           </form>
-
-//           <div className="auth-links">
-//             <p>
-//               Don't have an account?{" "}
-//               <span onClick={() => onNavigate("register")}>Register</span>
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
@@ -113,7 +26,7 @@ export default function Login() {
 
   const redirectByRole = (role) => {
     if (role === "admin") navigate("/admin");
-    else if (role === "provider") navigate("/provider-dashboard");
+    else if (role === "provider") navigate("/provider/dashboard");
     else navigate("/user-dashboard");
   };
 
