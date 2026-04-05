@@ -10,6 +10,11 @@ import Verify from "../pages/Verify/Verify";
 import OAuthCallback from "../pages/OAuthCallback/OAuthCallback";
 import PrivacyPolicy from "../pages/Legal/PrivacyPolicy";
 
+import BookingPage from "../pages/Booking/BookingPage";
+import PaymentPage from "../pages/Booking/PaymentPage";
+import BookingConfirmation from "../pages/Booking/BookingConfirmation";
+import RealTimeTracking from "../pages/Booking/RealTimeTracking";
+
 import ProviderRoute      from './ProviderRoute';
 import Layout             from '../layouts/Layout';
 import ProviderDashboard  from '../dashboard/ProviderDashboard';
@@ -32,6 +37,11 @@ const AppRoutes = () => {
         <Route path="/register" element={<UserRegister />} />
         <Route path="/booking" element={<h1>Booking Page</h1>} />
         
+        <Route path="/book/:serviceId" element={<BookingPage />} />
+        <Route path="/payment/:bookingId" element={<PaymentPage />} />
+        <Route path="/booking-confirmation/:bookingId" element={<BookingConfirmation />} />
+        <Route path="/tracking/:bookingId" element={<RealTimeTracking />} />
+
         {/* Registration goes here */}
         <Route path="/provider-register" element={<ServiceProviderRegister />} />
         <Route path="/admin" element={<AdminDashboard />} />
