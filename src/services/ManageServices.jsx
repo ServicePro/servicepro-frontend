@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
+import "../styles/provider.css"
 
 const ManageServices = () => {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ const ManageServices = () => {
           <h1>Manage Services</h1>
           <p>View, edit, and control your listed services.</p>
         </div>
-        <Link to="/provider/add-service" className="btn btn-primary">
+        <Link to="/provider/add-service" className="btn btn-primary_1">
           ➕ Add New Service
         </Link>
       </div>
@@ -110,7 +111,7 @@ const ManageServices = () => {
             <div className="empty-state-icon">🛠️</div>
             <h3>No services found</h3>
             <p>Try changing your search or filter, or add a new service.</p>
-            <Link to="/provider/add-service" className="btn btn-primary" style={{ marginTop: '12px' }}>
+            <Link to="/provider/add-service" className="btn btn-primary_1" style={{ marginTop: '12px' }}>
               ➕ Add Service
             </Link>
           </div>
@@ -154,11 +155,11 @@ const ManageServices = () => {
               </div>
 
               <div className="service-card-actions">
-                <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/provider/edit-service/${s.id}`)}>
+                <button className="btn btn-secondary_1 btn-sm" onClick={() => navigate(`/provider/edit-service/${s.id}`)}>
                   ✏️ Edit
                 </button>
                 <button
-                  className={`btn btn-sm ${s.status === 'active' ? 'btn-secondary' : 'btn-success'}`}
+                  className={`btn btn-sm ${s.status === 'active' ? 'btn-secondary_1' : 'btn-success'}`}
                   onClick={() => toggleStatus(s.id)}
                 >
                   {s.status === 'active' ? '⏸️ Deactivate' : '▶️ Activate'}
@@ -180,7 +181,7 @@ const ManageServices = () => {
             <h3 style={{ marginBottom: '8px' }}>Delete Service?</h3>
             <p style={{ marginBottom: '24px' }}>This action cannot be undone. All bookings for this service will be affected.</p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button className="btn btn-secondary" onClick={() => setDeleteId(null)}>Cancel</button>
+              <button className="btn btn-secondary_1" onClick={() => setDeleteId(null)}>Cancel</button>
               <button className="btn btn-danger" onClick={() => deleteService(deleteId)}>Delete</button>
             </div>
           </div>

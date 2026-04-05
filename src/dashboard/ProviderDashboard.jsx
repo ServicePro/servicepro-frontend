@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import dashboardApi from '../api/dashboardApi';
+import "../styles/provider.css"
 
 // ── Badge helper ───────────────────────────────────────────────
 const statusBadge = (status) => {
@@ -98,7 +99,7 @@ const ProviderDashboard = () => {
           <h1>Welcome back 👋</h1>
           <p>{today}</p>
         </div>
-        <Link to="/provider/add-service" className="btn btn-primary">
+        <Link to="/provider/add-service" className="btn btn-primary_1">
           <span>➕</span> Add New Service
         </Link>
       </div>
@@ -140,7 +141,7 @@ const ProviderDashboard = () => {
         <div className="card">
           <div className="section-header">
             <h2>Recent Appointments</h2>
-            <Link to="/provider/appointments" className="btn btn-secondary btn-sm">
+            <Link to="/provider/appointments" className="btn btn-secondary_1 btn-sm">
               View All →
             </Link>
           </div>

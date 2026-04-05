@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import appointmentsApi from '../api/appointmentsApi';
+import "../styles/provider.css"
 
 const statusFilters = ['All', 'Pending', 'Confirmed', 'Completed', 'Cancelled'];
 
@@ -174,7 +175,7 @@ const Appointments = () => {
 
                     {a.status === 'confirmed' && (
                       <button
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-secondary_1 btn-sm"
                         onClick={() => updateStatus(a.id, 'completed')}
                       >
                         ✔ Mark Done

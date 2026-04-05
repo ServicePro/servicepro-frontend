@@ -128,23 +128,23 @@ p { color: var(--text-secondary); }
   white-space: nowrap;
 }
 
-.btn-primary {
+.btn-primary_1 {
   background: var(--brand-gradient);
   color: var(--text-white);
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
-.btn-primary:hover {
+.btn-primary_1:hover {
   opacity: 0.92;
   box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
   transform: translateY(-1px);
 }
 
-.btn-secondary {
+.btn-secondary_1 {
   background: var(--bg-main);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
-.btn-secondary:hover {
+.btn-secondary_1:hover {
   background: var(--bg-hover);
   border-color: var(--brand-blue-light);
   color: var(--brand-blue);
