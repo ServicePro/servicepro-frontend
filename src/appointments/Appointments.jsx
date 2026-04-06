@@ -92,7 +92,7 @@ const Appointments = () => {
         ].map((s) => (
           <div key={s.label} className="card" style={{ padding: '16px 20px', borderLeft: `4px solid ${s.color}` }}>
             <div style={{ fontSize: '1.6rem', fontWeight: 800, color: s.color }}>{s.count}</div>
-            <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 500 }}>{s.label}</div>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-light)', fontWeight: 500 }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -127,24 +127,24 @@ const Appointments = () => {
             const monthObj = dateObj.toLocaleString('default', { month: 'short' });
 
             return (
-              <div key={a.id} className="appt-card" style={{ display: 'flex', background: 'var(--bg-card)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', gap: '20px', alignItems: 'center' }}>
+              <div key={a.id} className="appt-card" style={{ display: 'flex', background: 'var(--white)', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', gap: '20px', alignItems: 'center' }}>
                 {/* Date box */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '60px', height: '60px', background: 'var(--bg-main)', borderRadius: '12px', flexShrink: 0 }}>
-                  <span style={{ fontSize: '1.5rem', fontWeight: 800, lineHeight: 1, color: 'var(--brand-blue)' }}>{day || '?'}</span>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>{monthObj || ''}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '60px', height: '60px', background: 'var(--light)', borderRadius: '12px', flexShrink: 0 }}>
+                  <span style={{ fontSize: '1.5rem', fontWeight: 800, lineHeight: 1, color: 'var(--primary)' }}>{day || '?'}</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-light)' }}>{monthObj || ''}</span>
                 </div>
 
                 {/* Info */}
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>{a.service_name}</div>
-                  <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>{a.service_name}</div>
+                  <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', marginBottom: '8px' }}>
                     👤 <strong>{a.client_name}</strong> &nbsp;·&nbsp; 📞 {a.client_phone || 'No phone provided'}
                   </div>
-                  <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  <div style={{ display: 'flex', gap: '16px', fontSize: '0.85rem', color: 'var(--text-light)' }}>
                     <div>🕐 {a.appointment_time || 'No time set'}</div>
                     {a.client_address && <div>📍 {a.client_address}</div>}
                     <div>
-                      💰 <strong style={{ color: 'var(--brand-blue)' }}>${a.amount}</strong>
+                      💰 <strong style={{ color: 'var(--primary)' }}>${a.amount}</strong>
                     </div>
                   </div>
                 </div>

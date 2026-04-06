@@ -1,8 +1,8 @@
-import "./Navbar.css";
-import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Menu, X, Search, Moon, Sun, Globe } from "lucide-react";
 import axios from "axios";
+import { Globe, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import "./Navbar.css";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -87,9 +87,21 @@ const Navbar = () => {
         {/* LINKS */}
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
           <li className={isActive("/") ? "active" : ""}><Link to="/">Home</Link></li>
-          <li className={isActive("/services") ? "active" : ""}><Link to="/services">Services</Link></li>
-          <li className={isActive("/about") ? "active" : ""}><Link to="/about">About</Link></li>
-          <li className={isActive("/contact") ? "active" : ""}><Link to="/contact">Contact</Link></li>
+          <li><Link to="/login">Services</Link></li>
+          <li>
+            {location.pathname === "/" ? (
+              <a href="#faq">About</a>
+            ) : (
+              <Link to="/about">About</Link>
+            )}
+          </li>
+          <li>
+            {location.pathname === "/" ? (
+              <a href="#footer">Contact</a>
+            ) : (
+              <Link to="/contact">Contact</Link>
+            )}
+          </li>
         </ul>
 
         {/* RIGHT */}

@@ -24,8 +24,18 @@ const servicesApi = {
     return response.data;
   },
 
+  getAllPublic: async (params = {}) => {
+    const response = await API.get("/services/public", { params });
+    return response.data;
+  },
+
   getById: async (id) => {
     const response = await API.get(`/services/${id}`);
+    return response.data;
+  },
+
+  getPublicById: async (id) => {
+    const response = await API.get(`/services/public/${id}`);
     return response.data;
   },
 
