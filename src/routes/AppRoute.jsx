@@ -9,7 +9,12 @@ import Verify from "../pages/Verify/Verify";
 import OAuthCallback from "../pages/OAuthCallback/OAuthCallback";
 import PrivacyPolicy from "../pages/Legal/PrivacyPolicy";
 
-// Provider
+import BookingPage from "../pages/Booking/BookingPage";
+import PaymentPage from "../pages/Booking/PaymentPage";
+import BookingConfirmation from "../pages/Booking/BookingConfirmation";
+import RealTimeTracking from "../pages/Booking/RealTimeTracking";
+
+import ProviderRoute      from './ProviderRoute';
 import Layout             from '../layouts/Layout';
 import ProviderDashboard  from '../dashboard/ProviderDashboard';
 import AddService         from '../services/AddService';
@@ -63,14 +68,16 @@ const AppRoutes = () => {
         </Route>
 
         {/* All provider pages share the Layout (sidebar + header) */}
-        <Route path="/provider" element={<Layout />}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard"       element={<ProviderDashboard />} />
-          <Route path="add-service"     element={<AddService />} />
-          <Route path="manage-services" element={<ManageServices />} />
-          <Route path="edit-service/:id" element={<EditService />} />
-          <Route path="appointments"    element={<Appointments />} />
-          <Route path="analytics"       element={<ProviderAnalytics />} />
+        <Route path="/provider" element={<ProviderRoute />}>
+          <Route element={<Layout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard"       element={<ProviderDashboard />} />
+            <Route path="add-service"     element={<AddService />} />
+            <Route path="manage-services" element={<ManageServices />} />
+            <Route path="edit-service/:id" element={<EditService />} />
+            <Route path="appointments"    element={<Appointments />} />
+            <Route path="analytics"       element={<ProviderAnalytics />} />
+          </Route>
         </Route>
 
         {/* Fallback */}

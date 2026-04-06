@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import "../styles/provider.css"
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -85,7 +86,7 @@ const ProviderAnalytics = () => {
           {['1m', '3m', '6m', '1y'].map((p) => (
             <button
               key={p}
-              className={`btn btn-sm ${period === p ? 'btn-primary' : 'btn-secondary'}`}
+              className={`btn btn-sm ${period === p ? 'btn-primary_1' : 'btn-secondary_1'}`}
               style={{ borderRadius: '8px' }}
               onClick={() => setPeriod(p)}
             >

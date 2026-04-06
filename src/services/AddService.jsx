@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
+import "../styles/provider.css"
 
 const categories = [
   'Home Repair', 'Plumbing', 'Electrical', 'Cleaning',
@@ -382,14 +383,14 @@ const AddService = () => {
         <div className="form-actions">
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary_1"
             onClick={() => navigate('/provider/manage-services')}
             disabled={loading}
           >
             Cancel
           </button>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <button type="submit" className="btn btn-primary_1" disabled={loading}>
             {loading ? 'Saving...' : '✅ Publish Service'}
           </button>
         </div>
