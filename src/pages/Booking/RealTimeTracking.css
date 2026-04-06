@@ -1,0 +1,102 @@
+.tracking-root {
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 40px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.tracking-card {
+  width: min(720px, 100%);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
+  padding: 28px;
+}
+
+.tracking-card h1 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.tracking-id {
+  color: #475569;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.stepper-list {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+}
+
+.stepper-item.active {
+  border-color: #4f46e5;
+  background: #eef2ff;
+}
+
+.stepper-item.completed {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.step-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.stepper-item.completed .step-dot {
+  background: #10b981;
+}
+
+.stepper-item.active .step-dot {
+  background: #4f46e5;
+}
+
+.stepper-item:not(.completed):not(.active) .step-dot {
+  background: #d1d5db;
+  color: #334155;
+}
+
+.step-text strong {
+  display: block;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.step-text p {
+  margin: 4px 0 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.tracking-footer {
+  margin-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 14px;
+  color: #334155;
+}
+
+.tracking-error {
+  color: #b91c1c;
+}

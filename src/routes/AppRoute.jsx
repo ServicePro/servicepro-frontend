@@ -39,6 +39,11 @@ const AppRoutes = () => {
         <Route path="/register" element={<UserRegister />} />
         <Route path="/booking" element={<h1>Booking Page</h1>} />
         
+        <Route path="/book/:serviceId" element={<BookingPage />} />
+        <Route path="/payment/:bookingId" element={<PaymentPage />} />
+        <Route path="/booking-confirmation/:bookingId" element={<BookingConfirmation />} />
+        <Route path="/tracking/:bookingId" element={<RealTimeTracking />} />
+
         {/* Registration goes here */}
         <Route path="/provider-register" element={<ServiceProviderRegister />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
