@@ -1,0 +1,16 @@
+:root {
+  --primary: #F97316;
+  --primary-dark: #EA580C;
+  --accent: #FDBA74;
+
+  --dark: #0F172A;
+  --light: #F8FAFC;
+  --white: #ffffff;
+
+  --text: #1E293B;
+  --text-light: #64748B;
+  --text-white: rgba(255,255,255,0.85);
+
+  --border: #E2E8F0;
+  --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
