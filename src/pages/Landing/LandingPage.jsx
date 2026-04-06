@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-    FaCheckCircle,
-    FaSearch
+  FaCheckCircle,
+  FaSearch
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
@@ -12,26 +12,19 @@ const LandingPage = () => {
   const [activeFAQ, setActiveFAQ] = useState(null);
 
   useEffect(() => {
-  fetch("http://localhost:5000/api/providers")
-    .then(res => res.json())
-    .then(data => setProviders(data))
-    .catch(err => console.error(err));
-}, []);
+    const fetchProviders = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/providers");
+        const data = await res.json();
+        setProviders(data);
+      } catch (error) {
+        console.error("API Error:", error);
+        setProviders([]);
+      }
+    };
 
-useEffect(() => {
-  const fetchProviders = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/providers");
-      const data = await res.json();
-      setProviders(data);
-    } catch (error) {
-      console.error("API Error:", error);
-      setProviders([]); // fallback
-    }
-  };
-
-  fetchProviders();
-}, []);
+    fetchProviders();
+  }, []);
 
   return (
     <MainLayout>
@@ -70,7 +63,8 @@ useEffect(() => {
       </div>
 
       <div className={styles["hero-buttons"]}>
-        <Link to="/register" className="btn primary">Get Started →</Link>
+        <Link to="/login" className="btn outline">Login</Link>
+        <Link to="/register" className="btn primary">Sign Up</Link>
         <Link to="/provider-register" className="btn outline">Become a Provider</Link>
         <Link to="/services" className="btn outline">Browse Services</Link>
       </div>
@@ -646,11 +640,6 @@ useEffect(() => {
   </div>
 </section>
 
-
-      {/* FOOTER */}
-      <footer className={styles["footer"]}>
-        <p>© 2026 ServicePro. All rights reserved.</p>
-      </footer>
     </MainLayout>
   );
 };

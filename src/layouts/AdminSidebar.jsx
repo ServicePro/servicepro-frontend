@@ -5,31 +5,30 @@ const navItems = [
   {
     group: 'Main',
     items: [
-      { to: '/provider/dashboard',        icon: '🏠', label: 'Dashboard' },
-      { to: '/provider/add-service',      icon: '➕', label: 'Add Service' },
-      { to: '/provider/manage-services',  icon: '🛠️', label: 'Manage Services' },
+      { to: '/admin/dashboard',        icon: '🏠', label: 'Dashboard' },
+      { to: '/admin/users',            icon: '👥', label: 'User Management' },
     ],
   },
   {
-    group: 'Bookings',
+    group: 'Moderation',
     items: [
-      { to: '/provider/appointments',     icon: '📅', label: 'Appointments' },
+      { to: '/admin/moderation',       icon: '🛡️', label: 'Service Moderation' },
     ],
   },
   {
     group: 'Insights',
     items: [
-      { to: '/provider/analytics',        icon: '📊', label: 'Analytics' },
+      { to: '/admin/analytics',        icon: '📊', label: 'Reports & Analytics' },
     ],
   },
 ];
 
-const Sidebar = () => {
+const AdminSidebar = () => {
   const navigate = useNavigate();
-  const [providerData, setProviderData] = useState({
-    name: 'Service Provider',
-    role: 'Provider',
-    avatar: 'SP',
+  const [adminData, setAdminData] = useState({
+    name: 'Admin',
+    role: 'Administrator',
+    avatar: 'AD',
   });
 
   useEffect(() => {
@@ -38,14 +37,14 @@ const Sidebar = () => {
       if (userStr) {
         const user = JSON.parse(userStr);
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setProviderData({
-          name: user.name || 'Service Provider',
-          role: user.role === 'provider' ? 'Service Provider' : 'Provider',
-          avatar: (user.name || 'S').charAt(0).toUpperCase(),
+        setAdminData({
+          name: user.name || 'System Admin',
+          role: 'Platform Admin',
+          avatar: (user.name || 'A').charAt(0).toUpperCase(),
         });
       }
     } catch (err) {
-      console.error('Error fetching user data from local storage', err);
+      console.error('Error fetching admin data from local storage', err);
     }
   }, []);
 
@@ -58,22 +57,22 @@ const Sidebar = () => {
   return (
     <aside className="sidebar">
       {/* Logo */}
-      <Link to="/provider/dashboard" className="sidebar-logo">
-        <div className="sidebar-logo-icon">🔧</div>
+      <Link to="/admin/dashboard" className="sidebar-logo">
+        <div className="sidebar-logo-icon">👑</div>
         <div>
           <div className="sidebar-logo-text">ServicePro</div>
-          <div className="sidebar-logo-sub">Provider Portal</div>
+          <div className="sidebar-logo-sub">Admin Portal</div>
         </div>
       </Link>
 
-      {/* Provider Profile */}
+      {/* Profile */}
       <div className="sidebar-profile">
-        <div className="avatar avatar-md">
-          {providerData.avatar}
+        <div className="avatar avatar-md" style={{ backgroundColor: '#4f46e5' }}>
+          {adminData.avatar}
         </div>
         <div className="sidebar-profile-info">
-          <div className="sidebar-profile-name">{providerData.name}</div>
-          <div className="sidebar-profile-role">{providerData.role}</div>
+          <div className="sidebar-profile-name">{adminData.name}</div>
+          <div className="sidebar-profile-role">{adminData.role}</div>
         </div>
       </div>
 
@@ -105,7 +104,7 @@ const Sidebar = () => {
       <div className="sidebar-footer">
         <div className="sidebar-footer-item">
           <span className="sidebar-nav-icon">⚙️</span>
-          <span>Settings</span>
+          <span>Global Settings</span>
         </div>
         <div className="sidebar-footer-item logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
           <span className="sidebar-nav-icon">🚪</span>
@@ -116,4 +115,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default AdminSidebar;

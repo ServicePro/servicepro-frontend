@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
 
@@ -342,8 +342,8 @@ const AddService = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             style={{
-              border: isDragging ? '2px dashed var(--brand-blue)' : '2px dashed var(--border-color)',
-              backgroundColor: isDragging ? 'var(--info-bg)' : 'transparent',
+              border: isDragging ? '2px dashed var(--primary)' : '2px dashed var(--border)',
+              backgroundColor: isDragging ? 'var(--accent)' : 'transparent',
               borderRadius: 'var(--radius-lg)',
               padding: '40px 20px',
               textAlign: 'center',
@@ -360,7 +360,7 @@ const AddService = () => {
             <h4 style={{ margin: 0, fontWeight: 600 }}>
               {selectedImage ? 'Change Image' : 'Click or Drag & Drop to Upload'}
             </h4>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-light)' }}>
               PNG, JPG or WEBP • Max 5MB
             </p>
             
@@ -372,7 +372,7 @@ const AddService = () => {
               style={{ display: 'none' }}
             />
             {selectedImage && (
-              <div style={{ marginTop: '8px', fontSize: '14px', color: 'var(--success)', fontWeight: 600 }}>
+              <div style={{ marginTop: '8px', fontSize: '14px', color: 'var(--primary)', fontWeight: 600 }}>
                 Selected: {selectedImage.name}
               </div>
             )}
