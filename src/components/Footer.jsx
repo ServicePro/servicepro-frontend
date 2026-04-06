@@ -1,10 +1,10 @@
-import "./Footer.css";
 import {
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaLinkedinIn,
+    FaFacebookF,
+    FaInstagram,
+    FaLinkedinIn,
+    FaTwitter,
 } from "react-icons/fa";
+import "./Footer.css";
 
 const Footer = () => {
 
@@ -16,7 +16,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="footer">
+    <footer id="footer" className="footer">
       <div className="footer-container">
 
         {/* LEFT */}
