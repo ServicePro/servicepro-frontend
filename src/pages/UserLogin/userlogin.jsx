@@ -1,95 +1,8 @@
-// import React, { useState } from "react";
-// import "./userlogin.css";
-
-// export default function UserLogin({ onNavigate }) {
-//   const [formData, setFormData] = useState({
-//     email: "",
-//     password: "",
-//   });
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleLogin = (e) => {
-//     e.preventDefault();
-//     // Add login logic here
-//     alert("Login functionality to be implemented!");
-//   };
-
-//   return (
-//     <div className="auth-container">
-//       {/* LEFT SIDE */}
-//       <div className="auth-left">
-//         <div className="brand">
-//           <h1>ServiceHub</h1>
-//           <p>Your trusted service marketplace</p>
-//         </div>
-
-//         <div className="features">
-//           <p>✔ Find trusted professionals</p>
-//           <p>✔ Easy booking system</p>
-//           <p>✔ Secure & reliable platform</p>
-//         </div>
-//       </div>
-
-//       {/* RIGHT SIDE */}
-//       <div className="auth-right">
-//         <div className="auth-form">
-//           <h2>Welcome Back</h2>
-//           <p>Sign in to your account</p>
-
-//           <form onSubmit={handleLogin}>
-//             <div className="form-group">
-//               <label htmlFor="email">Email</label>
-//               <input
-//                 type="email"
-//                 id="email"
-//                 name="email"
-//                 value={formData.email}
-//                 onChange={handleChange}
-//                 placeholder="Enter your email"
-//                 required
-//               />
-//             </div>
-
-//             <div className="form-group">
-//               <label htmlFor="password">Password</label>
-//               <input
-//                 type="password"
-//                 id="password"
-//                 name="password"
-//                 value={formData.password}
-//                 onChange={handleChange}
-//                 placeholder="Enter your password"
-//                 required
-//               />
-//             </div>
-
-//             <button type="submit" className="auth-btn">
-//               Sign In
-//             </button>
-//           </form>
-
-//           <div className="auth-links">
-//             <p>
-//               Don't have an account?{" "}
-//               <span onClick={() => onNavigate("register")}>Register</span>
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
-import { FcGoogle } from "react-icons/fc";
+import { useState } from "react";
 import { FaLinkedinIn } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./userlogin.css";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -112,9 +25,14 @@ export default function Login() {
   };
 
   const redirectByRole = (role) => {
-    if (role === "admin") navigate("/admin");
-    else if (role === "provider") navigate("/provider-dashboard");
-    else navigate("/user-dashboard");
+    const from = location.state?.from;
+    if (from) {
+      navigate(from);
+    } else {
+      if (role === "admin") navigate("/admin");
+      else if (role === "provider") navigate("/provider/dashboard");
+      else navigate("/user-dashboard");
+    }
   };
 
   // ── Email / password login ──────────────────────────────────────────────────
@@ -196,45 +114,27 @@ export default function Login() {
 
       {/* Role Selection Modal */}
       {showRoleModal && (
-        <div style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
-          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000
-        }}>
-          <div style={{
-            background: "#fff", borderRadius: "12px", padding: "36px 32px",
-            maxWidth: "380px", width: "90%", textAlign: "center", boxShadow: "0 8px 32px rgba(0,0,0,0.18)"
-          }}>
-            <h3 style={{ marginBottom: "8px", color: "#111" }}>Login As</h3>
-            <p style={{ color: "#6b7280", fontSize: "14px", marginBottom: "24px" }}>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Login As</h3>
+            <p>
               Your email is registered as both a User and a Service Provider. Choose how you want to log in.
             </p>
             <button
               onClick={() => handleLogin(null, "user")}
-              style={{
-                width: "100%", padding: "12px", marginBottom: "12px",
-                background: "#10b981", color: "#fff", border: "none",
-                borderRadius: "8px", fontSize: "15px", cursor: "pointer", fontWeight: 600
-              }}
+              className="modal-btn modal-btn-primary"
             >
               Login as User
             </button>
             <button
               onClick={() => handleLogin(null, "provider")}
-              style={{
-                width: "100%", padding: "12px", marginBottom: "12px",
-                background: "#4f46e5", color: "#fff", border: "none",
-                borderRadius: "8px", fontSize: "15px", cursor: "pointer", fontWeight: 600
-              }}
+              className="modal-btn modal-btn-secondary"
             >
               Login as Service Provider
             </button>
             <button
               onClick={() => setShowRoleModal(false)}
-              style={{
-                width: "100%", padding: "10px", background: "transparent",
-                color: "#6b7280", border: "1px solid #d1d5db",
-                borderRadius: "8px", fontSize: "14px", cursor: "pointer"
-              }}
+              className="modal-btn modal-btn-outline"
             >
               Cancel
             </button>
@@ -243,8 +143,13 @@ export default function Login() {
       )}
 
       <div className="login-left">
-        <h1>ServicePro</h1>
-        <p>Login to access your dashboard</p>
+        <div className="hero-image-container">
+          <img src="https://storage.cloud.google.com/servicepro-assets/images/multi-service.png" alt="ServicePro Hero" className="hero-image" />
+        </div>
+        <div className="hero-content">
+          <h1>ServicePro</h1>
+          <p>Login to access your dashboard</p>
+        </div>
       </div>
 
       <div className="login-right">
@@ -252,14 +157,14 @@ export default function Login() {
           <h2>Welcome Back</h2>
 
           {successMsg && (
-            <p style={{ color: "#10b981", fontSize: "14px", marginBottom: "12px", textAlign: "center" }}>
+            <div className="message message-success">
               {successMsg}
-            </p>
+            </div>
           )}
           {error && (
-            <p style={{ color: "#ef4444", fontSize: "14px", marginBottom: "12px", textAlign: "center" }}>
+            <div className="message message-error">
               {error}
-            </p>
+            </div>
           )}
 
           <form onSubmit={handleLogin} noValidate>
@@ -281,7 +186,7 @@ export default function Login() {
             />
 
             <div className="forgot-password">
-              <Link to="/forgot-password" style={{ color: "#6b7280", textDecoration: "none", fontSize: "14px" }}>
+              <Link to="/forgot-password">
                 Forgot Password?
               </Link>
             </div>
@@ -303,9 +208,9 @@ export default function Login() {
             Continue with LinkedIn
           </button>
 
-          <p style={{ textAlign: "center", marginTop: "20px" }}>
+          <p>
             Don't have an account?{" "}
-            <Link to="/register" style={{ color: "#10b981", textDecoration: "none" }}>Register</Link>
+            <Link to="/register">Register</Link>
           </p>
         </div>
       </div>

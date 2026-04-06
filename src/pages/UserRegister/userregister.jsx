@@ -335,7 +335,7 @@ const UserRegister = () => {
 
           <p className="bottom-text">
             Are you a service provider?{" "}
-            <span className="link" onClick={() => navigate("/provider")}>Register as a Service Provider</span>
+            <span className="link" onClick={() => navigate("/provider-register")}>Register as a Service Provider</span>
           </p>
 
         </form>
