@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import axios from 'axios';
@@ -30,7 +30,7 @@ const Layout = () => {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [profileForm, setProfileForm] = useState({ name: '', phone: '', category: '' });
-
+  });
   useEffect(() => {
     try {
       const userStr = localStorage.getItem('user');
@@ -201,7 +201,6 @@ const Layout = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };
