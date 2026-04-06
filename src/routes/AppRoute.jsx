@@ -4,17 +4,12 @@ import UserRegister from "../pages/UserRegister/userregister";
 import Login from "../pages/UserLogin/userlogin";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword";
 import ServiceProviderRegister from "../pages/ServiceproviderRegistration/serviceproviderregistration";
-import AdminDashboard from "../pages/Admin/AdminDashboard";
 import UserDashboard from "../pages/UserDashboard/UserDashboard";
 import Verify from "../pages/Verify/Verify";
 import OAuthCallback from "../pages/OAuthCallback/OAuthCallback";
 import PrivacyPolicy from "../pages/Legal/PrivacyPolicy";
 
-import BookingPage from "../pages/Booking/BookingPage";
-import PaymentPage from "../pages/Booking/PaymentPage";
-import BookingConfirmation from "../pages/Booking/BookingConfirmation";
-import RealTimeTracking from "../pages/Booking/RealTimeTracking";
-
+// Provider
 import Layout             from '../layouts/Layout';
 import ProviderDashboard  from '../dashboard/ProviderDashboard';
 import AddService         from '../services/AddService';
@@ -22,6 +17,14 @@ import EditService        from '../services/EditService';
 import ManageServices     from '../services/ManageServices';
 import Appointments       from '../appointments/Appointments';
 import ProviderAnalytics  from '../analytics/ProviderAnalytics';
+
+// Admin
+import AdminLayout        from '../layouts/AdminLayout';
+import DashboardOverview  from '../pages/Admin/DashboardOverview';
+import UserManagement     from '../pages/Admin/UserManagement';
+import ServiceModeration  from '../pages/Admin/ServiceModeration';
+import AdminAnalytics     from '../pages/Admin/AdminAnalytics';
+import AdminRoute         from './AdminRoute';
 
 const AppRoutes = () => {
   return (
@@ -43,12 +46,22 @@ const AppRoutes = () => {
 
         {/* Registration goes here */}
         <Route path="/provider-register" element={<ServiceProviderRegister />} />
-        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/verify/:token" element={<Verify />} />
         <Route path="/auth/callback" element={<OAuthCallback />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         
+        {/* Admin Portal - Protected by AdminRoute */}
+        <Route path="/admin" element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard"  element={<DashboardOverview />} />
+            <Route path="users"      element={<UserManagement />} />
+            <Route path="moderation" element={<ServiceModeration />} />
+            <Route path="analytics"  element={<AdminAnalytics />} />
+          </Route>
+        </Route>
+
         {/* All provider pages share the Layout (sidebar + header) */}
         <Route path="/provider" element={<Layout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
