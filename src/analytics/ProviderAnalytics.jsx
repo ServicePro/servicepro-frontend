@@ -1,17 +1,8 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis, YAxis,
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+
 } from 'recharts';
 import dashboardApi from '../api/dashboardApi';
 
@@ -122,6 +113,7 @@ const ProviderAnalytics = () => {
               <div className="stat-value" style={{ color: k.color }}>{k.value}</div>
               <div className="stat-label">{k.label}</div>
               <div className={`stat-change ${k.positive ? 'positive' : 'negative'}`} style={{ color: 'var(--text-light)' }}>
+
                 {k.change}
               </div>
             </div>
@@ -137,6 +129,7 @@ const ProviderAnalytics = () => {
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Revenue Overview</h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Monthly revenue vs target</p>
+
             </div>
           </div>
           {data.monthlyData.length === 0 ? (
@@ -168,6 +161,7 @@ const ProviderAnalytics = () => {
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Service Popularity</h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Bookings by service type</p>
+
             </div>
           </div>
           {data.servicePopularity.length === 0 ? (

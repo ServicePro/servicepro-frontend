@@ -35,6 +35,19 @@ import ServiceModeration from '../pages/Admin/ServiceModeration';
 import UserManagement from '../pages/Admin/UserManagement';
 import AdminRoute from './AdminRoute';
 
+import BookingPage from "../pages/Booking/BookingPage";
+import PaymentPage from "../pages/Booking/PaymentPage";
+import BookingConfirmation from "../pages/Booking/BookingConfirmation";
+import RealTimeTracking from "../pages/Booking/RealTimeTracking";
+
+import Layout             from '../layouts/Layout';
+import ProviderDashboard  from '../dashboard/ProviderDashboard';
+import AddService         from '../services/AddService';
+import EditService        from '../services/EditService';
+import ManageServices     from '../services/ManageServices';
+import Appointments       from '../appointments/Appointments';
+import ProviderAnalytics  from '../analytics/ProviderAnalytics';
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
