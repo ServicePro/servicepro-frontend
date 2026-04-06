@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
 
@@ -297,7 +297,7 @@ const EditService = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             style={{
-              border: isDragging ? '2px dashed var(--brand-blue)' : '2px dashed var(--border-color)',
+              border: isDragging ? '2px dashed var(--primary)' : '2px dashed var(--border)',
               backgroundColor: isDragging ? 'var(--info-bg)' : 'transparent',
               borderRadius: 'var(--radius-lg)',
               padding: '40px 20px',

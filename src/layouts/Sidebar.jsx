@@ -37,6 +37,7 @@ const Sidebar = () => {
       const userStr = localStorage.getItem('user');
       if (userStr) {
         const user = JSON.parse(userStr);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setProviderData({
           name: user.name || 'Service Provider',
           role: user.role === 'provider' ? 'Service Provider' : 'Provider',

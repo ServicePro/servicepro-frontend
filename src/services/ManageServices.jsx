@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
 
@@ -97,7 +97,7 @@ const ManageServices = () => {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 'auto' }}>
+          <span style={{ fontSize: '0.82rem', color: 'var(--text-light)', marginLeft: 'auto' }}>
             {filtered.length} service{filtered.length !== 1 ? 's' : ''} found
           </span>
         </div>

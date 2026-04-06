@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import servicesApi from "../../api/servicesApi";import FilterSidebar from "../../components/services/FilterSidebar";
+import { useSearchParams } from "react-router-dom";
+import servicesApi from "../../api/servicesApi";
+import FilterSidebar from "../../components/services/FilterSidebar";
 import ServiceCard from "../../components/services/ServiceCard";
 import SortBar from "../../components/services/SortBar";
 import Footer from "../../components/userDashboard/UserFooter";
@@ -8,19 +10,38 @@ import Navbar from "../../components/userDashboard/UserNavbar";
 import "./ServiceListing.css";
 
 const ServiceListing = () => {
+  const [searchParams] = useSearchParams();
   const [services, setServices] = useState([]);
-  const [loading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({});
   const [sort, setSort] = useState("");
 
   useEffect(() => {
-  servicesApi.getAll({ ...filters, sort })
-    .then(res => {
-      // depends on backend structure
-      setServices(res.data || res);
-    })
-    .catch(err => console.error(err));
-}, [filters, sort]);
+    // Initialize filters from URL parameters
+    const category = searchParams.get('category');
+    const initialFilters = {};
+    if (category) {
+      initialFilters.category = category;
+    }
+    setFilters(initialFilters);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const loadServices = async () => {
+      setLoading(true);
+      try {
+        const res = await servicesApi.getAllPublic({ ...filters, sort });
+        setServices(res.data?.services || res.services || res.data || res || []);
+      } catch (err) {
+        console.error(err);
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadServices();
+  }, [filters, sort]);
 
   return (
     <div className="service-page">
