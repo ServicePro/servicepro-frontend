@@ -1,12 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import bookingApi from '../../api/bookingApi';
 import './BookingConfirmation.css';
 
 export default function BookingConfirmation() {
   const { bookingId } = useParams();
+  const navigate = useNavigate();
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (!user || JSON.parse(user).role !== 'user') {
+      navigate('/login');
+      return;
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const loadBooking = async () => {
@@ -39,7 +48,7 @@ export default function BookingConfirmation() {
         <div className="details-box">
           <div className="detail-row"><span>Service</span><strong>{booking.serviceId?.name || 'Service'}</strong></div>
           <div className="detail-row"><span>Provider</span><strong>{booking.providerId?.name || 'Provider'}</strong></div>
-          <div className="detail-row"><span>Date</span><strong>{new Date(booking.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</strong></div>
+          <div className="detail-row"><span>Date</span><strong>{new Date(booking.date).toLocaleDateString()}</strong></div>
           <div className="detail-row"><span>Time</span><strong>{booking.time}</strong></div>
           <div className="detail-row"><span>Location</span><strong>{booking.location}</strong></div>
           <div className="detail-row"><span>Total Cost</span><strong>${booking.amount.toFixed(2)}</strong></div>

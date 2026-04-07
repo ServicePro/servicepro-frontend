@@ -1,17 +1,8 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import "../styles/provider.css"
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Legend,
-    Line,
-    LineChart,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis, YAxis,
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import dashboardApi from '../api/dashboardApi';
 
@@ -95,7 +86,7 @@ const ProviderAnalytics = () => {
           {['1m', '3m', '6m', '1y'].map((p) => (
             <button
               key={p}
-              className={`btn btn-sm ${period === p ? 'btn-primary' : 'btn-secondary'}`}
+              className={`btn btn-sm ${period === p ? 'btn-primary_1' : 'btn-secondary_1'}`}
               style={{ borderRadius: '8px' }}
               onClick={() => setPeriod(p)}
             >
@@ -105,7 +96,7 @@ const ProviderAnalytics = () => {
         </div>
       </div>
 
-      {loading && <div style={{ marginBottom: '1rem', color: 'var(--text-light)' }}>Updating charts...</div>}
+      {loading && <div style={{ marginBottom: '1rem', color: 'var(--text-muted)' }}>Updating charts...</div>}
 
       {/* KPI Cards */}
       <div className="stats-grid" style={{ marginBottom: '24px' }}>
@@ -121,7 +112,7 @@ const ProviderAnalytics = () => {
             <div className="stat-info">
               <div className="stat-value" style={{ color: k.color }}>{k.value}</div>
               <div className="stat-label">{k.label}</div>
-              <div className={`stat-change ${k.positive ? 'positive' : 'negative'}`} style={{ color: 'var(--text-light)' }}>
+              <div className={`stat-change ${k.positive ? 'positive' : 'negative'}`} style={{ color: 'var(--text-muted)' }}>
                 {k.change}
               </div>
             </div>
@@ -136,7 +127,7 @@ const ProviderAnalytics = () => {
           <div className="section-header">
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Revenue Overview</h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Monthly revenue vs target</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Monthly revenue vs target</p>
             </div>
           </div>
           {data.monthlyData.length === 0 ? (
@@ -167,7 +158,7 @@ const ProviderAnalytics = () => {
           <div className="section-header">
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Service Popularity</h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Bookings by service type</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Bookings by service type</p>
             </div>
           </div>
           {data.servicePopularity.length === 0 ? (
@@ -199,7 +190,7 @@ const ProviderAnalytics = () => {
                       width: 10, height: 10, borderRadius: '50%',
                       background: s.color, flexShrink: 0,
                     }} />
-                    <span style={{ fontSize: '0.78rem', flex: 1, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={s.name}>{s.name}</span>
+                    <span style={{ fontSize: '0.78rem', flex: 1, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={s.name}>{s.name}</span>
                     <span style={{ fontSize: '0.78rem', fontWeight: 700, color: s.color }}>{s.value}</span>
                   </div>
                 ))}
@@ -216,7 +207,7 @@ const ProviderAnalytics = () => {
           <div className="section-header">
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Appointments Breakdown</h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Status counts per month</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Status counts per month</p>
             </div>
           </div>
           {data.monthlyData.length === 0 ? (
@@ -242,7 +233,7 @@ const ProviderAnalytics = () => {
           <div className="section-header">
             <div>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 700 }}>Rating Trend</h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-light)' }}>Average rating over time</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Average rating over time</p>
             </div>
           </div>
           {data.monthlyData.length === 0 ? (

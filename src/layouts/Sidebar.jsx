@@ -24,30 +24,16 @@ const navItems = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ onToggleTheme, onOpenProfile, currentTheme, providerData }) => {
   const navigate = useNavigate();
-  const [providerData, setProviderData] = useState({
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // Fallback defaults if props are not yet loaded
+  const fallbackData = providerData || {
     name: 'Service Provider',
     role: 'Provider',
     avatar: 'SP',
-  });
-
-  useEffect(() => {
-    try {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setProviderData({
-          name: user.name || 'Service Provider',
-          role: user.role === 'provider' ? 'Service Provider' : 'Provider',
-          avatar: (user.name || 'S').charAt(0).toUpperCase(),
-        });
-      }
-    } catch (err) {
-      console.error('Error fetching user data from local storage', err);
-    }
-  }, []);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -69,11 +55,11 @@ const Sidebar = () => {
       {/* Provider Profile */}
       <div className="sidebar-profile">
         <div className="avatar avatar-md">
-          {providerData.avatar}
+          {fallbackData.avatar}
         </div>
         <div className="sidebar-profile-info">
-          <div className="sidebar-profile-name">{providerData.name}</div>
-          <div className="sidebar-profile-role">{providerData.role}</div>
+          <div className="sidebar-profile-name">{fallbackData.name}</div>
+          <div className="sidebar-profile-role">{fallbackData.role}</div>
         </div>
       </div>
 
@@ -103,9 +89,24 @@ const Sidebar = () => {
 
       {/* Footer */}
       <div className="sidebar-footer">
-        <div className="sidebar-footer-item">
-          <span className="sidebar-nav-icon">⚙️</span>
-          <span>Settings</span>
+        <div style={{ position: 'relative' }}>
+          <div className="sidebar-footer-item" onClick={() => setIsSettingsOpen(!isSettingsOpen)} style={{ cursor: 'pointer' }}>
+            <span className="sidebar-nav-icon">⚙️</span>
+            <span>Settings</span>
+          </div>
+
+          {isSettingsOpen && (
+            <div className="settings-dropdown">
+              <div className="settings-dropdown-item" onClick={() => { onToggleTheme?.(); setIsSettingsOpen(false); }}>
+                <span className="sidebar-nav-icon">{currentTheme === 'dark' ? '☀️' : '🌙'}</span>
+                <span>{currentTheme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              </div>
+              <div className="settings-dropdown-item" onClick={() => { onOpenProfile?.(); setIsSettingsOpen(false); }}>
+                <span className="sidebar-nav-icon">👤</span>
+                <span>Update Profile</span>
+              </div>
+            </div>
+          )}
         </div>
         <div className="sidebar-footer-item logout" onClick={handleLogout} style={{ cursor: 'pointer' }}>
           <span className="sidebar-nav-icon">🚪</span>

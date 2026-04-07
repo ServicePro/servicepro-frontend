@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
+import "../styles/provider.css"
 
 const categories = [
   'Home Repair', 'Plumbing', 'Electrical', 'Cleaning',
@@ -167,7 +168,7 @@ const EditService = () => {
           <p>Update the details of your existing service listing.</p>
         </div>
         <button
-          className="btn btn-secondary"
+          className="btn btn-secondary_1"
           onClick={() => navigate('/provider/manage-services')}
         >
           ← Back to Services
@@ -297,7 +298,7 @@ const EditService = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             style={{
-              border: isDragging ? '2px dashed var(--primary)' : '2px dashed var(--border)',
+              border: isDragging ? '2px dashed var(--brand-blue)' : '2px dashed var(--border-color)',
               backgroundColor: isDragging ? 'var(--info-bg)' : 'transparent',
               borderRadius: 'var(--radius-lg)',
               padding: '40px 20px',
@@ -345,11 +346,11 @@ const EditService = () => {
 
         {/* Actions */}
         <div className="form-actions">
-          <button type="button" className="btn btn-secondary"
+          <button type="button" className="btn btn-secondary_1"
             onClick={() => navigate('/provider/manage-services')} disabled={loading}>
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <button type="submit" className="btn btn-primary_1" disabled={loading}>
             {loading ? 'Saving...' : '💾 Save Changes'}
           </button>
         </div>

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import bookingApi from '../../api/bookingApi';
 import './PaymentPage.css';
 
@@ -16,13 +16,19 @@ export default function PaymentPage() {
       try {
         const res = await bookingApi.getById(bookingId);
         if (res.success) setBooking(res.data);
-      // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError('Unable to load booking details.');
       }
     };
     fetchBooking();
   }, [bookingId]);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (!user || JSON.parse(user).role !== 'user') {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const handlePay = async (e) => {
     e.preventDefault();
@@ -95,7 +101,7 @@ export default function PaymentPage() {
             <h2>Order Summary</h2>
             <div className="summary-row"><span>Service</span><span>{booking.serviceId?.name || 'Service'}</span></div>
             <div className="summary-row"><span>Provider</span><span>{booking.providerId?.name || 'Provider'}</span></div>
-            <div className="summary-row"><span>Date</span><span>{new Date(booking.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span></div>
+            <div className="summary-row"><span>Date</span><span>{new Date(booking.date).toLocaleDateString()}</span></div>
             <div className="summary-row"><span>Time</span><span>{booking.time}</span></div>
             <div className="summary-row"><span>Subtotal</span><span>${booking.amount.toFixed(2)}</span></div>
             <div className="summary-row"><span>Service Fee</span><span>${serviceFee.toFixed(2)}</span></div>

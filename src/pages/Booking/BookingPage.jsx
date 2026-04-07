@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import bookingApi from '../../api/bookingApi';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import servicesApi from '../../api/servicesApi';
+import bookingApi from '../../api/bookingApi';
 import './BookingPage.css';
 
 const timeSlots = ['09:00 AM - 10:00 AM', '10:30 AM - 11:30 AM', '01:00 PM - 02:00 PM', '02:30 PM - 03:30 PM'];
@@ -15,10 +15,18 @@ export default function BookingPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (!user || JSON.parse(user).role !== 'user') {
+      navigate('/login');
+      return;
+    }
+  }, [navigate]);
+
+  useEffect(() => {
     if (!serviceId) return;
     const fetchService = async () => {
       try {
-        const res = await servicesApi.getPublicById(serviceId);
+        const res = await servicesApi.getById(serviceId);
         if (res.success && res.data && res.data.service) {
           setService(res.data.service);
         } else {
@@ -52,7 +60,7 @@ export default function BookingPage() {
     try {
       const payload = {
         serviceId: service._id,
-        providerId: service.providerId._id || service.providerId,
+        providerId: service.providerId,
         date: form.date,
         time: form.slot,
         location: form.address,
@@ -97,7 +105,7 @@ export default function BookingPage() {
 
         <section className="booking-section service-summary">
           <div className="service-header">Booking for {service.name}</div>
-          <div className="service-subtitle">Service by {service.providerId?.name || service.providerId || 'Provider'}</div>
+          <div className="service-subtitle">Service by {service.providerId || 'Provider'}</div>
           <div className="service-row">
             <span>Service Type</span>
             <strong>{service.category}</strong>

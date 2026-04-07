@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import {  useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import bookingApi from '../../api/bookingApi';
 import './RealTimeTracking.css';
 
@@ -12,8 +12,17 @@ const statusDefinitions = [
 
 export default function RealTimeTracking() {
   const { bookingId } = useParams();
+  const navigate = useNavigate();
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (!user || JSON.parse(user).role !== 'user') {
+      navigate('/login');
+      return;
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const loadBooking = async () => {

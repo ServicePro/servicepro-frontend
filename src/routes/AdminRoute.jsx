@@ -13,10 +13,8 @@ const AdminRoute = () => {
     const user = JSON.parse(userStr);
     if (user.role !== 'admin') {
       // If a regular user or provider attempts to access /admin via URL
-      // eslint-disable-next-line react-hooks/error-boundaries
       return <Navigate to="/login" replace />;
     }
-  // eslint-disable-next-line no-unused-vars
   } catch (error) {
     return <Navigate to="/login" replace />;
   }

@@ -43,7 +43,6 @@ export default function ServiceModeration() {
         // Refresh the list
         fetchPendingProviders();
       }
-    // eslint-disable-next-line no-unused-vars
     } catch (error) {
       alert("Error processing approval");
     }

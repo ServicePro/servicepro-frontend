@@ -1,8 +1,8 @@
+import React, { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useState } from "react";
-import { FaLinkedinIn } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaLinkedinIn } from "react-icons/fa";
 import "./userlogin.css";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -25,14 +25,9 @@ export default function Login() {
   };
 
   const redirectByRole = (role) => {
-    const from = location.state?.from;
-    if (from) {
-      navigate(from);
-    } else {
-      if (role === "admin") navigate("/admin");
-      else if (role === "provider") navigate("/provider/dashboard");
-      else navigate("/user-dashboard");
-    }
+    if (role === "admin") navigate("/admin");
+    else if (role === "provider") navigate("/provider/dashboard");
+    else navigate("/user-dashboard");
   };
 
   // ── Email / password login ──────────────────────────────────────────────────
@@ -114,27 +109,45 @@ export default function Login() {
 
       {/* Role Selection Modal */}
       {showRoleModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Login As</h3>
-            <p>
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000
+        }}>
+          <div style={{
+            background: "#fff", borderRadius: "12px", padding: "36px 32px",
+            maxWidth: "380px", width: "90%", textAlign: "center", boxShadow: "0 8px 32px rgba(0,0,0,0.18)"
+          }}>
+            <h3 style={{ marginBottom: "8px", color: "#111" }}>Login As</h3>
+            <p style={{ color: "#6b7280", fontSize: "14px", marginBottom: "24px" }}>
               Your email is registered as both a User and a Service Provider. Choose how you want to log in.
             </p>
             <button
               onClick={() => handleLogin(null, "user")}
-              className="modal-btn modal-btn-primary"
+              style={{
+                width: "100%", padding: "12px", marginBottom: "12px",
+                background: "#10b981", color: "#fff", border: "none",
+                borderRadius: "8px", fontSize: "15px", cursor: "pointer", fontWeight: 600
+              }}
             >
               Login as User
             </button>
             <button
               onClick={() => handleLogin(null, "provider")}
-              className="modal-btn modal-btn-secondary"
+              style={{
+                width: "100%", padding: "12px", marginBottom: "12px",
+                background: "#4f46e5", color: "#fff", border: "none",
+                borderRadius: "8px", fontSize: "15px", cursor: "pointer", fontWeight: 600
+              }}
             >
               Login as Service Provider
             </button>
             <button
               onClick={() => setShowRoleModal(false)}
-              className="modal-btn modal-btn-outline"
+              style={{
+                width: "100%", padding: "10px", background: "transparent",
+                color: "#6b7280", border: "1px solid #d1d5db",
+                borderRadius: "8px", fontSize: "14px", cursor: "pointer"
+              }}
             >
               Cancel
             </button>
@@ -143,13 +156,8 @@ export default function Login() {
       )}
 
       <div className="login-left">
-        <div className="hero-image-container">
-          <img src="https://storage.cloud.google.com/servicepro-assets/images/multi-service.png" alt="ServicePro Hero" className="hero-image" />
-        </div>
-        <div className="hero-content">
-          <h1>ServicePro</h1>
-          <p>Login to access your dashboard</p>
-        </div>
+        <h1>ServicePro</h1>
+        <p>Login to access your dashboard</p>
       </div>
 
       <div className="login-right">
@@ -157,14 +165,14 @@ export default function Login() {
           <h2>Welcome Back</h2>
 
           {successMsg && (
-            <div className="message message-success">
+            <p style={{ color: "#10b981", fontSize: "14px", marginBottom: "12px", textAlign: "center" }}>
               {successMsg}
-            </div>
+            </p>
           )}
           {error && (
-            <div className="message message-error">
+            <p style={{ color: "#ef4444", fontSize: "14px", marginBottom: "12px", textAlign: "center" }}>
               {error}
-            </div>
+            </p>
           )}
 
           <form onSubmit={handleLogin} noValidate>
@@ -186,7 +194,7 @@ export default function Login() {
             />
 
             <div className="forgot-password">
-              <Link to="/forgot-password">
+              <Link to="/forgot-password" style={{ color: "#6b7280", textDecoration: "none", fontSize: "14px" }}>
                 Forgot Password?
               </Link>
             </div>
@@ -208,9 +216,9 @@ export default function Login() {
             Continue with LinkedIn
           </button>
 
-          <p>
+          <p style={{ textAlign: "center", marginTop: "20px" }}>
             Don't have an account?{" "}
-            <Link to="/register">Register</Link>
+            <Link to="/register" style={{ color: "#10b981", textDecoration: "none" }}>Register</Link>
           </p>
         </div>
       </div>
