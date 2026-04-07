@@ -22,6 +22,11 @@ const servicesApi = {
     return response.data;
   },
 
+  getAllPublic: async (params = {}) => {
+    const response = await axios.get(`${API_BASE_URL}/services/public`, { params });
+    return response.data;
+  },
+
   getById: async (id) => {
     const response = await axios.get(`${API_BASE_URL}/services/${id}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
