@@ -1,25 +1,33 @@
-import { useState } from "react";
-import axios from "axios";
+import { Search } from "lucide-react";
 
-const SearchBar = () => {
-  const [query, setQuery] = useState("");
-
-  const handleSearch = async (e) => {
-    if (e.key === "Enter") {
-      const res = await axios.get(`/api/services?search=${query}`);
-      console.log(res.data);
-    }
+const SearchBar = ({
+  value = "",
+  onChange,
+  onSubmit,
+  placeholder = "Search plumbing, cleaning...",
+}) => {
+  const handleClickSearch = () => {
+    onSubmit?.(value);
   };
 
   return (
-    <input
-      type="text"
-      placeholder="Search plumbing, cleaning..."
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      onKeyDown={handleSearch}
-      className="search-input"
-    />
+    <div className="search-input-wrap">
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        className="search-input"
+      />
+      <button
+        type="button"
+        className="search-submit-btn"
+        aria-label="Search services"
+        onClick={handleClickSearch}
+      >
+        <Search size={16} />
+      </button>
+    </div>
   );
 };
 
