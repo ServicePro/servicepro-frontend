@@ -140,7 +140,7 @@ const ServiceProviderRegister = () => {
     password: "", confirmPassword: "",
     category: "", skills: "", experience: "",
     area: "", availability: "",
-    license: null, idProof: null, agree: false
+    profilePhoto: null, license: null, idProof: null, agree: false
   });
   const [fieldErrors, setFieldErrors] = useState({});
   const [serverError, setServerError] = useState("");
@@ -186,15 +186,24 @@ const ServiceProviderRegister = () => {
 
     if (!form.availability.trim()) e.availability = "Please describe your availability.";
 
+    if (!form.profilePhoto) e.profilePhoto = "A profile photo is required.";
+    else {
+      const ext = form.profilePhoto.name.split(".").pop().toLowerCase();
+      if (!["jpg","jpeg","png","webp"].includes(ext)) e.profilePhoto = "Profile photo must be JPEG, PNG or WebP.";
+      else if (form.profilePhoto.size > 4 * 1024 * 1024) e.profilePhoto = "Photo must be smaller than 4MB.";
+    }
+
+    if (!form.idProof) e.idProof = "Government ID is required for verification.";
+    else {
+      const ext = form.idProof.name.split(".").pop().toLowerCase();
+      if (!["jpg","jpeg","png","pdf"].includes(ext)) e.idProof = "Only JPEG, PNG, or PDF allowed.";
+      else if (form.idProof.size > 5 * 1024 * 1024) e.idProof = "File must be smaller than 5MB.";
+    }
+
     if (form.license) {
       const ext = form.license.name.split(".").pop().toLowerCase();
       if (!["jpg","jpeg","png","pdf"].includes(ext)) e.license = "Only JPEG, PNG, or PDF allowed.";
       else if (form.license.size > 5 * 1024 * 1024) e.license = "File must be smaller than 5MB.";
-    }
-    if (form.idProof) {
-      const ext = form.idProof.name.split(".").pop().toLowerCase();
-      if (!["jpg","jpeg","png","pdf"].includes(ext)) e.idProof = "Only JPEG, PNG, or PDF allowed.";
-      else if (form.idProof.size > 5 * 1024 * 1024) e.idProof = "File must be smaller than 5MB.";
     }
 
     if (!form.agree) e.agree = "You must agree to the Terms and Conditions.";
@@ -238,8 +247,9 @@ const ServiceProviderRegister = () => {
       data.append("experience", form.experience);
       data.append("area", form.area.trim());
       data.append("availability", form.availability.trim());
+      if (form.profilePhoto) data.append("profilePhoto", form.profilePhoto);
       if (form.license) data.append("license", form.license);
-      if (form.idProof) data.append("idProof", form.idProof);
+      if (form.idProof)  data.append("idProof",  form.idProof);
 
       const res = await fetch(`${API}/api/providers/register`, {
         method: "POST",
@@ -263,28 +273,51 @@ const ServiceProviderRegister = () => {
 
   if (success) {
     return (
-      <div className="register-container">
-        <div className="register-box" style={{ textAlign: "center", padding: "60px 40px" }}>
-          <h2 style={{ color: "#10b981", marginBottom: "16px" }}>Registration Submitted!</h2>
-          <p style={{ color: "#555", fontSize: "15px", marginBottom: "24px" }}>
-            Your application is pending admin review. You will receive an email once your account is approved (usually within 24 hours).
-          </p>
-          <button className="btn-primary" onClick={() => navigate("/login")}>Back to Login</button>
+      <div className="spr-root">
+        <div className="spr-left">
+          <div className="spr-hero-img-wrap">
+            <img src="https://storage.cloud.google.com/servicepro-assets/images/multi-service.png" alt="ServicePro" className="spr-hero-img" />
+          </div>
+          <h1 className="spr-brand-name">ServicePro</h1>
+          <p className="spr-brand-tagline">Join our trusted service network</p>
+        </div>
+        <div className="spr-right">
+          <div className="register-box" style={{ textAlign: "center", padding: "60px 40px", width: "100%", margin: "auto" }}>
+            <h2 style={{ color: "#10b981", marginBottom: "16px" }}>Registration Submitted!</h2>
+            <p style={{ color: "#555", fontSize: "15px", marginBottom: "24px" }}>
+              Your application is pending admin review. You will receive an email once your account is approved (usually within 24 hours).
+            </p>
+            <button className="btn-primary" onClick={() => navigate("/login")}>Back to Login</button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="register-container">
-      <div className="register-box">
-
-        {/* Header */}
-        <div className="header">
-          <h2>ServicePro</h2>
-          <h1>Service Provider Registration</h1>
-          <p>Join our network of skilled professionals. Provide your details to start offering your services.</p>
+    <div className="spr-root">
+      <div className="spr-left">
+        <div className="spr-hero-img-wrap">
+          <img src="https://storage.cloud.google.com/servicepro-assets/images/multi-service.png" alt="ServicePro" className="spr-hero-img" />
         </div>
+        <h1 className="spr-brand-name">ServicePro</h1>
+        <p className="spr-brand-tagline">Join our trusted service network</p>
+        <ul className="spr-features">
+          {[
+            ['✔', 'Grow your customer base'],
+            ['💰', 'Flexible pricing control'],
+            ['🔒', 'Secure & verified platform'],
+            ['📅', 'Manage your own schedule'],
+          ].map(([icon, text]) => (
+            <li key={text}>
+              <span className="spr-feat-dot">{icon}</span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="spr-right">
+        <div className="register-box">
 
         {serverError && (
           <p style={{ color: "#ef4444", fontSize: "14px", marginBottom: "12px", textAlign: "center", background: "#fef2f2", padding: "10px", borderRadius: "6px" }}>
@@ -293,6 +326,8 @@ const ServiceProviderRegister = () => {
         )}
 
         <form onSubmit={handleSubmit} noValidate>
+
+          <h2 style={{ fontSize: "1.4rem", fontWeight: 700, color: "#111827", marginBottom: "18px" }}>Register as Service Provider</h2>
 
           {/* Personal Info */}
           <div className="card">
@@ -312,6 +347,18 @@ const ServiceProviderRegister = () => {
             <input name="phone" placeholder="+94 77 1234567" value={form.phone} onChange={handleChange}
               className={fieldErrors.phone ? "field-error-active" : ""} />
             <FieldError msg={fieldErrors.phone} />
+
+            <label>Profile Photo *</label>
+            <input type="file" name="profilePhoto" accept=".jpg,.jpeg,.png,.webp" onChange={handleChange}
+              className={fieldErrors.profilePhoto ? "field-error-active" : ""} />
+            {form.profilePhoto && (
+              <img
+                src={URL.createObjectURL(form.profilePhoto)}
+                alt="preview"
+                className="spr-photo-preview"
+              />
+            )}
+            <FieldError msg={fieldErrors.profilePhoto} />
 
             <label>Password * <span style={{ fontWeight: 400, fontSize: "12px", color: "#6b7280" }}>(min 8 chars · uppercase · lowercase · number · special character)</span></label>
             <div style={{ position: "relative" }}>
@@ -374,17 +421,17 @@ const ServiceProviderRegister = () => {
             <FieldError msg={fieldErrors.availability} />
           </div>
 
-          {/* Documents */}
           <div className="card">
-            <h3>Document Uploads <span style={{ fontWeight: 400, fontSize: "13px", color: "#6b7280" }}>(optional – JPEG, PNG or PDF, max 5MB each)</span></h3>
+            <h3>Documents &amp; Verification</h3>
 
-            <label>Business License / Certification</label>
+            <label>Government ID / NIC * <span style={{ fontWeight: 400, fontSize: "12px", color: "#6b7280" }}>(JPEG, PNG or PDF · max 5MB)</span></label>
+            <input type="file" name="idProof" accept=".jpg,.jpeg,.png,.pdf" onChange={handleChange}
+              className={fieldErrors.idProof ? "field-error-active" : ""} />
+            <FieldError msg={fieldErrors.idProof} />
+
+            <label>Business License / Certification <span style={{ fontWeight: 400, fontSize: "12px", color: "#6b7280" }}>(optional · JPEG, PNG or PDF · max 5MB)</span></label>
             <input type="file" name="license" accept=".jpg,.jpeg,.png,.pdf" onChange={handleChange} />
             <FieldError msg={fieldErrors.license} />
-
-            <label>Government ID Verification</label>
-            <input type="file" name="idProof" accept=".jpg,.jpeg,.png,.pdf" onChange={handleChange} />
-            <FieldError msg={fieldErrors.idProof} />
           </div>
 
           {/* Terms */}
@@ -418,6 +465,7 @@ const ServiceProviderRegister = () => {
           </div>
 
         </form>
+        </div>
       </div>
     </div>
   );

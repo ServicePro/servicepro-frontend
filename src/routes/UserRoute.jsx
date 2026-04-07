@@ -10,7 +10,9 @@ const UserRoute = () => {
 
   try {
     const user = JSON.parse(userStr);
-    if (user.role?.toLowerCase() !== "user") {
+    const role = (user.role || "user").toLowerCase();
+    // Block providers and admins — they have their own portals
+    if (role === "provider" || role === "admin") {
       return <Navigate to="/login" replace />;
     }
   } catch {

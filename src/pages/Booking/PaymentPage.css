@@ -19,8 +19,12 @@
 
 .payment-card h1 {
   margin: 0 0 18px;
-  color: #111827;
+  color: #0f172a;
   font-size: 1.8rem;
+}
+
+.payment-card h1 span {
+  color: #F97316;
 }
 
 .payment-grid {
@@ -43,6 +47,14 @@
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.payment-form input:focus {
+  border-color: #F97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
 }
 
 .payment-row {
@@ -79,21 +91,35 @@
 .summary-total {
   margin-top: 14px;
   font-weight: 700;
-  color: #0f172a;
-  border-top: 1px solid #cbd5e1;
+  color: #F97316;
+  border-top: 2px solid #fed7aa;
   padding-top: 10px;
+  font-size: 1.05rem;
 }
 
 .payment-btn {
   width: 100%;
   border: none;
-  background: #0f172a;
+  background: #F97316;
   color: #fff;
   font-weight: 700;
   border-radius: 10px;
   padding: 14px;
   cursor: pointer;
   margin-top: 5px;
+  font-size: 1rem;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.payment-btn:hover:not(:disabled) {
+  background: #ea6c0a;
+  transform: translateY(-1px);
+}
+
+.payment-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .payment-error {

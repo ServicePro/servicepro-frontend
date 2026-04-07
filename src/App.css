@@ -251,7 +251,161 @@
   border: 1.5px solid white;
 }
 
+/* ── Admin Notification Bell ─────────────────────────────────────────────── */
+.admin-notif-wrap {
+  position: relative;
+}
+
+.admin-notif-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 2px solid #fff;
+  pointer-events: none;
+}
+
+.admin-notif-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 320px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+  z-index: 3000;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.95rem;
+}
+.admin-notif-header strong { color: #0f172a; }
+
+.admin-notif-count {
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.admin-notif-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+.admin-notif-list { max-height: 280px; overflow-y: auto; }
+
+.admin-notif-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.admin-notif-item:hover { background: #f8fafc; }
+
+.admin-notif-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-notif-body { flex: 1; min-width: 0; }
+.admin-notif-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #0f172a;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-notif-sub {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.admin-notif-time { font-size: 0.72rem; color: #94a3b8; margin: 0; }
+
+.admin-notif-new {
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.admin-notif-more {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #64748b;
+  padding: 8px;
+  margin: 0;
+}
+
+.admin-notif-footer {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 11px;
+  font-size: 0.83rem;
+  color: #4f46e5;
+  font-weight: 600;
+  background: none;
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.admin-notif-footer:hover { background: #f5f3ff; }
+
+/* ── Admin Profile Dropdown ──────────────────────────────────────────────── */
+.admin-profile-wrap {
+  position: relative;
+}
+
 .header-user {
+  all: unset;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -262,10 +416,78 @@
   border: 1px solid transparent;
 }
 .header-user:hover { background: var(--bg-hover); border-color: var(--border-color); }
-.header-user-name { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); }
-.header-user-role { font-size: 0.7rem; color: var(--text-muted); }
 
-/* ===================== DASHBOARD ===================== */
+.admin-profile-chevron {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+.admin-profile-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 220px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+  border: 1px solid #e2e8f0;
+  z-index: 3000;
+  overflow: hidden;
+}
+
+.admin-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-profile-info strong {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.admin-profile-info span {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.admin-profile-actions {
+  padding: 8px;
+}
+
+.admin-profile-logout {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #dc2626;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+.admin-profile-logout:hover { background: #fee2e2; }
 .dashboard-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
