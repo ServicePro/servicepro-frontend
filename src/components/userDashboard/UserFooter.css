@@ -1,0 +1,63 @@
+.user-footer {
+  background: #0f172a;
+  color: #fff;
+  padding: 50px 30px 20px;
+  margin-top: 60px;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+/* LEFT */
+.footer-left {
+  max-width: 350px;
+}
+
+.footer-left h2 {
+  color: #38bdf8;
+}
+
+.footer-left p {
+  margin: 10px 0;
+  color: #cbd5f5;
+}
+
+.socials {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* RIGHT */
+.footer-right {
+  display: flex;
+  gap: 50px;
+}
+
+.footer-right h4 {
+  margin-bottom: 10px;
+}
+
+.footer-right p {
+  color: #cbd5f5;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.footer-right p:hover {
+  color: #38bdf8;
+}
+
+/* BOTTOM */
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  border-top: 1px solid #1e293b;
+  padding-top: 15px;
+  font-size: 14px;
+}
