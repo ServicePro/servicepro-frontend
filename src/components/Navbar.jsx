@@ -1,28 +1,64 @@
-import "./Navbar.css";
-import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Menu, X, Search, Moon, Sun, Globe } from "lucide-react";
 import axios from "axios";
+import { Globe, Menu, Moon, Search, Sun, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "./Navbar.css";
+
+// ── Emergency intent detection ──────────────────────────────────────────────
+const EMERGENCY_WORDS = ['urgent','immediate','emergency','asap','quick','fast','help','broken','burst','flood','leak','fire','now'];
+const SERVICE_DETECT = [
+  [['plumb','pipe','water','tap','drain'], 'plumbing'],
+  [['electric','power','wire','circuit','fuse'], 'electrical'],
+  [['lock','key','locked','door'], 'locksmith'],
+  [['ac','heat','cool','hvac','air condition'], 'hvac'],
+  [['appliance','fridge','washer','oven','machine'], 'appliance'],
+  [['roof','ceiling','tile'], 'roofing'],
+  [['pest','bug','rat','cockroach','insect'], 'pest'],
+  [['flood','damp','mold','damage'], 'water_damage'],
+];
+function detectEmergency(q) {
+  const lower = q.toLowerCase();
+  const isUrgent = EMERGENCY_WORDS.some(w => lower.includes(w));
+  if (!isUrgent) return null;
+  for (const [keywords, type] of SERVICE_DETECT) {
+    if (keywords.some(k => lower.includes(k))) return type;
+  }
+  return 'general';
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('sp_dark') === 'true');
+  const [lang, setLang] = useState(() => localStorage.getItem('sp_lang') || 'EN');
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
+  const dropdownRef = useRef(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
+    // apply saved dark mode on mount
+    document.body.classList.toggle("dark", darkMode);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
+    localStorage.setItem('sp_dark', darkMode);
   }, [darkMode]);
+
+  const handleLangChange = (e) => {
+    const newLang = e.target.value;
+    setLang(newLang);
+    localStorage.setItem('sp_lang', newLang);
+    window.dispatchEvent(new CustomEvent('sp_lang_change', { detail: newLang }));
+  };
 
   const isActive = (path) => location.pathname === path;
 
@@ -36,11 +72,24 @@ const Navbar = () => {
 
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/services/search?q=${value}`
+        `http://localhost:5000/api/services/search?q=${encodeURIComponent(value)}`
       );
-      setResults(res.data);
+      setResults(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const doNavSearch = () => {
+    const q = search.trim();
+    setResults([]);
+    const emergencyType = detectEmergency(q);
+    if (emergencyType) {
+      navigate(`/emergency${emergencyType !== 'general' ? '?q=' + emergencyType : ''}`);
+    } else if (q) {
+      navigate(`/services?q=${encodeURIComponent(q)}`);
+    } else {
+      navigate('/services');
     }
   };
 
@@ -51,7 +100,7 @@ const Navbar = () => {
         {/* LEFT - LOGO */}
         <div className="nav-left">
           <img
-            src="../../../public/videos/logo.png"
+            src="/videos/logo.png"
             alt="ServicePro"
             className="logo-img"
             onError={(e) => (e.target.style.display = "none")}
@@ -60,13 +109,14 @@ const Navbar = () => {
         </div>
 
         {/* CENTER - SEARCH */}
-        <div className="nav-search">
-          <Search size={18} className="search-icon" />
+        <div className="nav-search" ref={dropdownRef}>
+          <Search size={18} className="search-icon" onClick={doNavSearch} style={{ cursor: 'pointer' }} />
           <input
             type="text"
             placeholder="Search for services..."
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && doNavSearch()}
           />
 
           {results.length > 0 && (
@@ -74,8 +124,9 @@ const Navbar = () => {
               {results.map((item) => (
                 <Link
                   key={item._id}
-                  to={`/services/${item._id}`}
+                  to={`/services?q=${encodeURIComponent(item.name)}`}
                   className="search-item"
+                  onClick={() => { setSearch(item.name); setResults([]); }}
                 >
                   {item.name}
                 </Link>
@@ -88,8 +139,20 @@ const Navbar = () => {
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
           <li className={isActive("/") ? "active" : ""}><Link to="/">Home</Link></li>
           <li className={isActive("/services") ? "active" : ""}><Link to="/services">Services</Link></li>
-          <li className={isActive("/about") ? "active" : ""}><Link to="/about">About</Link></li>
-          <li className={isActive("/contact") ? "active" : ""}><Link to="/contact">Contact</Link></li>
+          <li>
+            {location.pathname === "/" ? (
+              <a href="#faq">About</a>
+            ) : (
+              <Link to="/about">About</Link>
+            )}
+          </li>
+          <li>
+            {location.pathname === "/" ? (
+              <a href="#footer">Contact</a>
+            ) : (
+              <Link to="/contact">Contact</Link>
+            )}
+          </li>
         </ul>
 
         {/* RIGHT */}
@@ -98,15 +161,15 @@ const Navbar = () => {
           {/* LANGUAGE */}
           <div className="lang-box">
             <Globe size={16} />
-            <select>
-              <option>EN</option>
-              <option>TA</option>
-              <option>SI</option>
+            <select value={lang} onChange={handleLangChange}>
+              <option value="EN">EN</option>
+              <option value="TA">TA</option>
+              <option value="SI">SI</option>
             </select>
           </div>
 
           {/* DARK MODE */}
-          <div className="icon-btn" onClick={() => setDarkMode(!darkMode)}>
+          <div className="icon-btn" onClick={() => setDarkMode(v => !v)} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </div>
 

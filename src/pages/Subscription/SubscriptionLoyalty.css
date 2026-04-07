@@ -1,0 +1,321 @@
+/* ============================================================
+   SubscriptionLoyalty.css
+============================================================ */
+
+.sl-root {
+  min-height: calc(100vh - 64px);
+  background: #f8fafc;
+  padding: 32px 24px 60px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+/* ── Toast ──────────────────────────────────────────────── */
+.sl-toast {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 9999;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  animation: sl-fade-in 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.sl-toast-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+.sl-toast-error   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+@keyframes sl-fade-in { from { opacity:0; transform: translateY(-10px) } to { opacity:1; transform: translateY(0) } }
+
+/* ── Page Header ────────────────────────────────────────── */
+.sl-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.sl-page-header h1 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+.sl-page-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.sl-current-plan-badge {
+  padding: 8px 20px;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+.sl-current-plan-badge[data-plan="free"]     { background:#f1f5f9; color:#475569; }
+.sl-current-plan-badge[data-plan="standard"] { background:#dbeafe; color:#1e40af; }
+.sl-current-plan-badge[data-plan="premium"]  { background:#fef3c7; color:#92400e; }
+
+/* ── Tabs ───────────────────────────────────────────────── */
+.sl-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.sl-tab {
+  padding: 10px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 40px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sl-tab:hover { border-color: #F97316; color: #F97316; }
+.sl-tab-active { background: #F97316; border-color: #F97316; color: #fff; }
+
+/* ── Loading ────────────────────────────────────────────── */
+.sl-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 40px;
+  font-size: 1rem;
+  color: #64748b;
+}
+.sl-spinner {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #F97316;
+  border-radius: 50%;
+  animation: sl-spin 0.7s linear infinite;
+}
+@keyframes sl-spin { to { transform: rotate(360deg) } }
+
+/* ── Plans Grid ─────────────────────────────────────────── */
+.sl-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.sl-plan-card {
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 28px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.sl-plan-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+.sl-plan-active { border-color: var(--plan-color, #F97316); box-shadow: 0 0 0 4px color-mix(in srgb, var(--plan-color, #F97316) 15%, transparent); }
+
+.sl-plan-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--plan-color, #F97316);
+  color: #fff;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.sl-plan-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.sl-plan-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--plan-color, #0f172a);
+  margin: 0 0 8px;
+}
+.sl-plan-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+}
+.sl-price-amount { font-size: 2.2rem; font-weight: 800; color: #0f172a; }
+.sl-price-billing { font-size: 0.85rem; color: #94a3b8; }
+
+.sl-plan-tagline {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin: 4px 0 0;
+  text-align: center;
+}
+
+.sl-feature-list { list-style: none; padding: 0; margin: 0 0 24px; display: flex; flex-direction: column; gap: 8px; }
+.sl-feature-included { font-size: 0.88rem; color: #334155; }
+.sl-feature-excluded  { font-size: 0.88rem; color: #cbd5e1; }
+
+.sl-plan-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.sl-plan-btn:disabled { cursor: default; opacity: 0.7; }
+.sl-plan-btn-active { color: #64748b !important; }
+
+/* ── Loyalty ────────────────────────────────────────────── */
+.sl-loyalty-root { display: flex; flex-direction: column; gap: 28px; }
+
+.sl-tier-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 2px solid #e2e8f0;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.sl-tier-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sl-tier-info { flex: 1; min-width: 200px; }
+.sl-tier-name { font-size: 1.2rem; font-weight: 800; margin: 0 0 4px; }
+.sl-tier-pts  { font-size: 1rem; color: #334155; margin: 0 0 10px; }
+.sl-progress-bar {
+  background: #e2e8f0;
+  border-radius: 8px;
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.sl-progress-fill { height: 100%; border-radius: 8px; transition: width 0.6s ease; }
+.sl-tier-next { font-size: 0.82rem; color: #64748b; margin: 0; }
+
+.sl-earn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+}
+.sl-earn-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 12px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+}
+.sl-earn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.sl-earn-icon  { font-size: 1.8rem; display: block; margin-bottom: 8px; }
+.sl-earn-label { font-size: 0.82rem; color: #475569; margin: 0 0 4px; }
+.sl-earn-pts   { font-size: 0.9rem; font-weight: 700; color: #F97316; margin: 0; }
+
+.sl-history-section h3 { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0 0 14px; }
+.sl-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.sl-history-table th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.82rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.sl-history-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; color: #334155; }
+.sl-pts-earned   { font-weight: 700; color: #10b981; }
+.sl-pts-redeemed { font-weight: 700; color: #ef4444; }
+
+.sl-empty { text-align: center; padding: 40px; color: #94a3b8; font-size: 0.95rem; }
+
+/* ── Redeem ─────────────────────────────────────────────── */
+.sl-redeem-root { display: flex; flex-direction: column; gap: 28px; }
+
+/* ── Pending reward notice ───────────────────────────────── */
+.sl-pending-reward-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #f0fdf4;
+  border: 2px solid #6ee7b7;
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.sl-pending-icon { font-size: 2rem; line-height: 1; }
+.sl-pending-title {
+  font-size: .95rem;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+.sl-pending-sub {
+  font-size: .82rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.sl-points-banner {
+  background: linear-gradient(135deg, #F97316, #fb923c);
+  border-radius: 18px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #fff;
+}
+.sl-points-big   { font-size: 2.2rem; font-weight: 900; }
+.sl-points-label { font-size: 1rem; opacity: 0.85; }
+
+.sl-rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+.sl-reward-card {
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.sl-reward-card:hover:not(.sl-reward-locked) { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); }
+.sl-reward-locked { opacity: 0.55; filter: grayscale(0.3); }
+.sl-reward-icon  { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+.sl-reward-title { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0 0 4px; }
+.sl-reward-value { font-size: 0.88rem; color: #64748b; margin: 0 0 12px; }
+.sl-reward-cost  { background: #f8fafc; border-radius: 8px; padding: 6px 12px; display: inline-block; font-size: 0.88rem; font-weight: 600; color: #475569; margin-bottom: 16px; }
+.sl-reward-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #F97316;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.sl-reward-btn:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }

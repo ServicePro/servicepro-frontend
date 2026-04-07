@@ -235,111 +235,113 @@ const UserRegister = () => {
   });
 
   return (
-    <div className="register-container">
-      <div className="register-card">
+    <div className="ur-root">
 
-        <h2>ServicePro</h2>
-        <h1>Create Your Account</h1>
-        <p className="subtitle">Join ServicePro to discover and book local services.</p>
-
-        <form onSubmit={handleSubmit}>
-
-          <label>Full Name</label>
-          <input
-            name="name"
-            placeholder="John Doe"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-
-          <label>Email Address</label>
-          <input
-            name="email"
-            type="email"
-            placeholder="john@example.com"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-          {errors.email && <p className="field-error">{errors.email}</p>}
-
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            value={form.password}
-            onChange={handleChange}
-          />
-
-          {/* Live password rules */}
-          {form.password && (
-            <div className="password-rules">
-              <p className={rules.length(form.password)    ? "rule-ok" : "rule-fail"}>✔ At least 8 characters</p>
-              <p className={rules.uppercase(form.password) ? "rule-ok" : "rule-fail"}>✔ One uppercase letter</p>
-              <p className={rules.lowercase(form.password) ? "rule-ok" : "rule-fail"}>✔ One lowercase letter</p>
-              <p className={rules.number(form.password)    ? "rule-ok" : "rule-fail"}>✔ One number</p>
-              <p className={rules.special(form.password)   ? "rule-ok" : "rule-fail"}>✔ One special character</p>
-            </div>
-          )}
-
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="••••••••"
-            value={form.confirmPassword}
-            onChange={handleChange}
-          />
-          {form.confirmPassword && !passwordsMatch && (
-            <p className="field-error">Passwords do not match</p>
-          )}
-          {form.confirmPassword && passwordsMatch && (
-            <p className="field-ok">✔ Passwords match</p>
-          )}
-
-          {/* Terms */}
-          <label className="terms-inline">
-            <input type="checkbox" name="agree" checked={form.agree} onChange={handleChange} />
-            <span>
-              I agree to our{" "}
-              <span className="link">Terms of Service</span> and{" "}
-              <span className="link">Privacy Policy</span>.
-            </span>
-          </label>
-
-          <button
-            className="btn-primary"
-            disabled={!canSubmit || loading}
-          >
-            {loading ? "Signing up..." : "Sign Up"}
-          </button>
-
-          <div className="divider">OR CONTINUE WITH</div>
-
-          <button type="button" className="btn-google" onClick={() => googleLogin()}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "8px", verticalAlign: "middle" }}>
-              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-            </svg>
-            Sign up with Google
-          </button>
-
-          <p className="bottom-text">
-            Already have an account?{" "}
-            <span className="link" onClick={() => navigate("/login")}>Sign In</span>
-          </p>
-
-          <p className="bottom-text">
-            Are you a service provider?{" "}
-            <span className="link" onClick={() => navigate("/provider")}>Register as a Service Provider</span>
-          </p>
-
-        </form>
+      {/* ── Left branding panel ── */}
+      <div className="ur-left">
+        <div className="ur-hero-img-wrap">
+          <img src="https://storage.cloud.google.com/servicepro-assets/images/multi-service.png" alt="ServicePro" className="ur-hero-img" />
+        </div>
+        <h1 className="ur-brand-name">ServicePro</h1>
+        <p className="ur-brand-tagline">Your trusted service marketplace</p>
+        <ul className="ur-features">
+          {[
+            ['✔', 'Find trusted professionals'],
+            ['📅', 'Easy booking system'],
+            ['🔒', 'Secure & reliable platform'],
+            ['⭐', 'Verified service providers'],
+          ].map(([icon, text]) => (
+            <li key={text}>
+              <span className="ur-feat-dot">{icon}</span>
+              <span>{text}</span>
+            </li>
+          ))}
+        </ul>
       </div>
+
+      {/* ── Right form panel ── */}
+      <div className="ur-right">
+        <div className="ur-card">
+
+          <div className="ur-card-head">
+            <p className="ur-card-logo">SERVICEPRO</p>
+            <h2 className="ur-card-title">Create Your Account</h2>
+            <p className="ur-card-sub">Join ServicePro to discover and book local services.</p>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+
+            <label className="ur-label">Full Name</label>
+            <input className="ur-input" name="name" placeholder="John Doe"
+              value={form.name} onChange={handleChange} required />
+
+            <label className="ur-label">Email Address</label>
+            <input className="ur-input" name="email" type="email" placeholder="john@example.com"
+              value={form.email} onChange={handleChange} required />
+            {errors.email && <p className="ur-field-err">{errors.email}</p>}
+
+            <label className="ur-label">Password</label>
+            <input className="ur-input" type="password" name="password" placeholder="••••••••"
+              value={form.password} onChange={handleChange} />
+
+            {form.password && (
+              <div className="ur-pw-rules">
+                <p className={rules.length(form.password)    ? 'ur-rule-ok' : 'ur-rule-fail'}>✔ At least 8 characters</p>
+                <p className={rules.uppercase(form.password) ? 'ur-rule-ok' : 'ur-rule-fail'}>✔ One uppercase letter</p>
+                <p className={rules.lowercase(form.password) ? 'ur-rule-ok' : 'ur-rule-fail'}>✔ One lowercase letter</p>
+                <p className={rules.number(form.password)    ? 'ur-rule-ok' : 'ur-rule-fail'}>✔ One number</p>
+                <p className={rules.special(form.password)   ? 'ur-rule-ok' : 'ur-rule-fail'}>✔ One special character</p>
+              </div>
+            )}
+
+            <label className="ur-label">Confirm Password</label>
+            <input className="ur-input" type="password" name="confirmPassword" placeholder="••••••••"
+              value={form.confirmPassword} onChange={handleChange} />
+            {form.confirmPassword && !passwordsMatch && (
+              <p className="ur-field-err">Passwords do not match</p>
+            )}
+            {form.confirmPassword && passwordsMatch && (
+              <p className="ur-field-ok">✔ Passwords match</p>
+            )}
+
+            <label className="ur-terms">
+              <input type="checkbox" name="agree" checked={form.agree} onChange={handleChange} />
+              <span>
+                I agree to our{' '}
+                <span className="ur-link">Terms of Service</span> and{' '}
+                <span className="ur-link">Privacy Policy</span>.
+              </span>
+            </label>
+
+            <button className="ur-btn-primary" disabled={!canSubmit || loading}>
+              {loading ? 'Signing up…' : 'Sign Up'}
+            </button>
+
+            <div className="ur-divider">OR CONTINUE WITH</div>
+
+            <button type="button" className="ur-btn-google" onClick={() => googleLogin()}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              Sign up with Google
+            </button>
+
+            <p className="ur-bottom">
+              Already have an account?{' '}
+              <span className="ur-link" onClick={() => navigate('/login')}>Sign In</span>
+            </p>
+            <p className="ur-bottom">
+              Are you a service provider?{' '}
+              <span className="ur-link" onClick={() => navigate('/provider-register')}>Register as Provider</span>
+            </p>
+
+          </form>
+        </div>
+      </div>
+
     </div>
   );
 };
