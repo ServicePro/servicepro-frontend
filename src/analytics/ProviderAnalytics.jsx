@@ -1,10 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import "../styles/provider.css"
+import { useEffect, useState } from 'react';
 import {
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis, YAxis,
 } from 'recharts';
 import dashboardApi from '../api/dashboardApi';
+import "../styles/provider.css";
 
 // Custom tooltip for revenue chart
 const RevenueTooltip = ({ active, payload, label }) => {
