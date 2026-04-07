@@ -26,6 +26,7 @@ import AddService from '../services/AddService';
 import EditService from '../services/EditService';
 import ManageServices from '../services/ManageServices';
 import ProviderRoute from './ProviderRoute';
+import ProviderRequests from "../pages/Admin/ProviderRequests";
 
 // Admin
 import AdminLayout from '../layouts/AdminLayout';

@@ -1,7 +1,7 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import axios from 'axios';
 
 const pageTitles = {
   '/provider/dashboard':       { title: 'Dashboard',        breadcrumb: 'Home / Dashboard' },
@@ -19,35 +19,36 @@ const Layout = () => {
   );
   const pageInfo = pageTitles[matchKey] || { title: 'ServicePro', breadcrumb: '' };
 
-  const [providerData, setProviderData] = useState({
-    name: 'Service Provider',
-    role: 'Provider',
-    avatar: 'SP',
-    phone: '',
-    category: ''
-  });
-
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [profileForm, setProfileForm] = useState({ name: '', phone: '', category: '' });
-  });
-  useEffect(() => {
+  const initializeProviderData = () => {
     try {
       const userStr = localStorage.getItem('user');
       if (userStr) {
         const user = JSON.parse(userStr);
-        setProviderData({
+        return {
           name: user.name || 'Service Provider',
           role: user.role === 'provider' ? 'Service Provider' : 'Provider',
           avatar: (user.name || 'S').charAt(0).toUpperCase(),
           phone: user.phone || '',
           category: user.category || 'Other'
-        });
+        };
       }
     } catch (err) {
       console.error('Error fetching user data from local storage', err);
     }
-  }, []);
+    return {
+      name: 'Service Provider',
+      role: 'Provider',
+      avatar: 'SP',
+      phone: '',
+      category: ''
+    };
+  };
+
+  const [providerData, setProviderData] = useState(initializeProviderData);
+
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', phone: '', category: '' });
 
   useEffect(() => {
     if (theme === 'dark') {
