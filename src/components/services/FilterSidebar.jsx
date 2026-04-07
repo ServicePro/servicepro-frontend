@@ -36,6 +36,7 @@ const FilterSidebar = ({ setFilters }) => {
         <option>Electrical</option>
         <option>Gardening</option>
         <option>Pet Care</option>
+        <option>Beauty & Wellness</option>
         <option>Painting</option>
         <option>Moving</option>
         <option>Tutoring</option>
