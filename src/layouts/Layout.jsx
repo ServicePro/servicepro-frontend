@@ -137,7 +137,7 @@ const Layout = () => {
 
   return (
     <div className="app-layout">
-      <Sidebar onToggleTheme={toggleTheme} onOpenProfile={handleOpenProfile} currentTheme={theme} providerData={providerData} />
+      <Sidebar />
 
       <div className="main-content">
         <header className="header">

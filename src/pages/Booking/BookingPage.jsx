@@ -16,18 +16,10 @@ export default function BookingPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user || JSON.parse(user).role !== 'user') {
-      navigate('/login');
-      return;
-    }
-  }, [navigate]);
-
-  useEffect(() => {
     if (!serviceId) return;
     const fetchService = async () => {
       try {
-        const res = await servicesApi.getById(serviceId);
+        const res = await servicesApi.getPublicById(serviceId);
         if (res.success && res.data && res.data.service) {
           setService(res.data.service);
         } else {
@@ -61,7 +53,7 @@ export default function BookingPage() {
     try {
       const payload = {
         serviceId: service._id,
-        providerId: service.providerId,
+        providerId: service.providerId._id || service.providerId,
         date: form.date,
         time: form.slot,
         location: form.address,
@@ -109,7 +101,7 @@ export default function BookingPage() {
 
         <section className="booking-section service-summary">
           <div className="service-header">Booking for {service.name}</div>
-          <div className="service-subtitle">Service by {service.providerId || 'Provider'}</div>
+          <div className="service-subtitle">Service by {service.providerId?.name || service.providerId || 'Provider'}</div>
           <div className="service-row">
             <span>Service Type</span>
             <strong>{service.category}</strong>

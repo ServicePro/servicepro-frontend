@@ -46,7 +46,6 @@ const UserNavbar = () => {
         setNotifOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -95,6 +94,7 @@ const UserNavbar = () => {
             <span className="brand-title">ServicePro</span>
           </button>
 
+          {/* Desktop links */}
           <div className="nav-links">
             <Link to="/user-dashboard">{t.navHome}</Link>
             <Link to="/services">{t.navServices}</Link>
@@ -208,17 +208,18 @@ const UserNavbar = () => {
               aria-label="Open profile menu"
               aria-expanded={profileOpen}
             >
-              <img src={avatarUrl} alt={user.name} />
-              <span>{user.name?.split(" ")[0] || "Me"}</span>
+              <img src={user.avatar} alt={user.name} />
+              <span>{user.name.split(" ")[0]}</span>
             </button>
 
             {profileOpen && (
               <div className="profile-dropdown">
                 <div className="profile-info">
-                  <img src={avatarUrl} alt={user.name} />
+                  <img src={user.avatar} alt={user.name} />
                   <div>
                     <strong>{user.name}</strong>
                     <span>{user.email}</span>
+                    <span>{user.role}</span>
                   </div>
                 </div>
                 <div className="profile-actions">

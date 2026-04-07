@@ -240,3 +240,14 @@
     font-size: 1.5rem;
   }
 }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 480px) {
+  .confirmation-card {
+    padding: 24px 18px;
+  }
+
+  .confirmation-card h1 {
+    font-size: 1.5rem;
+  }
+}
