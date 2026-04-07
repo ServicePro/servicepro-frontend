@@ -28,7 +28,22 @@ const adminApi = {
   getAnalytics: async () => {
     const response = await axios.get(`${API_BASE_URL}/analytics`, getHeaders());
     return response.data;
-  }
+  },
+
+  getPendingProviders: async () => {
+    const response = await axios.get(`${API_BASE_URL}/providers/pending`, getHeaders());
+    return response.data;
+  },
+
+  approveProvider: async (id) => {
+    const response = await axios.put(`${API_BASE_URL}/providers/approve/${id}`, {}, getHeaders());
+    return response.data;
+  },
+
+  rejectProvider: async (id) => {
+    const response = await axios.put(`${API_BASE_URL}/providers/reject/${id}`, {}, getHeaders());
+    return response.data;
+  },
 };
 
 export default adminApi;

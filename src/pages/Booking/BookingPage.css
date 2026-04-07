@@ -1,10 +1,16 @@
 .booking-root {
   min-height: 100vh;
-  padding: 50px 16px;
   background: #f8fafc;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+}
+
+.booking-root > .booking-card {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  padding: 28px;
+  width: calc(100% - 32px);
 }
 
 .booking-card {
@@ -19,8 +25,10 @@
 
 .booking-card h1 {
   margin-bottom: 16px;
-  color: #111827;
+  color: #0f172a;
   font-size: 1.7rem;
+  border-left: 4px solid #F97316;
+  padding-left: 12px;
 }
 
 .booking-section {
@@ -34,7 +42,7 @@
 .service-summary .service-header {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #F97316;
 }
 
 .service-summary .service-subtitle {
@@ -74,6 +82,15 @@
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.schedule input:focus,
+.schedule textarea:focus {
+  border-color: #F97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
 }
 
 .slots-grid {
@@ -94,27 +111,39 @@
   transition: all 0.2s ease;
 }
 
-.slot-pill:hover,
+.slot-pill:hover {
+  background: #fff7ed;
+  border-color: #F97316;
+  color: #F97316;
+}
+
 .slot-pill.selected {
-  background: #4f46e5;
+  background: #F97316;
   color: #fff;
-  border-color: #4338ca;
+  border-color: #F97316;
 }
 
 .booking-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f1f5f9;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
   padding: 12px 14px;
   border-radius: 10px;
   margin-top: 16px;
   font-size: 0.95rem;
+  color: #0f172a;
+}
+
+.booking-summary strong {
+  color: #F97316;
+  font-size: 1.05rem;
 }
 
 .booking-action {
   margin-top: 14px;
-  background: #0f172a;
+  background: #F97316;
   color: #fff;
   width: 100%;
   padding: 14px;
@@ -123,11 +152,18 @@
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.booking-action:hover:not(:disabled) {
+  background: #ea6c0a;
+  transform: translateY(-1px);
 }
 
 .booking-action:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .booking-error {

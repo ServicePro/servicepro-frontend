@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const navItems = [
   {
@@ -13,13 +16,21 @@ const navItems = [
   {
     group: 'Bookings',
     items: [
-      { to: '/provider/appointments',     icon: '📅', label: 'Appointments' },
+      { to: '/provider/appointments',      icon: '📅', label: 'Appointments' },
+      { to: '/provider/emergency-requests', icon: '🚨', label: 'Emergency Requests', badgeKey: 'emergency' },
+      { to: '/provider/consultations',      icon: '🎥', label: 'Video Consultations', badgeKey: 'consultations' },
     ],
   },
   {
     group: 'Insights',
     items: [
       { to: '/provider/analytics',        icon: '📊', label: 'Analytics' },
+    ],
+  },
+  {
+    group: 'Communications',
+    items: [
+      { to: '/provider/chat',             icon: '💬', label: 'Messages', badgeKey: 'messages' },
     ],
   },
 ];
@@ -31,6 +42,38 @@ const Sidebar = () => {
     role: 'Provider',
     avatar: 'SP',
   });
+  const [badges, setBadges] = useState({ messages: 0, emergency: 0, consultations: 0 });
+
+  const fetchBadges = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const [chatRes, emergRes, consultRes] = await Promise.allSettled([
+        axios.get(`${API}/api/chat/threads`,           { headers }),
+        axios.get(`${API}/api/emergency/for-provider`, { headers }),
+        axios.get(`${API}/api/consultations/provider`, { headers }),
+      ]);
+
+      const threads = chatRes.status === 'fulfilled' ? (chatRes.value.data?.data || []) : [];
+      const emergency = emergRes.status === 'fulfilled' ? (emergRes.value.data?.data || []) : [];
+      const consult = consultRes.status === 'fulfilled' ? (consultRes.value.data?.data || []) : [];
+
+      setBadges({
+        messages:      threads.filter((t) => (t.unreadCountProvider || 0) > 0).length,
+        emergency:     emergency.filter((r) => r.status === 'pending').length,
+        consultations: consult.filter((s) => s.providerStatus === 'pending').length,
+      });
+    } catch {
+      // silently ignore — sidebar should never crash on errors
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBadges();
+    const interval = setInterval(fetchBadges, 30000);
+    return () => clearInterval(interval);
+  }, [fetchBadges]);
 
   useEffect(() => {
     try {
@@ -52,7 +95,7 @@ const Sidebar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   return (
@@ -92,8 +135,8 @@ const Sidebar = () => {
               >
                 <span className="sidebar-nav-icon">{item.icon}</span>
                 <span>{item.label}</span>
-                {item.badge && (
-                  <span className="sidebar-nav-badge">{item.badge}</span>
+                {item.badgeKey && badges[item.badgeKey] > 0 && (
+                  <span className="sidebar-nav-badge">{badges[item.badgeKey]}</span>
                 )}
               </NavLink>
             ))}
