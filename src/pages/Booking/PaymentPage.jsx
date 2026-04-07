@@ -41,7 +41,9 @@ export default function PaymentPage() {
       });
 
       if (res.success) {
-        navigate(`/booking-confirmation/${bookingId}`);
+        navigate(`/booking-confirmation/${bookingId}`, {
+          state: { loyaltyPointsEarned: res.loyaltyPointsEarned || 0 }
+        });
       } else {
         setError(res.message || 'Payment failed at gateway.');
       }

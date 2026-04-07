@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import bookingApi from '../../api/bookingApi';
 import servicesApi from '../../api/servicesApi';
+import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './BookingPage.css';
 
 const timeSlots = ['09:00 AM - 10:00 AM', '10:30 AM - 11:30 AM', '01:00 PM - 02:00 PM', '02:30 PM - 03:30 PM'];
@@ -75,6 +76,7 @@ export default function BookingPage() {
   if (error && !service) {
     return (
       <div className="booking-root">
+        <UserNavbar />
         <div className="booking-card">
           <p className="booking-error">{error}</p>
         </div>
@@ -85,6 +87,7 @@ export default function BookingPage() {
   if (!service) {
     return (
       <div className="booking-root">
+        <UserNavbar />
         <div className="booking-card">Loading your booking page...</div>
       </div>
     );
@@ -92,6 +95,7 @@ export default function BookingPage() {
 
   return (
     <div className="booking-root">
+      <UserNavbar />
       <div className="booking-card">
         <h1>Confirm Your Booking Details</h1>
 

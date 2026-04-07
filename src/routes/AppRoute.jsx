@@ -14,9 +14,21 @@ import BookingConfirmation from "../pages/Booking/BookingConfirmation";
 import BookingPage from "../pages/Booking/BookingPage";
 import PaymentPage from "../pages/Booking/PaymentPage";
 import RealTimeTracking from "../pages/Booking/RealTimeTracking";
+import CheckoutPage from "../pages/Checkout/CheckoutPage";
+import UserProfile from "../pages/UserProfile/UserProfile";
+import ChatPage from "../pages/Chat/ChatPage";
+import ServiceHistory from "../pages/ServiceHistory/ServiceHistory";
+import ReviewsRatings from "../pages/Reviews/ReviewsRatings";
+import Support from "../pages/Support/Support";
+import SubscriptionLoyalty from "../pages/Subscription/SubscriptionLoyalty";
+import EmergencyServices from "../pages/Emergency/EmergencyServices";
+import VideoConsultation from "../pages/VideoConsultation/VideoConsultation";
+import VRPreview from "../pages/VRPreview/VRPreview";
 
 import ProviderAnalytics from '../analytics/ProviderAnalytics';
 import Appointments from '../appointments/Appointments';
+import ProviderEmergencyRequests from '../pages/ProviderEmergency/ProviderEmergencyRequests';
+import ProviderConsultations from '../pages/ProviderConsultations/ProviderConsultations';
 import ProviderDashboard from '../dashboard/ProviderDashboard';
 import Layout from '../layouts/Layout';
 import ServiceDetails from '../pages/services/ServiceDetails';
@@ -54,8 +66,19 @@ const AppRoutes = () => {
 
         <Route element={<UserRoute />}>
           <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/service-history" element={<ServiceHistory />} />
+          <Route path="/reviews"         element={<ReviewsRatings />} />
+          <Route path="/subscription"    element={<SubscriptionLoyalty />} />
+          <Route path="/emergency"       element={<EmergencyServices />} />
+          <Route path="/video-consultation" element={<VideoConsultation />} />
+          <Route path="/vr-preview"      element={<VRPreview />} />
+          <Route path="/support"          element={<Support />} />
           <Route path="/book/:serviceId" element={<BookingPage />} />
           <Route path="/payment/:bookingId" element={<PaymentPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/profile"  element={<UserProfile />} />
+          <Route path="/settings" element={<UserProfile />} />
           <Route path="/booking-confirmation/:bookingId" element={<BookingConfirmation />} />
           <Route path="/tracking/:bookingId" element={<RealTimeTracking />} />
         </Route>
@@ -68,8 +91,11 @@ const AppRoutes = () => {
             <Route path="add-service"     element={<AddService />} />
             <Route path="manage-services" element={<ManageServices />} />
             <Route path="edit-service/:id" element={<EditService />} />
-            <Route path="appointments"    element={<Appointments />} />
-            <Route path="analytics"       element={<ProviderAnalytics />} />
+            <Route path="appointments"        element={<Appointments />} />
+            <Route path="emergency-requests"  element={<ProviderEmergencyRequests />} />
+            <Route path="consultations"       element={<ProviderConsultations />} />
+            <Route path="analytics"           element={<ProviderAnalytics />} />
+            <Route path="chat"            element={<ChatPage />} />
           </Route>
         </Route>
 

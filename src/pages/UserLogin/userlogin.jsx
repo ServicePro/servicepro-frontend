@@ -16,6 +16,8 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
   const [showRoleModal, setShowRoleModal] = useState(false);
+  // Stores the Google access token when the account is ambiguous (user+provider)
+  const [pendingGoogleToken, setPendingGoogleToken] = useState(null);
 
   const successMsg = location.state?.message || "";
 
@@ -78,6 +80,33 @@ export default function Login() {
   };
 
   // ── Google login (access-token flow) ───────────────────────────────────────
+  const handleGoogleResolve = async (loginAs) => {
+    if (!pendingGoogleToken) return;
+    setSocialLoading("google");
+    setShowRoleModal(false);
+    setError("");
+    try {
+      const res = await fetch(`${API}/api/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessToken: pendingGoogleToken, loginAs })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Google sign-in failed.");
+        return;
+      }
+      setPendingGoogleToken(null);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      redirectByRole(data.user.role);
+    } catch {
+      setError("Google sign-in failed. Please try again.");
+    } finally {
+      setSocialLoading("");
+    }
+  };
+
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       setSocialLoading("google");
@@ -88,6 +117,12 @@ export default function Login() {
           body: JSON.stringify({ accessToken: tokenResponse.access_token })
         });
         const data = await res.json();
+        // Account registered as both user and provider — ask which role
+        if (res.ok && data.ambiguous) {
+          setPendingGoogleToken(tokenResponse.access_token);
+          setShowRoleModal(true);
+          return;
+        }
         if (!res.ok) {
           setError(data.message || "Google sign-in failed.");
           return;
@@ -118,22 +153,22 @@ export default function Login() {
           <div className="modal-content">
             <h3>Login As</h3>
             <p>
-              Your email is registered as both a User and a Service Provider. Choose how you want to log in.
+              Your account is registered as both a User and a Service Provider. Choose how you want to log in.
             </p>
             <button
-              onClick={() => handleLogin(null, "user")}
+              onClick={() => pendingGoogleToken ? handleGoogleResolve("user") : handleLogin(null, "user")}
               className="modal-btn modal-btn-primary"
             >
               Login as User
             </button>
             <button
-              onClick={() => handleLogin(null, "provider")}
+              onClick={() => pendingGoogleToken ? handleGoogleResolve("provider") : handleLogin(null, "provider")}
               className="modal-btn modal-btn-secondary"
             >
               Login as Service Provider
             </button>
             <button
-              onClick={() => setShowRoleModal(false)}
+              onClick={() => { setShowRoleModal(false); setPendingGoogleToken(null); }}
               className="modal-btn modal-btn-outline"
             >
               Cancel

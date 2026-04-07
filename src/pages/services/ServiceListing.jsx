@@ -19,10 +19,10 @@ const ServiceListing = () => {
   useEffect(() => {
     // Initialize filters from URL parameters
     const category = searchParams.get('category');
+    const q        = searchParams.get('q');
     const initialFilters = {};
-    if (category) {
-      initialFilters.category = category;
-    }
+    if (category) initialFilters.category = category;
+    if (q)        initialFilters.search   = q;
     setFilters(initialFilters);
   }, [searchParams]);
 

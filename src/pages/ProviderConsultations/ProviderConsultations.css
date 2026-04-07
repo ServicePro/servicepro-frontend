@@ -1,0 +1,238 @@
+.pc-root {
+  padding: 28px 24px 60px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  max-width: 1100px;
+}
+
+/* Toast */
+.pc-toast {
+  position: fixed; top: 80px; right: 24px; z-index: 9999;
+  padding: 14px 24px; border-radius: 10px; font-weight: 600;
+  font-size: 0.95rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.pc-toast-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+.pc-toast-error   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+
+/* Header */
+.pc-header { margin-bottom: 28px; }
+.pc-header h1 { font-size: 1.7rem; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+.pc-header p  { color: #64748b; margin: 0; }
+
+.pc-loading { color: #64748b; padding: 40px 0; text-align: center; }
+
+/* Section */
+.pc-section { margin-bottom: 36px; }
+
+.pc-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pc-pending-title { color: #d97706; }
+
+.pc-count-badge {
+  background: #F97316;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+/* Cards grid */
+.pc-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+
+/* Card */
+.pc-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+  transition: box-shadow 0.2s;
+}
+
+.pc-card:hover { box-shadow: 0 6px 18px rgba(15,23,42,0.1); }
+.pc-card--pending    { border-left: 4px solid #F97316; }
+.pc-card--accepted   { border-left: 4px solid #10b981; }
+.pc-card--rescheduled { border-left: 4px solid #7c3aed; }
+.pc-card--past       { border-left: 4px solid #e2e8f0; opacity: 0.85; }
+
+.pc-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pc-topic {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 4px;
+}
+
+.pc-meta {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.pc-badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.pc-details {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 10px;
+}
+
+.pc-notes {
+  font-size: 0.85rem;
+  color: #64748b;
+  border-left: 3px solid #e2e8f0;
+  padding-left: 10px;
+  margin: 8px 0;
+}
+
+/* Actions */
+.pc-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.pc-btn-accept {
+  flex: 1;
+  padding: 9px 14px;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.pc-btn-accept:hover { background: #059669; }
+
+.pc-btn-reschedule {
+  flex: 1;
+  padding: 9px 14px;
+  background: transparent;
+  color: #7c3aed;
+  border: 1.5px solid #7c3aed;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.pc-btn-reschedule:hover { background: #7c3aed; color: #fff; }
+
+/* Reschedule inline form */
+.pc-reschedule-form {
+  margin-top: 12px;
+  background: #f5f3ff;
+  border: 1.5px solid #c4b5fd;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.pc-reschedule-form label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4c1d95;
+  margin-bottom: 6px;
+}
+
+.pc-reschedule-form input {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid #c4b5fd;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.pc-reschedule-form input:focus { border-color: #7c3aed; }
+
+.pc-reschedule-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pc-btn-propose {
+  flex: 1;
+  padding: 8px 12px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.pc-btn-propose:hover { background: #6d28d9; }
+
+.pc-btn-cancel-form {
+  padding: 8px 12px;
+  background: transparent;
+  color: #6b7280;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Meet link */
+.pc-meet-link {
+  display: inline-block;
+  margin-top: 10px;
+  background: #10b981;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.pc-meet-link:hover { background: #059669; }
+
+/* Empty */
+.pc-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+.pc-empty p { font-size: 1.1rem; font-weight: 600; margin: 0 0 6px; }
+.pc-empty small { font-size: 0.9rem; }
+
+@media (max-width: 600px) {
+  .pc-cards { grid-template-columns: 1fr; }
+  .pc-actions { flex-direction: column; }
+}
