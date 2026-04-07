@@ -13,4 +13,21 @@
 
   --border: #E2E8F0;
   --shadow: 0 10px 30px rgba(0,0,0,0.08);
+
+  /* Shared aliases used by provider/dashboard styles */
+  --brand-blue: var(--primary);
+  --brand-blue-light: var(--accent);
+  --brand-blue-dark: var(--primary-dark);
+  --brand-cyan: #14b8a6;
+  --brand-gradient: linear-gradient(135deg, var(--primary) 0%, #14b8a6 100%);
+
+  --bg-main: var(--light);
+  --bg-card: var(--white);
+  --bg-sidebar: #fffdf9;
+  --bg-hover: #fff7ed;
+
+  --border-color: var(--border);
+  --border-focus: var(--primary);
+  --text-primary: var(--text);
+  --text-secondary: var(--text-light);
 }

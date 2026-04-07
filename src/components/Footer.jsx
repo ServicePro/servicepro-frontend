@@ -1,7 +1,11 @@
 import {
+    FaArrowUp,
+    FaEnvelope,
     FaFacebookF,
     FaInstagram,
     FaLinkedinIn,
+    FaMapMarkerAlt,
+    FaPhoneAlt,
     FaTwitter,
 } from "react-icons/fa";
 import "./Footer.css";
@@ -19,7 +23,7 @@ const Footer = () => {
     <footer id="footer" className="footer">
       <div className="footer-container">
 
-        {/* LEFT */}
+        {/* BRAND */}
         <div className="footer-left">
           <div
             className="footer-logo"
@@ -35,55 +39,75 @@ const Footer = () => {
             Quality service at your doorstep.
           </p>
 
+          <div className="footer-contact-list">
+            <p><FaPhoneAlt /> +94 77 123 4567</p>
+            <p><FaEnvelope /> support@servicepro.com</p>
+            <p><FaMapMarkerAlt /> Colombo, Sri Lanka</p>
+          </div>
+
           <div className="socials">
-            <span><FaFacebookF /></span>
-            <span><FaTwitter /></span>
-            <span><FaInstagram /></span>
-            <span><FaLinkedinIn /></span>
+            <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><FaFacebookF /></a>
+            <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter"><FaTwitter /></a>
+            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><FaInstagram /></a>
+            <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn"><FaLinkedinIn /></a>
           </div>
         </div>
 
         {/* LINKS */}
         <div className="footer-links">
 
-          {/* COMPANY */}
-          <div>
+          <div className="footer-link-group">
             <h4>Company</h4>
-            <a onClick={() => scrollToSection("why-servicepro")}>About Us</a>
-            <a onClick={() => scrollToSection("join-professional")}>Careers</a>
-            <a onClick={() => scrollToSection("testimonials")}>Press</a>
-            <a onClick={() => scrollToSection("hero")}>Blog</a>
+            <button type="button" onClick={() => scrollToSection("why-servicepro")}>About Us</button>
+            <button type="button" onClick={() => scrollToSection("join-professional")}>Careers</button>
+            <button type="button" onClick={() => scrollToSection("testimonials")}>Customer Stories</button>
+            <button type="button" onClick={() => scrollToSection("hero")}>Blog</button>
           </div>
 
-          {/* SERVICES */}
-          <div>
+          <div className="footer-link-group">
             <h4>Services</h4>
-            <a onClick={() => scrollToSection("services")}>Cleaning</a>
-            <a onClick={() => scrollToSection("services")}>Beauty</a>
-            <a onClick={() => scrollToSection("services")}>Repair</a>
-            <a onClick={() => scrollToSection("services")}>Tutoring</a>
+            <button type="button" onClick={() => scrollToSection("services")}>Cleaning Services</button>
+            <button type="button" onClick={() => scrollToSection("services")}>Beauty and Wellness</button>
+            <button type="button" onClick={() => scrollToSection("services")}>Home Repairs</button>
+            <button type="button" onClick={() => scrollToSection("services")}>Tutoring Services</button>
           </div>
 
-          {/* SUPPORT */}
-          <div>
+          <div className="footer-link-group">
             <h4>Support</h4>
-            <a onClick={() => scrollToSection("faq")}>Help Center</a>
-            <a onClick={() => scrollToSection("trust-safety")}>Safety</a>
-            <a onClick={() => scrollToSection("pricing")}>Terms of Service</a>
-            <a onClick={() => scrollToSection("pricing")}>Privacy Policy</a>
+            <button type="button" onClick={() => scrollToSection("faq")}>Help Center</button>
+            <button type="button" onClick={() => scrollToSection("trust-safety")}>Safety</button>
+            <button type="button" onClick={() => scrollToSection("pricing")}>Terms of Service</button>
+            <button type="button" onClick={() => scrollToSection("pricing")}>Privacy Policy</button>
           </div>
 
+          <div className="footer-newsletter">
+            <h4>Stay Updated</h4>
+            <p>Get service tips and exclusive offers every week.</p>
+            <form
+              className="newsletter-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                window.location.href = "mailto:support@servicepro.com?subject=ServicePro%20Newsletter%20Subscription";
+              }}
+            >
+              <input type="email" placeholder="Enter your email" required />
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
         </div>
       </div>
 
       {/* BOTTOM */}
       <div className="footer-bottom">
-        <p>© 2026 ServicePro. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} ServicePro. All rights reserved.</p>
 
         <div className="footer-bottom-links">
-          <span onClick={() => scrollToSection("pricing")}>Terms</span>
-          <span onClick={() => scrollToSection("pricing")}>Privacy</span>
-          <span onClick={() => scrollToSection("faq")}>Cookies</span>
+          <button type="button" onClick={() => scrollToSection("pricing")}>Terms</button>
+          <button type="button" onClick={() => scrollToSection("pricing")}>Privacy</button>
+          <button type="button" onClick={() => scrollToSection("faq")}>Cookies</button>
+          <button type="button" className="to-top" onClick={() => scrollToSection("hero")}>
+            <FaArrowUp /> Back to Top
+          </button>
         </div>
       </div>
     </footer>

@@ -11,6 +11,10 @@ const bookingApi = {
     const response = await axios.post(`${API_BASE_URL}/bookings`, data, getHeaders());
     return response.data;
   },
+  getMyBookings: async () => {
+    const response = await axios.get(`${API_BASE_URL}/bookings`, getHeaders());
+    return response.data;
+  },
   getById: async (id) => {
     const response = await axios.get(`${API_BASE_URL}/bookings/${id}`, getHeaders());
     return response.data;

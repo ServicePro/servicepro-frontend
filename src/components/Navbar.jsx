@@ -1,18 +1,19 @@
-import axios from "axios";
 import { Globe, Menu, Moon, Search, Sun, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { applyGlobalTheme, emitThemeChange, getInitialDarkMode, onThemeChange } from "../utils/themeMode";
 import "./Navbar.css";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(getInitialDarkMode);
+  const [lang, setLang] = useState(() => localStorage.getItem('sp_lang') || 'EN');
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [results, setResults] = useState([]);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -21,27 +22,33 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle("dark", darkMode);
+    applyGlobalTheme(darkMode);
+    emitThemeChange(darkMode);
   }, [darkMode]);
+
+  useEffect(() => onThemeChange(setDarkMode), []);
+
+  const handleLangChange = (e) => {
+    const newLang = e.target.value;
+    setLang(newLang);
+    localStorage.setItem('sp_lang', newLang);
+    window.dispatchEvent(new CustomEvent('sp_lang_change', { detail: newLang }));
+  };
 
   const isActive = (path) => location.pathname === path;
 
-  const handleSearch = async (value) => {
-    setSearch(value);
+  const handleSearch = (value) => setSearch(value);
 
-    if (!value.trim()) {
-      setResults([]);
+  const doNavSearch = () => {
+    const q = search.trim();
+    if (!q) return;
+
+    if (location.pathname === "/") {
+      window.dispatchEvent(new CustomEvent("sp_landing_search", { detail: q }));
       return;
     }
 
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/services/search?q=${value}`
-      );
-      setResults(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+    navigate(`/?q=${encodeURIComponent(q)}`);
   };
 
   return (
@@ -61,33 +68,20 @@ const Navbar = () => {
 
         {/* CENTER - SEARCH */}
         <div className="nav-search">
-          <Search size={18} className="search-icon" />
+          <Search size={18} className="search-icon" onClick={doNavSearch} style={{ cursor: 'pointer' }} />
           <input
             type="text"
-            placeholder="Search for services..."
+            placeholder="Search on landing page..."
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && doNavSearch()}
           />
-
-          {results.length > 0 && (
-            <div className="search-dropdown">
-              {results.map((item) => (
-                <Link
-                  key={item._id}
-                  to={`/services/${item._id}`}
-                  className="search-item"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* LINKS */}
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
           <li className={isActive("/") ? "active" : ""}><Link to="/">Home</Link></li>
-          <li><Link to="/login">Services</Link></li>
+          <li className={isActive("/login") ? "active" : ""}><Link to="/login">Services</Link></li>
           <li>
             {location.pathname === "/" ? (
               <a href="#faq">About</a>
@@ -110,15 +104,15 @@ const Navbar = () => {
           {/* LANGUAGE */}
           <div className="lang-box">
             <Globe size={16} />
-            <select>
-              <option>EN</option>
-              <option>TA</option>
-              <option>SI</option>
+            <select value={lang} onChange={handleLangChange}>
+              <option value="EN">EN</option>
+              <option value="TA">TA</option>
+              <option value="SI">SI</option>
             </select>
           </div>
 
           {/* DARK MODE */}
-          <div className="icon-btn" onClick={() => setDarkMode(!darkMode)}>
+          <div className="icon-btn" onClick={() => setDarkMode(v => !v)} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}>
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </div>
 

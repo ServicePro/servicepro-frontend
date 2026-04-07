@@ -10,6 +10,12 @@ const navItems = [
     ],
   },
   {
+    group: 'Providers',
+    items: [
+      { to: '/admin/providers',        icon: '🧑‍🔧', label: 'Provider Requests' },
+    ],
+  },
+  {
     group: 'Moderation',
     items: [
       { to: '/admin/moderation',       icon: '🛡️', label: 'Service Moderation' },
@@ -49,7 +55,7 @@ const AdminSidebar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   return (

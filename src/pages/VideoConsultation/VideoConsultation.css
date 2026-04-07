@@ -1,0 +1,496 @@
+/* ============================================================
+   VideoConsultation.css
+============================================================ */
+
+.vc-root {
+  min-height: calc(100vh - 64px);
+  background: #f8fafc;
+  padding: 32px 24px 60px;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+/* ── Toast ──────────────────────────────────────────────── */
+.vc-toast {
+  position: fixed; top: 80px; right: 24px; z-index: 9999;
+  padding: 14px 24px; border-radius: 10px; font-weight: 600; font-size: 0.95rem;
+  animation: vc-fade-in 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+.vc-toast-success { background: #d1fae5; color: #065f46; border-left: 4px solid #10b981; }
+.vc-toast-error   { background: #fee2e2; color: #991b1b; border-left: 4px solid #ef4444; }
+@keyframes vc-fade-in { from { opacity:0; transform: translateY(-10px) } to { opacity:1; transform: translateY(0) } }
+
+/* ── Page Header ────────────────────────────────────────── */
+.vc-page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 20px; margin-bottom: 28px;
+}
+.vc-page-header h1 { font-size: 1.9rem; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+.vc-page-header p  { color: #64748b; font-size: 0.95rem; margin: 0; }
+
+.vc-header-features {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.vc-header-features span {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+/* ── Tabs ───────────────────────────────────────────────── */
+.vc-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.vc-tab {
+  position: relative;
+  padding: 10px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 40px;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vc-tab:hover { border-color: #2563eb; color: #2563eb; }
+.vc-tab-active { background: #2563eb; border-color: #2563eb; color: #fff; }
+.vc-badge {
+  position: absolute; top: -8px; right: -8px;
+  background: #F97316; color: #fff;
+  border-radius: 50%; width: 20px; height: 20px;
+  font-size: 0.72rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Loading ────────────────────────────────────────────── */
+.vc-loading { display: flex; align-items: center; gap: 12px; padding: 40px; color: #64748b; }
+.vc-spinner {
+  width: 22px; height: 22px;
+  border: 3px solid #e2e8f0; border-top-color: #2563eb;
+  border-radius: 50%; animation: vc-spin 0.7s linear infinite;
+}
+@keyframes vc-spin { to { transform: rotate(360deg) } }
+
+/* ── Schedule form ──────────────────────────────────────── */
+.vc-schedule-root { display: flex; flex-direction: column; gap: 24px; }
+
+.vc-info-banner {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+.vc-info-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.vc-info-item > :first-child { font-size: 1.5rem; }
+.vc-info-item span { font-size: 0.9rem; font-weight: 700; color: #0f172a; }
+.vc-info-item small { font-size: 0.78rem; color: #64748b; }
+
+.vc-form {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.vc-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media (max-width: 600px) { .vc-form-row { grid-template-columns: 1fr; } }
+
+.vc-form-group { display: flex; flex-direction: column; gap: 6px; }
+.vc-form-group label { font-size: 0.88rem; font-weight: 600; color: #374151; }
+.vc-form-group input,
+.vc-form-group select,
+.vc-form-group textarea {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  font-family: inherit;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.vc-form-group input:focus,
+.vc-form-group select:focus,
+.vc-form-group textarea:focus { outline: none; border-color: #2563eb; }
+
+.vc-duration-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.vc-duration-pill {
+  padding: 8px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vc-duration-pill:hover { border-color: #2563eb; color: #2563eb; }
+.vc-duration-active { background: #2563eb; border-color: #2563eb; color: #fff; }
+
+.vc-schedule-btn {
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.vc-schedule-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── Sessions ───────────────────────────────────────────── */
+.vc-sessions-root { display: flex; flex-direction: column; gap: 16px; }
+.vc-section-heading { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0; }
+.vc-sessions-list { display: flex; flex-direction: column; gap: 12px; }
+
+.vc-session-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px 24px;
+}
+.vc-session-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.vc-session-topic { font-size: 1rem; font-weight: 700; color: #0f172a; margin: 0 0 2px; }
+.vc-session-meta  { font-size: 0.82rem; color: #94a3b8; margin: 0; }
+.vc-status-badge  { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+.vc-session-details { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.83rem; color: #64748b; margin-bottom: 8px; }
+.vc-session-notes   { font-size: 0.85rem; color: #64748b; background: #f8fafc; border-radius: 8px; padding: 8px 12px; margin: 8px 0 0; }
+.vc-session-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+
+.vc-join-session-btn {
+  padding: 9px 20px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.vc-cancel-session-btn {
+  padding: 9px 18px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  color: #64748b;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.vc-cancel-session-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+/* ── Call UI ────────────────────────────────────────────── */
+.vc-call-root { display: flex; justify-content: center; padding: 20px 0; }
+
+.vc-no-call {
+  text-align: center;
+  padding: 60px 24px;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 480px;
+}
+.vc-no-call p { font-size: 1rem; color: #475569; margin: 0; }
+.vc-no-call-sub { font-size: 0.88rem !important; color: #94a3b8 !important; }
+.vc-upcoming-quick { width: 100%; margin-top: 16px; }
+.vc-upcoming-quick h4 { font-size: 0.9rem; font-weight: 700; color: #0f172a; margin: 0 0 10px; }
+.vc-quick-join-btn {
+  display: block; width: 100%;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 0.85rem;
+  color: #334155;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+.vc-quick-join-btn:hover { border-color: #2563eb; background: #eff6ff; }
+
+/* Pre-call lobby */
+.vc-pre-call {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  width: 100%;
+  max-width: 900px;
+}
+@media (max-width: 640px) { .vc-pre-call { grid-template-columns: 1fr; } }
+
+.vc-camera-preview {
+  background: #0f172a;
+  border-radius: 18px;
+  aspect-ratio: 4/3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  gap: 10px;
+}
+.vc-camera-off-icon { font-size: 3rem; }
+.vc-camera-preview p { font-size: 0.9rem; margin: 0; }
+
+.vc-pre-call-info { display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+.vc-pre-call-info h2 { font-size: 1.3rem; font-weight: 800; color: #0f172a; margin: 0; }
+.vc-pre-call-info p  { font-size: 0.9rem; color: #475569; margin: 0; }
+.vc-pre-call-controls { display: flex; gap: 10px; }
+.vc-media-btn {
+  padding: 10px 18px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vc-media-off { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+.vc-join-btn {
+  padding: 14px;
+  background: #10b981;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  animation: vc-pulse-green 1.5s infinite;
+}
+@keyframes vc-pulse-green { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.4) } 50% { box-shadow: 0 0 0 8px rgba(16,185,129,0) } }
+
+/* Active call */
+.vc-active-call { width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 0; background: #0f172a; border-radius: 20px; overflow: hidden; }
+.vc-call-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: #1e293b; }
+.vc-call-title  { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+.vc-call-timer  { display: flex; align-items: center; gap: 8px; color: #f1f5f9; font-size: 0.95rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.vc-timer-dot   { width: 10px; height: 10px; background: #ef4444; border-radius: 50%; animation: vc-blink 1s infinite; }
+@keyframes vc-blink { 0%,100% { opacity:1 } 50% { opacity:0.3 } }
+
+.vc-video-area { position: relative; background: #0f172a; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; }
+.vc-video-main { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.vc-video-placeholder { text-align: center; color: #64748b; }
+.vc-video-placeholder span { font-size: 4rem; display: block; margin-bottom: 12px; }
+.vc-video-placeholder p   { font-size: 1.1rem; color: #94a3b8; margin: 0 0 4px; }
+.vc-video-placeholder small { font-size: 0.8rem; color: #475569; }
+
+.vc-video-self {
+  position: absolute; bottom: 16px; right: 16px;
+  width: 120px; aspect-ratio: 4/3;
+  background: #1e293b;
+  border-radius: 10px;
+  border: 2px solid #334155;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  color: #64748b;
+  gap: 4px;
+}
+.vc-video-self small { font-size: 0.72rem; color: #94a3b8; }
+
+.vc-call-toolbar { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px 24px; background: #1e293b; flex-wrap: wrap; }
+.vc-tool-btn {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #334155;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.vc-tool-btn:hover { background: #475569; }
+.vc-tool-off { background: #dc2626 !important; }
+.vc-end-btn {
+  padding: 12px 24px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* ── Empty & CTA ────────────────────────────────────────── */
+.vc-empty { text-align: center; padding: 60px 20px; color: #94a3b8; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.vc-empty p { font-size: 1rem; margin: 0; }
+.vc-cta-btn { padding: 12px 24px; background: #2563eb; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+
+/* ── Category filter pills ──────────────────────────────── */
+.vc-category-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.vc-cat-pill {
+  padding: 6px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 20px;
+  background: #fff;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.vc-cat-pill:hover {
+  border-color: #F97316;
+  color: #F97316;
+}
+
+.vc-cat-active {
+  background: #F97316;
+  border-color: #F97316;
+  color: #fff;
+}
+
+/* ── Session badges (dual badge row) ───────────────────── */
+.vc-session-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+/* ── Provider proposed reschedule notice ────────────────── */
+.vc-reschedule-notice {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #f5f3ff;
+  border: 1.5px solid #7c3aed;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 0.9rem;
+  color: #4c1d95;
+}
+
+.vc-reschedule-notice strong {
+  flex-shrink: 0;
+}
+
+.vc-reschedule-notice span {
+  font-weight: 600;
+  color: #6d28d9;
+}
+
+.vc-confirm-btn {
+  margin-left: auto;
+  padding: 6px 14px;
+  background: #7c3aed;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.vc-confirm-btn:hover {
+  background: #6d28d9;
+}
+
+/* ── Meet link box ──────────────────────────────────────── */
+.vc-meet-link-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #d1fae5;
+  border: 1.5px solid #10b981;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 10px 0;
+}
+
+.vc-meet-link-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #065f46;
+}
+
+.vc-meet-link-btn {
+  display: inline-block;
+  background: #10b981;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.vc-meet-link-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+/* ── External meet link (pre-call) ──────────────────────── */
+.vc-external-meet-link {
+  display: inline-block;
+  margin: 8px 0;
+  color: #2563eb;
+  font-size: 0.88rem;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* ── Category hint under service select ─────────────────── */
+.vc-category-hint {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.vc-category-hint strong {
+  color: #F97316;
+}
+
+/* ── Disabled select (provider before service chosen) ────── */
+.vc-form select:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}

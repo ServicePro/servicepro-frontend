@@ -1,7 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import servicesApi from "../../api/servicesApi";
+import reviewsApi from "../../api/reviewsApi";
 import "./ServiceListing.css";
+
+const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+
+function StarRow({ rating, size = '1rem' }) {
+  return (
+    <span style={{ fontSize: size, letterSpacing: '2px' }}>
+      {[1,2,3,4,5].map(s => (
+        <span key={s} style={{ color: s <= Math.round(rating) ? '#f59e0b' : '#e2e8f0' }}>★</span>
+      ))}
+    </span>
+  );
+}
 
 const ServiceDetails = () => {
   const { id } = useParams();
@@ -9,6 +22,8 @@ const ServiceDetails = () => {
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [reviews, setReviews] = useState([]);
+  const [reviewsAvg, setReviewsAvg] = useState(null);
 
   useEffect(() => {
     const loadService = async () => {
@@ -27,8 +42,21 @@ const ServiceDetails = () => {
       }
     };
 
+    const loadReviews = async () => {
+      try {
+        const res = await reviewsApi.getServiceReviews(id);
+        if (res.success) {
+          setReviews(res.data || []);
+          setReviewsAvg(res.averageRating);
+        }
+      } catch {
+        // silently ignore — reviews are supplementary
+      }
+    };
+
     if (id) {
       loadService();
+      loadReviews();
     } else {
       setError("Invalid service identifier.");
       setLoading(false);
@@ -170,6 +198,53 @@ const ServiceDetails = () => {
               </ul>
             </section>
           </div>
+        </div>
+
+        {/* ── Customer Reviews ── */}
+        <div className="sd-reviews-section">
+          <div className="sd-reviews-header">
+            <h2>Customer Reviews</h2>
+            {reviews.length > 0 && (
+              <div className="sd-reviews-summary">
+                <span className="sd-reviews-avg">{reviewsAvg?.toFixed(1) ?? '—'}</span>
+                <div>
+                  <StarRow rating={reviewsAvg ?? 0} size="1.2rem" />
+                  <p>{reviews.length} review{reviews.length !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {reviews.length === 0 ? (
+            <p className="sd-reviews-empty">No reviews yet. Be the first to review this service!</p>
+          ) : (
+            <div className="sd-reviews-list">
+              {reviews.map(r => (
+                <div key={r._id} className="sd-review-card">
+                  <div className="sd-review-top">
+                    <div className="sd-review-avatar">
+                      {(r.clientId?.name || 'U')[0].toUpperCase()}
+                    </div>
+                    <div className="sd-review-meta">
+                      <span className="sd-review-name">{r.clientId?.name || 'Anonymous'}</span>
+                      <span className="sd-review-date">{new Date(r.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                    </div>
+                    <div className="sd-review-stars">
+                      <StarRow rating={r.rating} size="1rem" />
+                      <span className="sd-review-label">{RATING_LABELS[r.rating]}</span>
+                    </div>
+                  </div>
+                  {r.comment && <p className="sd-review-comment">{r.comment}</p>}
+                  {r.providerResponse && (
+                    <div className="sd-review-response">
+                      <span className="sd-review-response-label">Provider reply:</span>
+                      <p>{r.providerResponse}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
