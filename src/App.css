@@ -1081,8 +1081,392 @@
 }
 
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
+  0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* ===================== RESPONSIVE DESIGN ===================== */
+
+/* ===== TABLET (768px - 1023px) ===== */
+@media (max-width: 1023px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .sidebar-logo {
+    padding: 16px;
+  }
+
+  .sidebar-logo-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 0.85rem;
+  }
+
+  .sidebar-logo-text {
+    font-size: 1rem;
+  }
+
+  .sidebar-nav-item {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .sidebar-profile {
+    padding: 12px 16px;
+  }
+
+  .header {
+    left: 240px;
+  }
+
+  .provider-profile-hero {
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .provider-profile-photo {
+    width: 72px;
+    height: 72px;
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .service-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .appt-card {
+    padding: 14px 16px;
+  }
+
+  .appt-meta {
+    gap: 8px;
+  }
+}
+
+/* ===== LARGE TABLET (640px - 767px) ===== */
+@media (max-width: 767px) and (min-width: 640px) {
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    transition: left 0.3s ease;
+    width: 260px;
+    z-index: 1100;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .header {
+    left: 0;
+    right: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+/* ===== MOBILE (max-width: 640px) ===== */
+@media (max-width: 640px) {
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    width: 260px;
+    transition: left 0.3s ease;
+    z-index: 1100;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1099;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .header {
+    left: 0;
+    right: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  /* Typography */
+  .sidebar-logo-text {
+    font-size: 0.95rem;
+  }
+
+  .sidebar-profile-name {
+    font-size: 0.8rem;
+  }
+
+  /* Cards */
+  .service-card {
+    margin-bottom: 12px;
+  }
+
+  .service-card-img {
+    height: 120px;
+  }
+
+  .service-card-body {
+    padding: 12px;
+  }
+
+  .service-card-title {
+    font-size: 0.9rem;
+  }
+
+  .service-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Appointments */
+  .appt-card {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+
+  .appt-date-box {
+    width: 48px;
+    height: 54px;
+  }
+
+  .appt-date-day {
+    font-size: 1.1rem;
+  }
+
+  .appt-service-name {
+    font-size: 0.9rem;
+  }
+
+  .appt-meta {
+    width: 100%;
+    gap: 6px;
+    font-size: 0.75rem;
+  }
+
+  /* Forms */
+  .form-section {
+    padding: 20px 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .provider-profile-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .provider-profile-photo {
+    width: 64px;
+    height: 64px;
+  }
+
+  /* Analytics */
+  .analytics-grid {
+    gap: 16px;
+  }
+
+  .chart-card {
+    padding: 16px 12px;
+  }
+
+  .chart-title {
+    font-size: 0.9rem;
+  }
+
+  /* Upload area */
+  .upload-area {
+    padding: 24px;
+  }
+
+  .upload-area-icon {
+    font-size: 1.5rem;
+  }
+}
+
+/* ===== SMALL MOBILE (480px - 639px) ===== */
+@media (max-width: 639px) and (min-width: 480px) {
+  .sidebar-logo {
+    padding: 14px;
+  }
+
+  .sidebar-nav-item {
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+
+  .provider-profile-chip {
+    font-size: 0.65rem;
+  }
+}
+
+/* ===== EXTRA SMALL MOBILE (below 480px) ===== */
+@media (max-width: 479px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .sidebar-logo {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .sidebar-logo-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+  }
+
+  .sidebar-logo-text {
+    display: none;
+  }
+
+  .sidebar-nav-item {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+
+  .sidebar-nav-icon {
+    width: 18px;
+  }
+
+  .sidebar-profile {
+    flex-direction: column;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .sidebar-profile-info {
+    width: 100%;
+  }
+
+  .sidebar-profile-role {
+    margin-top: 4px;
+  }
+
+  .provider-profile-hero {
+    flex-direction: column;
+    padding: 12px;
+  }
+
+  .provider-profile-photo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .service-card-meta {
+    gap: 8px;
+  }
+
+  .appt-card {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .appt-date-box {
+    width: 40px;
+    height: 48px;
+  }
+
+  .appt-date-day {
+    font-size: 0.95rem;
+  }
+
+  .appt-info {
+    min-width: 0;
+  }
+
+  .appt-service-name {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  is-client-name {
+    font-size: 0.75rem;
+  }
+
+  .form-section {
+    padding: 16px 12px;
+    border-radius: 10px;
+  }
+
+  .form-section-title {
+    font-size: 0.85rem;
+  }
+
+  .upload-area {
+    padding: 16px;
+  }
+
+  .upload-area-icon {
+    font-size: 1.25rem;
+    margin-bottom: 4px;
+  }
+
+  .upload-area h4 {
+    font-size: 0.8rem;
+  }
+
+  .upload-area p {
+    font-size: 0.7rem;
+  }
+}
+
+/* ===== LANDSCAPE MOBILE (max-height: 600px) ===== */
+@media (max-height: 600px) {
+  .sidebar-logo {
+    padding: 10px 12px;
+  }
+
+  .sidebar-nav-item {
+    padding: 6px 10px;
+    margin-bottom: 0;
+  }
+
+  .sidebar-profile {
+    padding: 8px 12px;
+  }
+
+  .header {
+    height: 48px;
+  }
+
+  .main-content {
+    margin-top: 48px;
+  }
 }
 
 /* ===================== SETTINGS DROPDOWN ===================== */

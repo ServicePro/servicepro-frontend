@@ -1,12 +1,8 @@
-﻿import React, { useState, useRef } from 'react';
+﻿import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
-import "../styles/provider.css"
-
-const categories = [
-  'Home Repair', 'Plumbing', 'Electrical', 'Cleaning',
-  'Landscaping', 'Painting', 'HVAC', 'Carpentry', 'Moving', 'Other',
-];
+import { SERVICE_CATEGORY_OPTIONS } from '../constants/serviceCategories';
+import "../styles/provider.css";
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -189,9 +185,9 @@ const AddService = () => {
                   required
                 >
                   <option value="">Select a category</option>
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
+                  {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
                     </option>
                   ))}
                 </select>
@@ -249,9 +245,9 @@ const AddService = () => {
 
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Price ($) *</label>
+              <label className="form-label">Price (Rs.) *</label>
               <div className="price-input-wrap">
-                <span className="price-prefix">$</span>
+                <span className="price-prefix">Rs.</span>
                 <input
                   className="form-input"
                   name="price"

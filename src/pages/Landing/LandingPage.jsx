@@ -1,9 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FaCheckCircle
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import appReviewApi from "../../api/appReviewApi";
+import {
+  SERVICE_CATEGORIES,
+  getServiceCategoryDisplayName,
+  getServiceCategoryIcon,
+} from "../../constants/serviceCategories";
 import MainLayout from "../../layouts/MainLayout";
 import { resolveAssetUrl } from "../../utils/media";
 import styles from "./Landing.module.css";
@@ -315,20 +320,7 @@ const LandingPage = () => {
   const [liveTestimonials, setLiveTestimonials] = useState([]);
   const [activeFAQ, setActiveFAQ] = useState(null);
   const [lang, setLang] = useState(() => localStorage.getItem('sp_lang') || 'EN');
-  const serviceCatalog = useMemo(() => [
-    { name: 'Cleaning Services', desc: 'House cleaning, office cleaning, deep cleaning.' },
-    { name: 'Beauty & Wellness', desc: 'Haircuts, manicures, pedicures, facials, massage therapy, acupuncture, yoga instructors.' },
-    { name: 'Electrical Services', desc: 'Electrical work, wiring, fittings and power repairs.' },
-    { name: 'Plumbing Services', desc: 'Plumbing fixes, pipe work, leak repair and water systems.' },
-    { name: 'Painting Services', desc: 'Interior painting, exterior painting and finishing work.' },
-    { name: 'Repair Services', desc: 'Appliance repair, fixture repair and general home fixes.' },
-    { name: 'Tutoring Services', desc: 'Academic tutoring, language lessons, music lessons.' },
-    { name: 'Health and Fitness', desc: 'Personal training, nutritionists, physiotherapists.' },
-    { name: 'Childcare Services', desc: 'Babysitting, nanny services, daycare.' },
-    { name: 'Cooking Services', desc: 'Personal chefs, meal prep services, cooking classes.' },
-    { name: 'Elderly Care Services', desc: 'In-home care, companionship services, mobility assistance.' },
-    { name: 'Laundry Services', desc: 'Pickup and delivery laundry, dry cleaning.' },
-  ], []);
+  const serviceCatalog = SERVICE_CATEGORIES;
 
   // Listen for language changes dispatched by Navbar
   useEffect(() => {
@@ -339,23 +331,8 @@ const LandingPage = () => {
 
   const t = T[lang] || T.EN;
 
-  const CATEGORY_ICONS = {
-    'Cleaning Services': '🧹',
-    'Beauty & Wellness': '✨',
-    'Electrical Services': '⚡',
-    'Plumbing Services': '🔧',
-    'Painting Services': '🎨',
-    'Repair Services': '🛠️',
-    'Tutoring Services': '📚',
-    'Health and Fitness': '🏋️',
-    'Childcare Services': '🧸',
-    'Cooking Services': '👨‍🍳',
-    'Elderly Care Services': '❤️',
-    'Laundry Services': '🧺',
-  };
-
-  const getCategoryIcon = (cat) => CATEGORY_ICONS[cat] || '🔨';
-  const getProviderCategory = (provider) => provider.category || 'Service Provider';
+  const getProviderCategory = (provider) =>
+    provider.category ? getServiceCategoryDisplayName(provider.category) : 'Service Provider';
   const getProviderBadge = (provider) => {
     if (provider.status === 'pending') return 'Pending Approval';
     if (provider.experience) return `${provider.experience} yrs exp`;
@@ -367,8 +344,15 @@ const LandingPage = () => {
   };
   const getProviderImage = (provider) => resolveAssetUrl(provider.profile_image);
   const getProviderInitial = (provider) => provider.name?.[0]?.toUpperCase() || 'P';
+  const getProviderRatingText = (provider) => {
+    const value = Number(provider?.rating);
+    if (!Number.isFinite(value) || value <= 0) return 'No ratings yet';
+    return `${value.toFixed(1)} ⭐`;
+  };
   const topRatedProviders = Array.isArray(providers)
-    ? [...providers].sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0)).slice(0, 3)
+    ? [...providers]
+        .sort((a, b) => (Number(b.total_reviews) || 0) - (Number(a.total_reviews) || 0) || (Number(b.rating) || 0) - (Number(a.rating) || 0))
+        .slice(0, 3)
     : [];
   const clampRating = (value) => {
     const parsed = Number(value);
@@ -402,7 +386,7 @@ const LandingPage = () => {
     };
 
     addCandidate(`${t.allServices} ${t.allServicesSub}`, 'services', t.allServices, 6);
-    serviceCatalog.forEach((svc) => addCandidate(`${svc.name} ${svc.desc}`, 'services', t.allServices, 10));
+    serviceCatalog.forEach((svc) => addCandidate(`${svc.label} ${svc.description} ${svc.value}`, 'services', t.allServices, 10));
 
     addCandidate(`${t.featuredTitle} ${t.featuredSub}`, 'providers', t.featuredTitle, 6);
     providers.forEach((pro) => addCandidate(`${pro.name} ${pro.category || ''} ${pro.area || ''} ${pro.skills || ''}`, 'providers', t.featuredTitle, 10));
@@ -512,6 +496,8 @@ const LandingPage = () => {
     };
 
     fetchProviders();
+    const intervalId = setInterval(fetchProviders, 15000);
+    return () => clearInterval(intervalId);
   }, [API]);
 
   useEffect(() => {
@@ -616,7 +602,7 @@ const LandingPage = () => {
             </div>
             <div className={styles["mini-info"]}>
               <p>{pro.name}</p>
-              <small>{getProviderCategory(pro)} • {(Number(pro.rating) || 0).toFixed(1)} ⭐</small>
+              <small>{getProviderCategory(pro)} • {getProviderRatingText(pro)}</small>
             </div>
             <span className={styles["mini-meta"]}>{pro.total_reviews || 0} reviews</span>
           </div>
@@ -644,13 +630,13 @@ const LandingPage = () => {
 
       {serviceCatalog.map((item) => (
         <div
-          key={item.name}
+          key={item.value}
           className={styles["service-box"]}
           onClick={() => navigate('/login')}
         >
-          <div className={styles["service-icon"]}>{getCategoryIcon(item.name)}</div>
-          <h3>{item.name}</h3>
-          <p>{item.desc}</p>
+          <div className={styles["service-icon"]}>{getServiceCategoryIcon(item.value)}</div>
+          <h3>{item.label}</h3>
+          <p>{item.description}</p>
           <span className={styles["service-cta"]}>Explore <span className={styles["cta-arrow"]}>→</span></span>
         </div>
       ))}
@@ -743,7 +729,7 @@ const LandingPage = () => {
             <p className={styles["provider-skills"]}>{getProviderSkills(pro)}</p>
 
             <div className={styles["provider-meta"]}>
-              <span>⭐ {(pro.rating || 0).toFixed(1)} ({pro.total_reviews || 0} reviews)</span>
+              <span>{getProviderRatingText(pro)} ({pro.total_reviews || 0} reviews)</span>
               <span className={styles["price"]}>{getProviderCategory(pro)}</span>
             </div>
 

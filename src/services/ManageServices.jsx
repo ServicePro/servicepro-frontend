@@ -143,7 +143,7 @@ const ManageServices = () => {
 
                 <div className="service-card-meta">
                   <div className="service-card-meta-item">
-                    💰 <strong>${s.price}</strong>
+                    💰 <strong>Rs. {s.price}</strong>
                   </div>
                   <div className="service-card-meta-item">
                     ⏱️ {s.duration_minutes} min

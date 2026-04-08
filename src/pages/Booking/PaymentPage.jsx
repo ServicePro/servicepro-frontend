@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import bookingApi from '../../api/bookingApi';
 import './PaymentPage.css';
 
@@ -16,6 +16,7 @@ export default function PaymentPage() {
       try {
         const res = await bookingApi.getById(bookingId);
         if (res.success) setBooking(res.data);
+      // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError('Unable to load booking details.');
       }
@@ -48,7 +49,10 @@ export default function PaymentPage() {
 
       if (res.success) {
         navigate(`/booking-confirmation/${bookingId}`, {
-          state: { loyaltyPointsEarned: res.loyaltyPointsEarned || 0 }
+          state: {
+            loyaltyPointsEarned: res.loyaltyPointsEarned || 0,
+            paymentMethod: 'card',
+          }
         });
       } else {
         setError(res.message || 'Payment failed at gateway.');
@@ -105,9 +109,9 @@ export default function PaymentPage() {
             <div className="summary-row"><span>Provider</span><span>{booking.providerId?.name || 'Provider'}</span></div>
             <div className="summary-row"><span>Date</span><span>{new Date(booking.date).toLocaleDateString()}</span></div>
             <div className="summary-row"><span>Time</span><span>{booking.time}</span></div>
-            <div className="summary-row"><span>Subtotal</span><span>${booking.amount.toFixed(2)}</span></div>
-            <div className="summary-row"><span>Service Fee</span><span>${serviceFee.toFixed(2)}</span></div>
-            <div className="summary-total"><span>Total Due</span><span>${total.toFixed(2)}</span></div>
+            <div className="summary-row"><span>Subtotal</span><span>Rs. {booking.amount.toFixed(2)}</span></div>
+            <div className="summary-row"><span>Service Fee</span><span>Rs. {serviceFee.toFixed(2)}</span></div>
+            <div className="summary-total"><span>Total Due</span><span>Rs. {total.toFixed(2)}</span></div>
           </aside>
         </div>
       </div>

@@ -76,9 +76,9 @@ function generateInvoiceHTML(booking) {
         <td>${date}</td>
         <td>${booking.time}</td>
         <td>${booking.location}</td>
-        <td>$${Number(booking.amount).toFixed(2)}</td>
+        <td>Rs. ${Number(booking.amount).toFixed(2)}</td>
       </tr>
-      <tr class="total-row"><td colspan="5">Total Paid</td><td>$${Number(booking.amount).toFixed(2)}</td></tr>
+      <tr class="total-row"><td colspan="5">Total Paid</td><td>Rs. ${Number(booking.amount).toFixed(2)}</td></tr>
     </tbody>
   </table>
   <div><span class="paid-badge">✓ Payment Confirmed</span></div>
@@ -173,7 +173,7 @@ function BookingCard({ booking, isFav, onToggleFav, onRebook, existingReview }) 
         <div className="sh-detail"><span className="sh-detail-label">📅 Date</span><span>{new Date(booking.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span></div>
         <div className="sh-detail"><span className="sh-detail-label">⏰ Time</span><span>{booking.time}</span></div>
         <div className="sh-detail"><span className="sh-detail-label">📍 Location</span><span>{booking.location}</span></div>
-        <div className="sh-detail"><span className="sh-detail-label">💰 Amount</span><span className="sh-amount">${Number(booking.amount).toFixed(2)}</span></div>
+        <div className="sh-detail"><span className="sh-detail-label">💰 Amount</span><span className="sh-amount">Rs. {Number(booking.amount).toFixed(2)}</span></div>
         <div className="sh-detail">
           <span className="sh-detail-label">Status</span>
           <span className="sh-badge" style={{ background: sColor.bg, color: sColor.text }}>{booking.status}</span>

@@ -23,47 +23,72 @@ export default function OAuthCallback() {
   const [resolveError, setResolveError] = useState("");
 
   useEffect(() => {
-    const token      = searchParams.get("token");
-    const name       = searchParams.get("name");
-    const role       = searchParams.get("role");
-    const error      = searchParams.get("error");
-    const isAmbig    = searchParams.get("ambiguous") === "1";
-    const pToken     = searchParams.get("pendingToken");
+    const hydrateAndRedirect = async () => {
+      const token      = searchParams.get("token");
+      const name       = searchParams.get("name");
+      const role       = searchParams.get("role");
+      const error      = searchParams.get("error");
+      const isAmbig    = searchParams.get("ambiguous") === "1";
+      const pToken     = searchParams.get("pendingToken");
 
-    if (error) {
-      const msg = ERROR_MESSAGES[error] || "Authentication failed.";
-      navigate("/login", { state: { message: msg } });
-      return;
-    }
-
-    // Account exists as both user and provider — show role selection
-    if (isAmbig && pToken) {
-      setDisplayName(name ? decodeURIComponent(name) : "");
-      setPendingToken(pToken);
-      setAmbiguous(true);
-      setStatus("ready");
-      return;
-    }
-
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        const user = {
-          id:   payload.id,
-          role: role || payload.role || "user",
-          name: name ? decodeURIComponent(name) : ""
-        };
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-        navigate(user.role === "provider" ? "/provider/dashboard" : user.role === "admin" ? "/admin" : "/user-dashboard");
-      } catch {
-        setStatus("error");
-        setTimeout(() => navigate("/login"), 2000);
+      if (error) {
+        const msg = ERROR_MESSAGES[error] || "Authentication failed.";
+        navigate("/login", { state: { message: msg } });
+        return;
       }
-    } else {
-      navigate("/login", { state: { message: "Authentication failed. Please try again." } });
-    }
-  }, []);
+
+      // Account exists as both user and provider — show role selection
+      if (isAmbig && pToken) {
+        setDisplayName(name ? decodeURIComponent(name) : "");
+        setPendingToken(pToken);
+        setAmbiguous(true);
+        setStatus("ready");
+        return;
+      }
+
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split(".")[1]));
+          const user = {
+            id: payload.id,
+            role: role || payload.role || "user",
+            name: name ? decodeURIComponent(name) : ""
+          };
+
+          localStorage.setItem("token", token);
+
+          if (user.role === "provider") {
+            try {
+              const res = await fetch(`${API}/api/providers/me`, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+              const data = await res.json();
+              const provider = data?.data?.provider;
+              if (res.ok && provider) {
+                user.name = provider.name || user.name;
+                user.email = provider.email || "";
+                user.phone = provider.phone || "";
+                user.category = provider.category || "";
+                user.profile_image = provider.profile_image || null;
+              }
+            } catch {
+              // Fall back to token/query payload if profile hydration fails.
+            }
+          }
+
+          localStorage.setItem("user", JSON.stringify(user));
+          navigate(user.role === "provider" ? "/provider/dashboard" : user.role === "admin" ? "/admin" : "/user-dashboard");
+        } catch {
+          setStatus("error");
+          setTimeout(() => navigate("/login"), 2000);
+        }
+      } else {
+        navigate("/login", { state: { message: "Authentication failed. Please try again." } });
+      }
+    };
+
+    hydrateAndRedirect();
+  }, [navigate, searchParams]);
 
   const handleResolve = async (loginAs) => {
     setResolving(true);

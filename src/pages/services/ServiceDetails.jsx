@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import servicesApi from "../../api/servicesApi";
 import reviewsApi from "../../api/reviewsApi";
+import servicesApi from "../../api/servicesApi";
+import Navbar from "../../components/userDashboard/UserNavbar";
+import { resolveAssetUrl } from "../../utils/media";
 import "./ServiceListing.css";
 
 const RATING_LABELS = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
@@ -91,26 +93,59 @@ const ServiceDetails = () => {
 
   if (loading) {
     return (
-      <div className="service-details-root">
-        <div className="service-details-card">Loading service details...</div>
-      </div>
+      <>
+        <Navbar />
+        <div className="service-details-root">
+          <div className="service-details-card">Loading service details...</div>
+        </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="service-details-root">
-        <div className="service-details-card">
-          <p className="error-message">{error}</p>
-          <button className="btn-primary" onClick={() => navigate("/services")}>Back to services</button>
+      <>
+        <Navbar />
+        <div className="service-details-root">
+          <div className="service-details-card">
+            <p className="error-message">{error}</p>
+            <button className="btn-primary" onClick={() => navigate("/services")}>Back to services</button>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
+  const serviceName = service.name || service.title || "Service Details";
+  const providerName =
+    service.providerId?.name
+    || service.provider_id?.name
+    || service.provider
+    || service.providerName
+    || "Trusted Expert";
+  const categoryName = service.category || service.type || "General";
+  const priceValue = Number(service.price);
+  const priceText = Number.isFinite(priceValue) ? priceValue.toFixed(2) : "N/A";
+  const durationText = service.duration_minutes ? `${service.duration_minutes} min` : (service.duration || "Flexible duration");
+  const locationText = typeof service.location === "string"
+    ? service.location
+    : [service.location?.city, service.location?.district].filter(Boolean).join(", ") || service.area || "Not specified";
+  const availabilityText = Array.isArray(service.available_days) && service.available_days.length > 0
+    ? service.available_days.join(", ")
+    : (service.availability || "Check availability during booking");
+  const bookingText = service.bookingType || durationText;
+  const resolvedRating = Number(reviewsAvg ?? service.rating ?? service.averageRating);
+  const resolvedRatingText = Number.isFinite(resolvedRating) && resolvedRating > 0
+    ? `⭐ ${resolvedRating.toFixed(1)}`
+    : 'No ratings yet';
+  const imageSrc = resolveAssetUrl(service.image || service.image_url || service.cover)
+    || "https://via.placeholder.com/680x420?text=Service+Image";
+
   return (
-    <div className="service-details-root">
-      <div className="service-details-card service-details-card-large">
+    <>
+      <Navbar />
+      <div className="service-details-root">
+        <div className="service-details-card service-details-card-large">
         <div className="service-details-header">
           <div>
             <div className="service-breadcrumbs">
@@ -118,12 +153,12 @@ const ServiceDetails = () => {
               <span className="breadcrumb-separator">/</span>
               <Link to="/services" className="breadcrumb-link">Services</Link>
               <span className="breadcrumb-separator">/</span>
-              <span className="breadcrumb-current">{service.name || service.title || "Service Details"}</span>
+              <span className="breadcrumb-current">{serviceName}</span>
             </div>
-            <span className="service-badge">{service.category || service.type || "Service"}</span>
-            <h1>{service.name || service.title || "Service Details"}</h1>
+            <span className="service-badge">{categoryName}</span>
+            <h1>{serviceName}</h1>
             <p className="service-subtitle">
-              Provided by <strong>{service.provider || service.providerName || service.provider_id?.name || "Trusted Expert"}</strong>
+              Provided by <strong>{providerName}</strong>
             </p>
           </div>
 
@@ -136,36 +171,36 @@ const ServiceDetails = () => {
         <div className="service-details-grid">
           <div className="service-details-image">
             <img
-              src={service.image || service.cover || "https://via.placeholder.com/680x420?text=Service+Image"}
-              alt={service.name || service.title}
+              src={imageSrc}
+              alt={serviceName}
             />
           </div>
 
           <div className="service-details-summary">
             <div className="service-price-row">
               <div>
-                <span className="service-price">${service.price?.toFixed?.(2) ?? service.price ?? "N/A"}</span>
-                <span className="service-duration">{service.duration_minutes ? `${service.duration_minutes} min` : service.duration || "Flexible duration"}</span>
+                <span className="service-price">Rs. {priceText}</span>
+                <span className="service-duration">{durationText}</span>
               </div>
-              <span className="service-rating">⭐ {service.rating ?? service.averageRating ?? 4.8}</span>
+              <span className="service-rating">{resolvedRatingText}</span>
             </div>
 
             <div className="service-summary-card">
               <div className="summary-row">
                 <span>Provider</span>
-                <strong>{service.provider || service.providerName || service.provider_id?.name || "Trusted Expert"}</strong>
+                <strong>{providerName}</strong>
               </div>
               <div className="summary-row">
                 <span>Location</span>
-                <strong>{service.location || service.area || "Not specified"}</strong>
+                <strong>{locationText}</strong>
               </div>
               <div className="summary-row">
                 <span>Category</span>
-                <strong>{service.category || service.type || "General"}</strong>
+                <strong>{categoryName}</strong>
               </div>
               <div className="summary-row">
                 <span>Booking</span>
-                <strong>{service.bookingType || service.duration || "Online & in-person"}</strong>
+                <strong>{bookingText}</strong>
               </div>
             </div>
 
@@ -177,15 +212,15 @@ const ServiceDetails = () => {
             <section className="service-meta">
               <div>
                 <strong>Category</strong>
-                <span>{service.category || service.type || "General"}</span>
+                <span>{categoryName}</span>
               </div>
               <div>
                 <strong>Provider location</strong>
-                <span>{service.location || service.area || "Not specified"}</span>
+                <span>{locationText}</span>
               </div>
               <div>
                 <strong>Available</strong>
-                <span>{service.availability || "Check availability during booking"}</span>
+                <span>{availabilityText}</span>
               </div>
             </section>
 
@@ -246,8 +281,9 @@ const ServiceDetails = () => {
             </div>
           )}
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
