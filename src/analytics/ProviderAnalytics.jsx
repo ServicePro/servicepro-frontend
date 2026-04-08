@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Legend,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis, YAxis,
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Cell,
+    Legend,
+    Line,
+    LineChart,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis, YAxis,
 } from 'recharts';
 import dashboardApi from '../api/dashboardApi';
 import "../styles/provider.css";
@@ -28,7 +28,7 @@ const RevenueTooltip = ({ active, payload, label }) => {
         <p style={{ fontWeight: 700, marginBottom: '6px' }}>{label}</p>
         {payload.map((p) => (
           <p key={p.name} style={{ color: p.color, fontSize: '0.85rem' }}>
-            {p.name === 'revenue' ? '💰 Revenue' : '🎯 Target'}: <strong>${p.value.toLocaleString()}</strong>
+            {p.name === 'revenue' ? '💰 Revenue' : '🎯 Target'}: <strong>Rs. {p.value.toLocaleString()}</strong>
           </p>
         ))}
       </div>
@@ -79,7 +79,7 @@ const ProviderAnalytics = () => {
 
   // Reconstruct KPI Cards from real data summary
   const kpiCards = [
-    { label: 'Total Revenue', value: `$${data.kpi.totalRevenue}`, change: 'Overall', positive: true, icon: '💰', color: '#2563eb', bg: '#eff6ff' },
+    { label: 'Total Revenue', value: `Rs. ${data.kpi.totalRevenue}`, change: 'Overall', positive: true, icon: '💰', color: '#2563eb', bg: '#eff6ff' },
     { label: 'Total Appointments', value: data.kpi.totalAppointments, change: 'All time', positive: true, icon: '📅', color: '#10b981', bg: '#ecfdf5' },
     { label: 'Avg. Rating', value: `${data.kpi.avgRating} ⭐`, change: 'Current', positive: true, icon: '⭐', color: '#f59e0b', bg: '#fffbeb' },
     { label: 'Cancellation Rate', value: `${data.kpi.cancellationRate}%`, change: 'Overall', positive: false, icon: '📉', color: '#7c3aed', bg: '#f5f3ff' },
@@ -147,7 +147,7 @@ const ProviderAnalytics = () => {
               <LineChart data={data.monthlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#94a3b8' }} />
-                <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} tickFormatter={(v) => `$${v}`} />
+                <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} tickFormatter={(v) => `Rs. ${v}`} />
                 <Tooltip content={<RevenueTooltip />} />
                 <Legend wrapperStyle={{ fontSize: '0.8rem' }} />
                 <Line

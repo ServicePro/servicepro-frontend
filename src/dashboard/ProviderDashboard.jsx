@@ -68,7 +68,7 @@ const ProviderDashboard = () => {
     },
     {
       label: 'Monthly Revenue',
-      value: `$${data.stats.monthlyRevenue}`,
+      value: `Rs. ${data.stats.monthlyRevenue}`,
       change: `${data.stats.revenueChange}% vs last month`,
       positive: data.stats.revenueChange >= 0,
       icon: '💰',
@@ -85,10 +85,10 @@ const ProviderDashboard = () => {
   ];
 
   const quickActions = [
+    { to: '/provider/bookings', icon: '📋', iconBg: '#fff7ed', title: 'Booking Requests', desc: `${data.statusBreakdown?.pending || 0} pending` },
     { to: '/provider/add-service', icon: '➕', iconBg: '#eff6ff', title: 'Add Service', desc: 'List a new service' },
-    { to: '/provider/appointments', icon: '📅', iconBg: '#ecfdf5', title: 'View Appointments', desc: `${data.statusBreakdown?.pending || 0} pending` },
     { to: '/provider/manage-services', icon: '🛠️', iconBg: '#f5f3ff', title: 'Manage Services', desc: 'Edit your listings' },
-    { to: '/provider/analytics', icon: '📊', iconBg: '#fff7ed', title: 'View Analytics', desc: 'Track performance' },
+    { to: '/provider/analytics', icon: '📊', iconBg: '#ecfdf5', title: 'View Analytics', desc: 'Track performance' },
   ];
 
   return (
@@ -176,7 +176,7 @@ const ProviderDashboard = () => {
                       </div>
                     </td>
                     <td>
-                      <strong style={{ color: 'var(--brand-blue)' }}>${appt.amount}</strong>
+                      <strong style={{ color: 'var(--brand-blue)' }}>Rs. {appt.amount}</strong>
                     </td>
                     <td>
                       <span className={statusBadge(appt.status)}>
@@ -228,7 +228,7 @@ const ProviderDashboard = () => {
                   <strong>{s.name}</strong>
                   <span>{s.total_bookings} bookings</span>
                 </div>
-                <div className="top-service-revenue">${s.revenue}</div>
+                <div className="top-service-revenue">Rs. {s.revenue}</div>
               </div>
             ))}
           </div>

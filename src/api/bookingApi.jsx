@@ -26,7 +26,20 @@ const bookingApi = {
   updateStatus: async (id, status) => {
     const response = await axios.put(`${API_BASE_URL}/bookings/${id}/status`, { status }, getHeaders());
     return response.data;
-  }
+  },
+  // ── Provider ──────────────────────────────────────────────
+  getProviderBookings: async (status = '') => {
+    const url = status
+      ? `${API_BASE_URL}/bookings/provider/all?status=${status}`
+      : `${API_BASE_URL}/bookings/provider/all`;
+    const response = await axios.get(url, getHeaders());
+    return response.data;
+  },
+  providerAction: async (id, payload) => {
+    // payload: { status, scheduledDate?, scheduledTime?, providerNote? }
+    const response = await axios.put(`${API_BASE_URL}/bookings/provider/${id}/action`, payload, getHeaders());
+    return response.data;
+  },
 };
 
 export default bookingApi;

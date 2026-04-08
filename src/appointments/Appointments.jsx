@@ -144,7 +144,7 @@ const Appointments = () => {
                     <div>🕐 {a.appointment_time || 'No time set'}</div>
                     {a.client_address && <div>📍 {a.client_address}</div>}
                     <div>
-                      💰 <strong style={{ color: 'var(--primary)' }}>${a.amount}</strong>
+                      💰 <strong style={{ color: 'var(--primary)' }}>Rs. {a.amount}</strong>
                     </div>
                   </div>
                 </div>

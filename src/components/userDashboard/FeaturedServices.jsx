@@ -5,7 +5,7 @@ import ServiceCard from "./ServiceCard";
 const FeaturedServices = ({ searchQuery = "", onSearchResult }) => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const FEATURED_LIMIT = 6;
+  const FEATURED_LIMIT = 8;
 
   const normalizeService = (service) => {
     const image = service?.image || service?.image_url;
@@ -24,36 +24,15 @@ const FeaturedServices = ({ searchQuery = "", onSearchResult }) => {
     };
   };
 
-  const pickDiverseServices = (inputServices, limit = FEATURED_LIMIT) => {
+  const pickRandomServices = (inputServices, limit = FEATURED_LIMIT) => {
     if (!Array.isArray(inputServices) || inputServices.length === 0) return [];
-
-    const buckets = new Map();
-
-    inputServices.forEach((service) => {
-      const category = service?.category || "Other";
-      if (!buckets.has(category)) {
-        buckets.set(category, []);
-      }
-      buckets.get(category).push(service);
-    });
-
-    const picked = [];
-
-    // Round-robin across categories to maximize visible variety.
-    while (picked.length < limit) {
-      let addedInRound = false;
-
-      for (const servicesInCategory of buckets.values()) {
-        if (servicesInCategory.length > 0 && picked.length < limit) {
-          picked.push(servicesInCategory.shift());
-          addedInRound = true;
-        }
-      }
-
-      if (!addedInRound) break;
+    const shuffled = [...inputServices];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    return picked;
+    return shuffled.slice(0, limit);
   };
 
   useEffect(() => {
@@ -69,9 +48,7 @@ const FeaturedServices = ({ searchQuery = "", onSearchResult }) => {
         const res = await servicesApi.getAllPublic(params);
         const allServices = res?.data?.services || res?.services || res?.data || res || [];
         const normalized = Array.isArray(allServices) ? allServices.map(normalizeService) : [];
-        const selected = trimmedQuery
-          ? normalized.slice(0, FEATURED_LIMIT)
-          : pickDiverseServices(normalized, FEATURED_LIMIT);
+        const selected = pickRandomServices(normalized, FEATURED_LIMIT);
 
         setServices(selected);
         onSearchResult?.({
@@ -95,12 +72,12 @@ const FeaturedServices = ({ searchQuery = "", onSearchResult }) => {
     };
 
     loadFeaturedServices();
+    const intervalId = setInterval(loadFeaturedServices, 15000);
+    return () => clearInterval(intervalId);
   }, [searchQuery, onSearchResult]);
 
   return (
     <section className="featured">
-      <h2>Featured Services</h2>
-
       <div className="grid">
         {loading ? (
           <p>Loading featured services...</p>

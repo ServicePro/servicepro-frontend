@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import UserNavbar from '../../components/userDashboard/UserNavbar';
 import consultationApi from '../../api/consultationApi';
+import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './VideoConsultation.css';
 
 const TABS = ['Schedule Session', 'My Sessions', 'Join Call'];
@@ -23,7 +23,6 @@ const PROVIDER_STATUS_CONFIG = {
 
 export default function VideoConsultation() {
   const [activeTab, setActiveTab] = useState('Schedule Session');
-  const [allProviders, setAllProviders] = useState([]);
   const [filteredProviders, setFilteredProviders] = useState([]);
   const [services, setServices]         = useState([]);
   const [sessions, setSessions]         = useState([]);
@@ -49,13 +48,10 @@ export default function VideoConsultation() {
   useEffect(() => {
     (async () => {
       try {
-        const [provRes, svcRes, sessRes] = await Promise.all([
-          consultationApi.getProviders(),
+        const [svcRes, sessRes] = await Promise.all([
           consultationApi.getServices(),
           consultationApi.getMy(),
         ]);
-        const prov = provRes.data?.data || [];
-        setAllProviders(prov);
         setServices(svcRes.data?.data  || []);
         setSessions(sessRes.data?.data || []);
       } catch (e) {
@@ -74,7 +70,7 @@ export default function VideoConsultation() {
     try {
       const res = await consultationApi.getProviders(cat);
       setFilteredProviders(res.data?.data || []);
-    } catch (e) {
+    } catch {
       setFilteredProviders([]);
     }
   };
@@ -186,7 +182,7 @@ export default function VideoConsultation() {
                   try {
                     const fresh = await consultationApi.getMy();
                     setSessions(fresh.data?.data || []);
-                  } catch (e) { /* keep existing */ }
+                  } catch { /* keep existing */ }
                 }
               }}
             >
@@ -209,7 +205,7 @@ export default function VideoConsultation() {
                   <div className="vc-info-item"><span>Virtual Inspection</span><small>Let the provider diagnose remotely</small></div>
                   <div className="vc-info-item"><span>Expert Advice</span><small>Get professional guidance before booking</small></div>
                   <div className="vc-info-item"><span>Flexible Duration</span><small>15 to 60 minute sessions</small></div>
-                  <div className="vc-info-item"><span>Free with Premium</span><small>Standard: $5/session</small></div>
+                  <div className="vc-info-item"><span>Free with Premium</span><small>Standard: Rs. 5/session</small></div>
                 </div>
 
                 <form className="vc-form" onSubmit={handleSchedule}>

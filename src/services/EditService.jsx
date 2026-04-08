@@ -1,12 +1,9 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
-import "../styles/provider.css"
+import { SERVICE_CATEGORY_OPTIONS } from '../constants/serviceCategories';
+import "../styles/provider.css";
 
-const categories = [
-  'Home Repair', 'Plumbing', 'Electrical', 'Cleaning',
-  'Landscaping', 'Painting', 'HVAC', 'Carpentry', 'Moving', 'Other',
-];
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const EditService = () => {
@@ -206,7 +203,7 @@ const EditService = () => {
                 <select className="form-select" name="category" value={form.category}
                   onChange={handleChange} required>
                   <option value="">Select Category</option>
-                  {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                  {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </div>
               <div className="form-group">
@@ -237,9 +234,9 @@ const EditService = () => {
 
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Price ($) *</label>
+              <label className="form-label">Price (Rs.) *</label>
               <div className="price-input-wrap">
-                <span className="price-prefix">$</span>
+                <span className="price-prefix">Rs.</span>
                 <input className="form-input" name="price" type="number" value={form.price}
                   onChange={handleChange} min="0" step="0.01" required />
               </div>
