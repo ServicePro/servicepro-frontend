@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import chatApi from '../../api/chatApi';
 import bookingApi from '../../api/bookingApi';
+import chatApi from '../../api/chatApi';
 import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './BookingConfirmation.css';
 
@@ -13,6 +13,23 @@ export default function BookingConfirmation() {
   const [booking, setBooking] = useState(null);
   const [error, setError] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+
+  const handleChatWithProvider = async () => {
+    try {
+      setChatLoading(true);
+      const res = await chatApi.createThread({
+        providerId: booking.providerId?._id,
+        bookingId: booking._id,
+        serviceName: booking.serviceId?.name || 'Service',
+      });
+      const threadId = res.data?._id || res._id;
+      navigate(`/chat?threadId=${threadId}`);
+    } catch (err) {
+      console.error('Failed to open chat:', err);
+    } finally {
+      setChatLoading(false);
+    }
+  };
 
   const handleChatWithProvider = async () => {
     try {

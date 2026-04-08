@@ -2,24 +2,24 @@
 
 /* ===================== CSS VARIABLES ===================== */
 :root {
-  --brand-blue: #2563eb;
-  --brand-blue-light: #3b82f6;
-  --brand-blue-dark: #1d4ed8;
-  --brand-cyan: #06b6d4;
-  --brand-gradient: linear-gradient(135deg, #2563eb 0%, #06b6d4 100%);
+  --brand-blue: var(--primary);
+  --brand-blue-light: var(--accent);
+  --brand-blue-dark: var(--primary-dark);
+  --brand-cyan: #14b8a6;
+  --brand-gradient: linear-gradient(135deg, var(--primary) 0%, #14b8a6 100%);
 
-  --bg-main: #f1f5f9;
-  --bg-card: #ffffff;
-  --bg-sidebar: #ffffff;
-  --bg-hover: #f0f7ff;
+  --bg-main: var(--light);
+  --bg-card: var(--white);
+  --bg-sidebar: #fffdf9;
+  --bg-hover: #fff7ed;
 
-  --border-color: #e2e8f0;
-  --border-focus: #3b82f6;
+  --border-color: var(--border);
+  --border-focus: var(--primary);
 
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
+  --text-primary: var(--text);
+  --text-secondary: var(--text-light);
   --text-muted: #94a3b8;
-  --text-white: #ffffff;
+  --text-white: var(--text-white);
 
   --success: #10b981;
   --success-bg: #ecfdf5;
@@ -27,8 +27,8 @@
   --warning-bg: #fffbeb;
   --danger: #ef4444;
   --danger-bg: #fef2f2;
-  --info: #3b82f6;
-  --info-bg: #eff6ff;
+  --info: #14b8a6;
+  --info-bg: #f0fdfa;
 
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
@@ -129,13 +129,13 @@ p { color: var(--text-secondary); }
 }
 
 .btn-primary_1 {
-  background: var(--brand-gradient);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 55%, var(--accent) 100%);
   color: var(--text-white);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 10px 24px rgba(249, 115, 22, 0.24);
 }
 .btn-primary_1:hover {
-  opacity: 0.92;
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+  opacity: 0.96;
+  box-shadow: 0 14px 28px rgba(249, 115, 22, 0.3);
   transform: translateY(-1px);
 }
 
@@ -226,7 +226,7 @@ p { color: var(--text-secondary); }
 .form-select:focus,
 .form-textarea:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
 }
 
 .form-textarea {
@@ -407,6 +407,13 @@ tbody tr:last-child td { border-bottom: none; }
   flex-shrink: 0;
   background: var(--brand-gradient);
   color: white;
+  overflow: hidden;
+}
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 .avatar-sm { width: 32px; height: 32px; font-size: 0.75rem; }
 .avatar-md { width: 40px; height: 40px; font-size: 0.875rem; }

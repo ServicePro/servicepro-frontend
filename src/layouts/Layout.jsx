@@ -1,39 +1,67 @@
-import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { applyGlobalTheme, emitThemeChange, getInitialDarkMode, onThemeChange } from '../utils/themeMode';
 import Sidebar from './Sidebar';
 
 const pageTitles = {
-  '/provider/dashboard':       { title: 'Dashboard',        breadcrumb: 'Home / Dashboard' },
-  '/provider/add-service':     { title: 'Add Service',      breadcrumb: 'Services / Add New' },
-  '/provider/manage-services': { title: 'Manage Services',  breadcrumb: 'Services / Manage' },
-  '/provider/edit-service':    { title: 'Edit Service',     breadcrumb: 'Services / Edit' },
-  '/provider/appointments':    { title: 'Appointments',     breadcrumb: 'Bookings / Appointments' },
-  '/provider/analytics':       { title: 'Analytics',        breadcrumb: 'Insights / Analytics' },
+  '/provider/dashboard': { title: 'Dashboard', breadcrumb: 'Home / Dashboard' },
+  '/provider/add-service': { title: 'Add Service', breadcrumb: 'Services / Add New' },
+  '/provider/manage-services': { title: 'Manage Services', breadcrumb: 'Services / Manage' },
+  '/provider/edit-service': { title: 'Edit Service', breadcrumb: 'Services / Edit' },
+  '/provider/appointments': { title: 'Appointments', breadcrumb: 'Bookings / Appointments' },
+  '/provider/analytics': { title: 'Analytics', breadcrumb: 'Insights / Analytics' },
 };
 
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const matchKey = Object.keys(pageTitles).find(
-    (k) => location.pathname.startsWith(k)
-  );
+  const matchKey = Object.keys(pageTitles).find((k) => location.pathname.startsWith(k));
   const pageInfo = pageTitles[matchKey] || { title: 'ServicePro', breadcrumb: '' };
 
-  const [providerData, setProviderData] = useState({
-    name: 'Service Provider',
-    role: 'Provider',
-    avatar: 'SP',
-  });
+  const initializeProviderData = () => {
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        return {
+          name: user.name || 'Service Provider',
+          role: user.role === 'provider' ? 'Service Provider' : 'Provider',
+          avatar: (user.name || 'S').charAt(0).toUpperCase(),
+          phone: user.phone || '',
+          category: user.category || 'Other',
+          profileImage: user.profile_image || '',
+        };
+      }
+    } catch (err) {
+      console.error('Error fetching user data from local storage', err);
+    }
+
+    return {
+      name: 'Service Provider',
+      role: 'Provider',
+      avatar: 'SP',
+      phone: '',
+      category: '',
+      profileImage: '',
+    };
+  };
+
+  const [providerData, setProviderData] = useState(initializeProviderData);
+  const [theme, setTheme] = useState(getInitialDarkMode() ? 'dark' : 'light');
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', phone: '', category: '' });
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/');
-  };
+  useEffect(() => {
+    const isDark = theme === 'dark';
+    applyGlobalTheme(isDark);
+    emitThemeChange(isDark);
+  }, [theme]);
 
-  // Close dropdown on outside click
+  useEffect(() => onThemeChange((isDark) => setTheme(isDark ? 'dark' : 'light')), []);
+
   useEffect(() => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -45,27 +73,73 @@ const Layout = () => {
   }, []);
 
   useEffect(() => {
+    const syncProviderData = () => setProviderData(initializeProviderData());
+    window.addEventListener('provider-profile-updated', syncProviderData);
+    return () => window.removeEventListener('provider-profile-updated', syncProviderData);
+  }, []);
+
+  const toggleTheme = () => setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+
+  const handleOpenProfile = () => {
+    setProfileForm({
+      name: providerData.name,
+      phone: providerData.phone || '',
+      category: providerData.category || '',
+    });
+    setIsProfileModalOpen(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/');
+  };
+
+  const handleSaveProfile = async () => {
     try {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        const user = JSON.parse(userStr);
-        setProviderData({
-          name: user.name || 'Service Provider',
-          role: user.role === 'provider' ? 'Service Provider' : 'Provider',
-          avatar: (user.name || 'S').charAt(0).toUpperCase(),
-        });
+      const token = localStorage.getItem('token');
+      const response = await axios.put('http://localhost:5000/api/providers/profile', {
+        name: profileForm.name,
+        phone: profileForm.phone,
+        category: profileForm.category,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        const newAvatar = (profileForm.name || 'S').charAt(0).toUpperCase();
+        setProviderData((prev) => ({
+          ...prev,
+          name: profileForm.name,
+          phone: profileForm.phone,
+          category: profileForm.category,
+          avatar: newAvatar,
+          profileImage: response.data?.data?.provider?.profile_image || prev.profileImage,
+        }));
+
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          user.name = profileForm.name;
+          user.phone = profileForm.phone;
+          user.category = profileForm.category;
+          user.profile_image = response.data?.data?.provider?.profile_image || user.profile_image || '';
+          localStorage.setItem('user', JSON.stringify(user));
+        }
+
+        setIsProfileModalOpen(false);
       }
     } catch (err) {
-      console.error('Error fetching user data from local storage', err);
+      console.error('Error updating profile:', err);
+      alert('Failed to update profile in the database. Please try again.');
     }
-  }, []);
+  };
 
   return (
     <div className="app-layout">
       <Sidebar />
 
       <div className="main-content">
-        {/* Top Header */}
         <header className="header">
           <div className="header-left">
             <span className="header-title">{pageInfo.title}</span>
@@ -73,43 +147,47 @@ const Layout = () => {
           </div>
 
           <div className="header-right">
-            {/* Notification bell */}
             <button className="header-notification-btn" title="Notifications">
               🔔
               <span className="notif-dot"></span>
             </button>
 
-            {/* Provider info */}
-            <div className="header-user" ref={dropdownRef} style={{ position: 'relative', cursor: 'pointer' }}
+            <div
+              className="header-user"
+              ref={dropdownRef}
+              style={{ position: 'relative', cursor: 'pointer' }}
               onClick={() => setDropdownOpen((v) => !v)}
             >
-              <div className="avatar avatar-sm">{providerData.avatar}</div>
+              <div className="avatar avatar-sm">
+                {providerData.profileImage ? (
+                  <img src={providerData.profileImage.startsWith('http') ? providerData.profileImage : `http://localhost:5000${providerData.profileImage.startsWith('/') ? providerData.profileImage : `/${providerData.profileImage}`}`} alt={providerData.name} className="avatar-image" />
+                ) : (
+                  providerData.avatar
+                )}
+              </div>
               <div>
                 <div className="header-user-name">{providerData.name}</div>
                 <div className="header-user-role">{providerData.role}</div>
               </div>
 
               {dropdownOpen && (
-                <div style={{
-                  position: 'absolute', top: 'calc(100% + 10px)', right: 0,
-                  background: '#fff', border: '1px solid #e5e7eb',
-                  borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                  minWidth: '180px', zIndex: 999, overflow: 'hidden',
-                }}>
-                  <div style={{ padding: '12px 16px', borderBottom: '1px solid #f3f4f6' }}>
-                    <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#111827' }}>{providerData.name}</div>
-                    <div style={{ fontSize: '0.78rem', color: '#6b7280' }}>{providerData.role}</div>
+                <div className="header-user-menu">
+                  <div className="header-user-menu-head">
+                    <div className="header-user-menu-name">{providerData.name}</div>
+                    <div className="header-user-menu-role">{providerData.role}</div>
                   </div>
                   <button
-                    onClick={handleLogout}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '8px',
-                      width: '100%', padding: '11px 16px', background: 'none',
-                      border: 'none', cursor: 'pointer', fontSize: '0.9rem',
-                      color: '#ef4444', fontWeight: 600, textAlign: 'left',
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      navigate('/provider/view-profile');
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = '#fef2f2'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                    className="header-user-menu-btn"
+                  >
+                    👤 View Profile
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="header-user-menu-btn danger"
                   >
                     🚪 Logout
                   </button>
@@ -119,11 +197,67 @@ const Layout = () => {
           </div>
         </header>
 
-        {/* Page content rendered by router */}
         <main className="page-content fade-in-up">
           <Outlet />
         </main>
       </div>
+
+      {isProfileModalOpen && (
+        <div className="profile-modal-overlay" onClick={() => setIsProfileModalOpen(false)}>
+          <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="profile-modal-header">
+              <h3 className="profile-modal-title">Update Profile</h3>
+              <button className="profile-modal-close" onClick={() => setIsProfileModalOpen(false)}>×</button>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <label className="form-label">Full Name</label>
+              <input
+                type="text"
+                className="form-input"
+                value={profileForm.name}
+                onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <label className="form-label">Phone Number</label>
+              <input
+                type="text"
+                className="form-input"
+                value={profileForm.phone}
+                onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                placeholder="Enter your phone number"
+              />
+            </div>
+
+            <div className="form-group" style={{ marginBottom: '16px' }}>
+              <label className="form-label">Category</label>
+              <select
+                className="form-select"
+                value={profileForm.category}
+                onChange={(e) => setProfileForm({ ...profileForm, category: e.target.value })}
+              >
+                <option value="">Select a category</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Carpentry">Carpentry</option>
+                <option value="Painting">Painting</option>
+                <option value="Beauty & Wellness">Beauty & Wellness</option>
+                <option value="Home Repair">Home Repair</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="profile-modal-footer">
+              <button className="btn btn-secondary_1" onClick={() => setIsProfileModalOpen(false)}>Cancel</button>
+              <button className="btn btn-primary_1" onClick={handleSaveProfile}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
