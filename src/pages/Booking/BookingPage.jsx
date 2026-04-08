@@ -17,14 +17,6 @@ export default function BookingPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user || JSON.parse(user).role !== 'user') {
-      navigate('/login');
-      return;
-    }
-  }, [navigate]);
-
-  useEffect(() => {
     if (!serviceId) return;
     const fetchService = async () => {
       try {

@@ -485,6 +485,16 @@ const LandingPage = () => {
       }
     };
 
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/services/categories");
+        const data = await res.json();
+        setCategories(data.data || []);
+      } catch (error) {
+        console.error("Categories Error:", error);
+      }
+    };
+
     fetchProviders();
     const intervalId = setInterval(fetchProviders, 15000);
     return () => clearInterval(intervalId);
@@ -536,16 +546,16 @@ const LandingPage = () => {
     {/* LEFT */}
     <div className={styles["hero-left"]}>
       <span className={styles["badge"]}>
-        <FaCheckCircle /> Trusted by 50,000+ customers
+        <FaCheckCircle /> {t.badge}
       </span>
 
       <h1>
-        Find Trusted <br />
-        <span>Home Services</span> Experts Near You
+        {t.heroH1a} <br />
+        <span>{t.heroH1b}</span> {t.heroH1c}
       </h1>
 
       <p className={styles["subtext"]}>
-        Book trusted professionals instantly. Fast, secure, and reliable.
+        {t.heroSub}
       </p>
 
       <div className={styles["hero-highlights"]}>
@@ -569,9 +579,9 @@ const LandingPage = () => {
       </div>
 
       <div className={styles["features"]}>
-        <span><FaCheckCircle /> Verified</span>
-        <span><FaCheckCircle /> Secure</span>
-        <span><FaCheckCircle /> Guaranteed</span>
+        <span><FaCheckCircle /> {t.verified}</span>
+        <span><FaCheckCircle /> {t.secure}</span>
+        <span><FaCheckCircle /> {t.guaranteed}</span>
       </div>
     </div>
 
@@ -579,7 +589,7 @@ const LandingPage = () => {
     <div className={styles["hero-right"]}>
       <div className={styles["hero-card"]}>
 
-        <h3 className={styles["card-title"]}>Top Rated Providers</h3>
+        <h3 className={styles["card-title"]}>{t.topRated}</h3>
 
         {topRatedProviders.length > 0 ? topRatedProviders.map((pro) => (
           <div key={pro._id} className={styles["mini-card"]}>
