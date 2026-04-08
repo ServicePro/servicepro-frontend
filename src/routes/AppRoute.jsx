@@ -66,7 +66,6 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<UserRegister />} />
         <Route path="/provider-register" element={<ServiceProviderRegister />} />
-        <Route path="/provider/register" element={<ServiceProviderRegister />} />
         <Route path="/verify/:token" element={<Verify />} />
         <Route path="/auth/callback" element={<OAuthCallback />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -93,11 +92,12 @@ const AppRoutes = () => {
           <Route path="/saved" element={<ComingSoon title="Saved Items" description="Your saved services and providers" icon="❤️" returnTo="/user-dashboard" />} />
         </Route>
 
+        {/* Provider portal - protected by ProviderRoute */}
         <Route path="/provider" element={<ProviderRoute />}>
           <Route element={<Layout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<ProviderDashboard />} />
-            <Route path="add-service" element={<AddService />} />
+            <Route path="dashboard"       element={<ProviderDashboard />} />
+            <Route path="add-service"     element={<AddService />} />
             <Route path="manage-services" element={<ManageServices />} />
             <Route path="edit-service/:id" element={<EditService />} />
             <Route path="bookings" element={<ProviderBookings />} />
@@ -121,7 +121,21 @@ const AppRoutes = () => {
           </Route>
         </Route>
 
+        {/* Admin Portal - Protected by AdminRoute */}
+        <Route path="/admin" element={<AdminRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard"  element={<DashboardOverview />} />
+            <Route path="users"      element={<UserManagement />} />
+            <Route path="moderation" element={<ServiceModeration />} />
+            <Route path="analytics"  element={<AdminAnalytics />} />
+            <Route path="providers"  element={<ProviderRequests />} />
+          </Route>
+        </Route>
+
+        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
     </BrowserRouter>
   );

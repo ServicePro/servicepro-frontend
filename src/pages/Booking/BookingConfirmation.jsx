@@ -31,13 +31,22 @@ export default function BookingConfirmation() {
     }
   };
 
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user || JSON.parse(user).role !== 'user') {
-      navigate('/login');
-      return;
+  const handleChatWithProvider = async () => {
+    try {
+      setChatLoading(true);
+      const res = await chatApi.createThread({
+        providerId: booking.providerId?._id,
+        bookingId: booking._id,
+        serviceName: booking.serviceId?.name || 'Service',
+      });
+      const threadId = res.data?._id || res._id;
+      navigate(`/chat?threadId=${threadId}`);
+    } catch (err) {
+      console.error('Failed to open chat:', err);
+    } finally {
+      setChatLoading(false);
     }
-  }, [navigate]);
+  };
 
   useEffect(() => {
     const loadBooking = async () => {

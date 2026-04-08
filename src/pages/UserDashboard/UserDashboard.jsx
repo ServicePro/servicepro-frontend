@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import Navbar from "../../components/userDashboard/UserNavbar";
 import Categories from "../../components/userDashboard/Categories";
 import FeaturedServices from "../../components/userDashboard/FeaturedServices";
 import SearchBar from "../../components/userDashboard/SearchBar";
@@ -37,10 +36,13 @@ const UserDashboard = () => {
         error: false,
       });
     }
-  };
+  })();
+
+  const firstName = user.name ? user.name.split(" ")[0] : "there";
 
   return (
     <div className="dashboard">
+
       <Navbar />
 
       <section className="dashboard-hero">
@@ -142,7 +144,7 @@ const UserDashboard = () => {
             <h2>{t.featured || "Featured Services"}</h2>
             <span>{t.featuredSub || "Top rated professionals"}</span>
           </div>
-          <FeaturedServices searchQuery={searchQuery} onSearchResult={setSearchState} />
+          <FeaturedServices />
         </section>
       </main>
 

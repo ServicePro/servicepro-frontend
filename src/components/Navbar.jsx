@@ -4,6 +4,29 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { applyGlobalTheme, emitThemeChange, getInitialDarkMode, onThemeChange } from "../utils/themeMode";
 import "./Navbar.css";
 
+// ── Emergency intent detection ──────────────────────────────────────────────
+const EMERGENCY_WORDS = ['urgent','immediate','emergency','asap','quick','fast','help','broken','burst','flood','leak','fire','now'];
+const SERVICE_DETECT = [
+  [['plumb','pipe','water','tap','drain'], 'plumbing'],
+  [['electric','power','wire','circuit','fuse'], 'electrical'],
+  [['lock','key','locked','door'], 'locksmith'],
+  [['ac','heat','cool','hvac','air condition'], 'hvac'],
+  [['appliance','fridge','washer','oven','machine'], 'appliance'],
+  [['roof','ceiling','tile'], 'roofing'],
+  [['pest','bug','rat','cockroach','insect'], 'pest'],
+  [['flood','damp','mold','damage'], 'water_damage'],
+];
+function detectEmergency(q) {
+  const lower = q.toLowerCase();
+  const isUrgent = EMERGENCY_WORDS.some(w => lower.includes(w));
+  if (!isUrgent) return null;
+  for (const [keywords, type] of SERVICE_DETECT) {
+    if (keywords.some(k => lower.includes(k))) return type;
+  }
+  return 'general';
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [darkMode, setDarkMode] = useState(getInitialDarkMode);
@@ -18,6 +41,8 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
+    // apply saved dark mode on mount
+    document.body.classList.toggle("dark", darkMode);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -49,6 +74,19 @@ const Navbar = () => {
     }
 
     navigate(`/?q=${encodeURIComponent(q)}`);
+  };
+
+  const doNavSearch = () => {
+    const q = search.trim();
+    setResults([]);
+    const emergencyType = detectEmergency(q);
+    if (emergencyType) {
+      navigate(`/emergency${emergencyType !== 'general' ? '?q=' + emergencyType : ''}`);
+    } else if (q) {
+      navigate(`/services?q=${encodeURIComponent(q)}`);
+    } else {
+      navigate('/services');
+    }
   };
 
   return (
