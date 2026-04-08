@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import UserNavbar from '../../components/userDashboard/UserNavbar';
 import emergencyApi from '../../api/emergencyApi';
+import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './EmergencyServices.css';
 
 const TABS = ['Request Service', 'Active Requests', 'Priority History'];
@@ -274,7 +274,7 @@ export default function EmergencyServices() {
                         >
                           <span className="em-svc-icon">{svc.icon}</span>
                           <p className="em-svc-label">{svc.label}</p>
-                          <p className="em-svc-price">from ${svc.basePrice}</p>
+                          <p className="em-svc-price">from Rs. {svc.basePrice}</p>
                         </div>
                       ))}
                     </div>
@@ -327,8 +327,8 @@ export default function EmergencyServices() {
                               </div>
                               <div className="em-prov-right">
                                 <span className="em-prov-rating">⭐ {p.rating?.toFixed(1) || '4.5'}</span>
-                                <span className="em-prov-base-price">${p.baseServicePrice}/hr</span>
-                                <span className="em-prov-em-price">🚨 ${emPrice} emergency</span>
+                                <span className="em-prov-base-price">Rs. {p.baseServicePrice}/hr</span>
+                                <span className="em-prov-em-price">🚨 Rs. {emPrice} emergency</span>
                                 <span className="em-prov-badge">✅ Accepts Emergency</span>
                               </div>
                             </div>
@@ -411,19 +411,19 @@ export default function EmergencyServices() {
                         <div className="em-price-preview">
                           <div className="em-price-row">
                             <span>Provider Base Price</span>
-                            <span>${selectedProvider?.baseServicePrice}/hr</span>
+                            <span>Rs. {selectedProvider?.baseServicePrice}/hr</span>
                           </div>
                           <div className="em-price-row">
                             <span>
                               Emergency Surcharge ({URGENCY_CONFIG[urgency]?.label} ×{URGENCY_CONFIG[urgency]?.mult})
                             </span>
                             <span>
-                              +${((mult - 1) * (selectedProvider?.baseServicePrice || 0)).toFixed(2)}
+                              +Rs. {((mult - 1) * (selectedProvider?.baseServicePrice || 0)).toFixed(2)}
                             </span>
                           </div>
                           <div className="em-price-row em-price-total">
                             <span>Total Emergency Price</span>
-                            <span>${((selectedProvider?.baseServicePrice || 0) * mult).toFixed(2)}</span>
+                            <span>Rs. {((selectedProvider?.baseServicePrice || 0) * mult).toFixed(2)}</span>
                           </div>
                         </div>
 
@@ -554,7 +554,7 @@ function RequestCard({ request, serviceTypes, onCancel }) {
       <div className="em-req-meta">
         <span>📍 {request.location}</span>
         <span>⏱ ETA: {request.eta}</span>
-        <span>💸 ${request.finalPrice}</span>
+        <span>💸 Rs. {request.finalPrice}</span>
         {request.paymentStatus === 'cash_pending' && (
           <span className="em-pay-cash-badge">💵 Cash on Delivery</span>
         )}
@@ -571,7 +571,7 @@ function RequestCard({ request, serviceTypes, onCancel }) {
         )}
         {canPay && (
           <button className="em-pay-btn" onClick={handlePay}>
-            💳 Pay Now — ${request.finalPrice}
+            💳 Pay Now — Rs. {request.finalPrice}
           </button>
         )}
       </div>

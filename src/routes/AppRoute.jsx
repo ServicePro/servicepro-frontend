@@ -22,6 +22,7 @@ import CheckoutPage from "../pages/Checkout/CheckoutPage";
 import EmergencyServices from "../pages/Emergency/EmergencyServices";
 import ReviewsRatings from "../pages/Reviews/ReviewsRatings";
 import ServiceHistory from "../pages/ServiceHistory/ServiceHistory";
+import ServiceDetails from "../pages/services/ServiceDetails";
 import ServiceListing from "../pages/services/ServiceListing";
 import SubscriptionLoyalty from "../pages/Subscription/SubscriptionLoyalty";
 import Support from "../pages/Support/Support";
@@ -30,10 +31,10 @@ import UserDashboard from "../pages/UserDashboard/UserDashboard";
 import DashboardUserProfile from "../pages/UserDashboard/UserProfile";
 import UserProfile from "../pages/UserProfile/UserProfile";
 import VideoConsultation from "../pages/VideoConsultation/VideoConsultation";
-import VRPreview from "../pages/VRPreview/VRPreview";
 
 import ProviderDashboard from "../dashboard/ProviderDashboard";
 import Layout from "../layouts/Layout";
+import ProviderBookings from "../pages/ProviderBookings/ProviderBookings";
 import ProviderConsultations from "../pages/ProviderConsultations/ProviderConsultations";
 import ProviderEmergencyRequests from "../pages/ProviderEmergency/ProviderEmergencyRequests";
 import ProviderViewProfile from "../pages/ProviderProfile/ProviderViewProfile";
@@ -58,6 +59,7 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/services" element={<ServiceListing />} />
+        <Route path="/services/:id" element={<ServiceDetails />} />
         <Route path="/about" element={<ComingSoon title="About Us" description="Learn more about ServicePro" icon="ℹ️" />} />
         <Route path="/contact" element={<ComingSoon title="Contact" description="Get in touch with us" icon="📧" />} />
         <Route path="/login" element={<Login />} />
@@ -82,7 +84,6 @@ const AppRoutes = () => {
           <Route path="/subscription" element={<SubscriptionLoyalty />} />
           <Route path="/emergency" element={<EmergencyServices />} />
           <Route path="/video-consultation" element={<VideoConsultation />} />
-          <Route path="/vr-preview" element={<VRPreview />} />
           <Route path="/support" element={<Support />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/settings" element={<UserProfile />} />
@@ -99,6 +100,7 @@ const AppRoutes = () => {
             <Route path="add-service" element={<AddService />} />
             <Route path="manage-services" element={<ManageServices />} />
             <Route path="edit-service/:id" element={<EditService />} />
+            <Route path="bookings" element={<ProviderBookings />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="emergency-requests" element={<ProviderEmergencyRequests />} />
             <Route path="consultations" element={<ProviderConsultations />} />

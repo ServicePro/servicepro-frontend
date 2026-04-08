@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { SERVICE_CATEGORY_OPTIONS } from '../constants/serviceCategories';
 import { applyGlobalTheme, emitThemeChange, getInitialDarkMode, onThemeChange } from '../utils/themeMode';
 import Sidebar from './Sidebar';
 
@@ -9,6 +10,7 @@ const pageTitles = {
   '/provider/add-service': { title: 'Add Service', breadcrumb: 'Services / Add New' },
   '/provider/manage-services': { title: 'Manage Services', breadcrumb: 'Services / Manage' },
   '/provider/edit-service': { title: 'Edit Service', breadcrumb: 'Services / Edit' },
+  '/provider/bookings':     { title: 'Booking Requests', breadcrumb: 'Bookings / Requests' },
   '/provider/appointments': { title: 'Appointments', breadcrumb: 'Bookings / Appointments' },
   '/provider/analytics': { title: 'Analytics', breadcrumb: 'Insights / Analytics' },
 };
@@ -240,14 +242,9 @@ const Layout = () => {
                 onChange={(e) => setProfileForm({ ...profileForm, category: e.target.value })}
               >
                 <option value="">Select a category</option>
-                <option value="Cleaning">Cleaning</option>
-                <option value="Plumbing">Plumbing</option>
-                <option value="Electrical">Electrical</option>
-                <option value="Carpentry">Carpentry</option>
-                <option value="Painting">Painting</option>
-                <option value="Beauty & Wellness">Beauty & Wellness</option>
-                <option value="Home Repair">Home Repair</option>
-                <option value="Other">Other</option>
+                {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
               </select>
             </div>
 

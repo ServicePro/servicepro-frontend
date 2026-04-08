@@ -115,7 +115,6 @@ const UserNavbar = () => {
                   <Link to="/subscription" onClick={closeAll}>{t.moreSubscription}</Link>
                   <Link to="/emergency" onClick={closeAll}>{t.moreEmergency}</Link>
                   <Link to="/video-consultation" onClick={closeAll}>{t.moreVideo}</Link>
-                  <Link to="/vr-preview" onClick={closeAll}>{t.moreVR}</Link>
                   <Link to="/support" onClick={closeAll}>{t.moreSupport}</Link>
                 </div>
               )}
@@ -252,7 +251,6 @@ const UserNavbar = () => {
           <Link to="/subscription" onClick={closeAll}>{t.moreSubscription}</Link>
           <Link to="/emergency" onClick={closeAll}>{t.moreEmergency}</Link>
           <Link to="/video-consultation" onClick={closeAll}>{t.moreVideo}</Link>
-          <Link to="/vr-preview" onClick={closeAll}>{t.moreVR}</Link>
           <Link to="/support" onClick={closeAll}>{t.moreSupport}</Link>
         </div>
       )}

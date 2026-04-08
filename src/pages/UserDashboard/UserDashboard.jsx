@@ -5,6 +5,7 @@ import FeaturedServices from "../../components/userDashboard/FeaturedServices";
 import SearchBar from "../../components/userDashboard/SearchBar";
 import Footer from "../../components/userDashboard/UserFooter";
 import Navbar from "../../components/userDashboard/UserNavbar";
+import { SERVICE_CATEGORIES } from "../../constants/serviceCategories";
 import { useLang } from "../../context/LangContext";
 import { getStoredUser } from "../../utils/userPresentation";
 import "./UserDashboard.css";
@@ -13,6 +14,8 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const { t } = useLang();
   const [user] = useState(getStoredUser() || { name: "there" });
+  const popularCategoryValues = ["Cleaning", "Plumbing", "Tutoring", "Beauty & Wellness"];
+  const popularTags = SERVICE_CATEGORIES.filter(({ value }) => popularCategoryValues.includes(value));
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchState, setSearchState] = useState({
@@ -94,7 +97,7 @@ const UserDashboard = () => {
                     No services found for "{searchState.query}".
                   </div>
                   <div className="search-feedback search-feedback-hint">
-                    Try related keywords like cleaning, plumbing, electrician, tutoring.
+                    Try related keywords like cleaning, plumbing, tutoring, or wellness.
                   </div>
                 </>
               )}
@@ -107,16 +110,16 @@ const UserDashboard = () => {
 
               <div className="popular-tags">
                 <span>Popular:</span>
-                {["Cleaning", "Plumbing", "Tutoring", "Electrician"].map((tag) => (
+                {popularTags.map(({ value, label }) => (
                   <button
-                    key={tag}
+                    key={value}
                     className="tag-pill"
                     onClick={() => {
-                      setSearchInput(tag);
-                      handleSearchSubmit(tag);
+                      setSearchInput(value);
+                      handleSearchSubmit(value);
                     }}
                   >
-                    {tag}
+                    {label}
                   </button>
                 ))}
               </div>

@@ -15,7 +15,6 @@ export const TRANSLATIONS = {
     moreSubscription: "⭐ Subscription & Loyalty",
     moreEmergency: "🚨 Emergency Services",
     moreVideo: "🎥 Video Consultation",
-    moreVR: "🥽 VR / AR Preview",
     moreSupport: "💬 Support",
     /* Notifications */
     notifTitle: "Notifications",
@@ -58,7 +57,6 @@ export const TRANSLATIONS = {
     moreSubscription: "⭐ சந்தா & விசுவாசம்",
     moreEmergency: "🚨 அவசர சேவைகள்",
     moreVideo: "🎥 வீடியோ ஆலோசனை",
-    moreVR: "🥽 VR / AR முன்னோட்டம்",
     moreSupport: "💬 ஆதரவு",
     /* Notifications */
     notifTitle: "அறிவிப்புகள்",
@@ -101,7 +99,6 @@ export const TRANSLATIONS = {
     moreSubscription: "⭐ දායකත්වය සහ පක්ෂපාතිත්වය",
     moreEmergency: "🚨 හදිසි සේවා",
     moreVideo: "🎥 වීඩියෝ උපදේශය",
-    moreVR: "🥽 VR / AR පෙරදසුන",
     moreSupport: "💬 සහාය",
     /* Notifications */
     notifTitle: "දැනුම්දීම්",

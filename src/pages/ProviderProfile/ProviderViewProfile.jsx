@@ -1,18 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { SERVICE_CATEGORY_OPTIONS } from '../../constants/serviceCategories';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-const CATEGORIES = [
-  'Cleaning',
-  'Plumbing',
-  'Electrical',
-  'Carpentry',
-  'Painting',
-  'Beauty & Wellness',
-  'Home Repair',
-  'Other',
-];
 
 const resolveProfileImage = (value) => {
   if (!value) return '';
@@ -22,6 +13,7 @@ const resolveProfileImage = (value) => {
 };
 
 const ProviderViewProfile = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -121,7 +113,7 @@ const ProviderViewProfile = () => {
 
         setProfileImageFile(null);
         window.dispatchEvent(new Event('provider-profile-updated'));
-        setMessage('Profile updated successfully.');
+        navigate('/provider/dashboard');
       }
     } catch {
       setMessage('Failed to update profile. Please try again.');
@@ -236,8 +228,8 @@ const ProviderViewProfile = () => {
           onChange={(e) => handleChange('category', e.target.value)}
         >
           <option value="">Select category</option>
-          {CATEGORIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
+          {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => (
+            <option key={value} value={value}>{label}</option>
           ))}
         </select>
       </div>

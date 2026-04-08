@@ -121,13 +121,14 @@
 //   );
 // }
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { SERVICE_CATEGORY_OPTIONS, SERVICE_CATEGORY_VALUES } from "../../constants/serviceCategories";
 import "./serviceproviderregistration.css";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const VALID_CATEGORIES = ["Cleaning","Plumbing","Electrical","Carpentry","Painting","Beauty & Wellness","Home Repair","Other"];
+const VALID_CATEGORIES = SERVICE_CATEGORY_VALUES;
 
 // helper component — shows red message under an input
 const FieldError = ({ msg }) =>
@@ -391,7 +392,7 @@ const ServiceProviderRegister = () => {
             <select name="category" value={form.category} onChange={handleChange}
               className={fieldErrors.category ? "field-error-active" : ""}>
               <option value="">Select a category</option>
-              {VALID_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+              {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
             </select>
             <FieldError msg={fieldErrors.category} />
 

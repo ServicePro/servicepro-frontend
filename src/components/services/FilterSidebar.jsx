@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { SERVICE_CATEGORY_OPTIONS } from "../../constants/serviceCategories";
 
 const FilterSidebar = ({ setFilters }) => {
   const [searchParams] = useSearchParams();
@@ -18,6 +19,12 @@ const FilterSidebar = ({ setFilters }) => {
     setFilters(localFilters);
   };
 
+  const applyQuickLocation = (location) => {
+    const next = { ...localFilters, location };
+    setLocalFilters(next);
+    setFilters(next);
+  };
+
   return (
     <div className="filter-sidebar">
       <h3>Filter Services</h3>
@@ -31,15 +38,9 @@ const FilterSidebar = ({ setFilters }) => {
         }
       >
         <option value="">All</option>
-        <option>Cleaning</option>
-        <option>Plumbing</option>
-        <option>Electrical</option>
-        <option>Gardening</option>
-        <option>Pet Care</option>
-        <option>Beauty & Wellness</option>
-        <option>Painting</option>
-        <option>Moving</option>
-        <option>Tutoring</option>
+        {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => (
+          <option key={value} value={value}>{label}</option>
+        ))}
       </select>
 
       {/* PRICE */}
@@ -64,6 +65,39 @@ const FilterSidebar = ({ setFilters }) => {
       />
 
       <button onClick={handleApply}>Apply Filters</button>
+
+      <div className="filter-fill-card">
+        <h4>Quick Locations</h4>
+        <div className="quick-location-chips">
+          {['Colombo', 'Kandy', 'Galle', 'Jaffna', 'Kurunegala'].map((city) => (
+            <button
+              key={city}
+              type="button"
+              className="location-chip"
+              onClick={() => applyQuickLocation(city)}
+            >
+              {city}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter-fill-card filter-highlight-card">
+        <h4>Why Book with ServicePro</h4>
+        <ul>
+          <li>Verified providers with ratings</li>
+          <li>Transparent pricing before booking</li>
+          <li>Real-time booking status tracking</li>
+          <li>In-app support and chat assistance</li>
+        </ul>
+      </div>
+
+      <div className="filter-fill-card">
+        <h4>Need Help Choosing?</h4>
+        <p>
+          Use category + max price + location together to quickly narrow down to the most relevant services.
+        </p>
+      </div>
     </div>
   );
 };

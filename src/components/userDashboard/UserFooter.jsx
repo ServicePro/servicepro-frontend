@@ -1,7 +1,11 @@
+import { AtSign, MessageCircle, PhoneCall } from "lucide-react";
+import { SERVICE_CATEGORIES } from "../../constants/serviceCategories";
 import "./UserFooter.css";
-import {AtSign, MessageCircle, PhoneCall} from "lucide-react";
+
+const FOOTER_CATEGORY_VALUES = ["Cleaning", "Plumbing", "Home Repair"];
 
 const UserFooter = () => {
+  const footerCategories = SERVICE_CATEGORIES.filter(({ value }) => FOOTER_CATEGORY_VALUES.includes(value));
   return (
     <footer className="user-footer">
 
@@ -41,9 +45,7 @@ const UserFooter = () => {
 
           <div>
             <h4>Services</h4>
-            <p>Plumbing</p>
-            <p>Cleaning</p>
-            <p>Electrical</p>
+            {footerCategories.map(({ value, label }) => <p key={value}>{label}</p>)}
           </div>
 
         </div>

@@ -12,6 +12,7 @@ export default function BookingPage() {
   const navigate = useNavigate();
   const [service, setService] = useState(null);
   const [form, setForm] = useState({ date: '', slot: '', address: '', notes: '' });
+  const [paymentMethod, setPaymentMethod] = useState('card');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -27,11 +28,12 @@ export default function BookingPage() {
     if (!serviceId) return;
     const fetchService = async () => {
       try {
-        const res = await servicesApi.getById(serviceId);
-        if (res.success && res.data && res.data.service) {
-          setService(res.data.service);
+        const res = await servicesApi.getPublicById(serviceId);
+        const fetchedService = res?.data?.service || res?.service || res?.data || null;
+        if (res?.success && fetchedService?._id) {
+          setService(fetchedService);
         } else {
-          setError(res.message || 'Service not found.');
+          setError(res?.message || 'Service not found.');
         }
       } catch (e) {
         console.error(e);
@@ -42,6 +44,8 @@ export default function BookingPage() {
   }, [serviceId]);
 
   const totalAmount = useMemo(() => service?.price || 0, [service]);
+  const priceText = Number(totalAmount).toFixed(2);
+  const durationText = service?.duration_minutes ? `${service.duration_minutes} minutes` : 'Flexible duration';
 
   const handleBook = async (e) => {
     e.preventDefault();
@@ -61,7 +65,7 @@ export default function BookingPage() {
     try {
       const payload = {
         serviceId: service._id,
-        providerId: service.providerId,
+        providerId: service.providerId?._id || service.providerId,
         date: form.date,
         time: form.slot,
         location: form.address,
@@ -69,7 +73,29 @@ export default function BookingPage() {
       };
       const res = await bookingApi.create(payload);
       if (res.success) {
-        navigate(`/payment/${res.data._id}`);
+        if (paymentMethod === 'cash') {
+          const bookingId = res.data._id;
+          const cashRes = await bookingApi.updatePayment(bookingId, {
+            paymentState: 'UNPAID',
+            paymentId: `cash_on_hand_${Date.now()}`,
+          });
+
+          if (cashRes.success) {
+            navigate(`/booking-confirmation/${bookingId}`, {
+              state: {
+                paymentMethod: 'cash',
+                loyaltyPointsEarned: cashRes.loyaltyPointsEarned || 0,
+              },
+            });
+          } else {
+            setError(cashRes.message || 'Unable to confirm cash booking.');
+          }
+          return;
+        }
+
+        navigate(`/payment/${res.data._id}`, {
+          state: { paymentMethod: 'card' },
+        });
       } else {
         setError(res.message || 'Booking could not be created.');
       }
@@ -109,18 +135,18 @@ export default function BookingPage() {
 
         <section className="booking-section service-summary">
           <div className="service-header">Booking for {service.name}</div>
-          <div className="service-subtitle">Service by {service.providerId || 'Provider'}</div>
+          <div className="service-subtitle">Service by {service.providerId?.name || 'Provider'}</div>
           <div className="service-row">
             <span>Service Type</span>
             <strong>{service.category}</strong>
           </div>
           <div className="service-row">
             <span>Price</span>
-            <strong>${service.price.toFixed(2)}</strong>
+            <strong>Rs. {priceText}</strong>
           </div>
           <div className="service-row">
             <span>Duration</span>
-            <strong>{service.duration_minutes} minutes</strong>
+            <strong>{durationText}</strong>
           </div>
         </section>
 
@@ -165,9 +191,27 @@ export default function BookingPage() {
             rows={4}
           />
 
+          <label>Payment Method</label>
+          <div className="slots-grid">
+            <button
+              type="button"
+              className={`slot-pill ${paymentMethod === 'card' ? 'selected' : ''}`}
+              onClick={() => setPaymentMethod('card')}
+            >
+              Card Payment
+            </button>
+            <button
+              type="button"
+              className={`slot-pill ${paymentMethod === 'cash' ? 'selected' : ''}`}
+              onClick={() => setPaymentMethod('cash')}
+            >
+              Cash on Hand
+            </button>
+          </div>
+
           <div className="booking-summary">
             <span>Total Cost</span>
-            <strong>${totalAmount.toFixed(2)}</strong>
+            <strong>Rs. {priceText}</strong>
           </div>
 
           {error && <p className="booking-error">{error}</p>}

@@ -16,6 +16,7 @@ const navItems = [
   {
     group: 'Bookings',
     items: [
+      { to: '/provider/bookings', icon: '📋', label: 'Booking Requests', badgeKey: 'bookings' },
       { to: '/provider/appointments', icon: '📅', label: 'Appointments' },
       { to: '/provider/emergency-requests', icon: '🚨', label: 'Emergency Requests', badgeKey: 'emergency' },
       { to: '/provider/consultations', icon: '🎥', label: 'Video Consultations', badgeKey: 'consultations' },
@@ -52,23 +53,26 @@ const Sidebar = ({ onToggleTheme, onOpenProfile, currentTheme, providerData }) =
 
     const headers = { Authorization: `Bearer ${token}` };
     try {
-      const [chatRes, emergRes, consultRes] = await Promise.allSettled([
+      const [chatRes, emergRes, consultRes, bookingRes] = await Promise.allSettled([
         axios.get(`${API}/api/chat/threads`, { headers }),
         axios.get(`${API}/api/emergency/for-provider`, { headers }),
         axios.get(`${API}/api/consultations/provider`, { headers }),
+        axios.get(`${API}/api/bookings/provider/all?status=PENDING`, { headers }),
       ]);
 
       const threads = chatRes.status === 'fulfilled' ? (chatRes.value.data?.data || []) : [];
       const emergency = emergRes.status === 'fulfilled' ? (emergRes.value.data?.data || []) : [];
       const consult = consultRes.status === 'fulfilled' ? (consultRes.value.data?.data || []) : [];
+      const pendingBookings = bookingRes.status === 'fulfilled' ? (bookingRes.value.data?.data || []) : [];
 
       setBadges({
         messages: threads.filter((t) => (t.unreadCountProvider || 0) > 0).length,
         emergency: emergency.filter((r) => r.status === 'pending').length,
         consultations: consult.filter((s) => s.providerStatus === 'pending').length,
+        bookings: pendingBookings.length,
       });
     } catch {
-      setBadges({ messages: 0, emergency: 0, consultations: 0 });
+      setBadges({ messages: 0, emergency: 0, consultations: 0, bookings: 0 });
     }
   }, []);
 
