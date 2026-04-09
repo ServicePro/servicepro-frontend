@@ -24,6 +24,13 @@ export default function PaymentPage() {
     fetchBooking();
   }, [bookingId]);
 
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (!user || JSON.parse(user).role !== 'user') {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   const handlePay = async (e) => {
     e.preventDefault();
     if (!card.number || !card.name || !card.expiry || !card.cvv) {
@@ -42,7 +49,10 @@ export default function PaymentPage() {
 
       if (res.success) {
         navigate(`/booking-confirmation/${bookingId}`, {
-          state: { loyaltyPointsEarned: res.loyaltyPointsEarned || 0 }
+          state: {
+            loyaltyPointsEarned: res.loyaltyPointsEarned || 0,
+            paymentMethod: 'card',
+          }
         });
       } else {
         setError(res.message || 'Payment failed at gateway.');
@@ -97,11 +107,11 @@ export default function PaymentPage() {
             <h2>Order Summary</h2>
             <div className="summary-row"><span>Service</span><span>{booking.serviceId?.name || 'Service'}</span></div>
             <div className="summary-row"><span>Provider</span><span>{booking.providerId?.name || 'Provider'}</span></div>
-            <div className="summary-row"><span>Date</span><span>{new Date(booking.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span></div>
+            <div className="summary-row"><span>Date</span><span>{new Date(booking.date).toLocaleDateString()}</span></div>
             <div className="summary-row"><span>Time</span><span>{booking.time}</span></div>
-            <div className="summary-row"><span>Subtotal</span><span>${booking.amount.toFixed(2)}</span></div>
-            <div className="summary-row"><span>Service Fee</span><span>${serviceFee.toFixed(2)}</span></div>
-            <div className="summary-total"><span>Total Due</span><span>${total.toFixed(2)}</span></div>
+            <div className="summary-row"><span>Subtotal</span><span>Rs. {booking.amount.toFixed(2)}</span></div>
+            <div className="summary-row"><span>Service Fee</span><span>Rs. {serviceFee.toFixed(2)}</span></div>
+            <div className="summary-total"><span>Total Due</span><span>Rs. {total.toFixed(2)}</span></div>
           </aside>
         </div>
       </div>

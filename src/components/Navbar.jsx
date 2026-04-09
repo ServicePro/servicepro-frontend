@@ -1,7 +1,7 @@
-import axios from "axios";
 import { Globe, Menu, Moon, Search, Sun, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { applyGlobalTheme, emitThemeChange, getInitialDarkMode, onThemeChange } from "../utils/themeMode";
 import "./Navbar.css";
 
 // ── Emergency intent detection ──────────────────────────────────────────────
@@ -29,13 +29,11 @@ function detectEmergency(q) {
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('sp_dark') === 'true');
+  const [darkMode, setDarkMode] = useState(getInitialDarkMode);
   const [lang, setLang] = useState(() => localStorage.getItem('sp_lang') || 'EN');
   const [menuOpen, setMenuOpen] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [results, setResults] = useState([]);
-  const dropdownRef = useRef(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,9 +47,11 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    document.body.classList.toggle("dark", darkMode);
-    localStorage.setItem('sp_dark', darkMode);
+    applyGlobalTheme(darkMode);
+    emitThemeChange(darkMode);
   }, [darkMode]);
+
+  useEffect(() => onThemeChange(setDarkMode), []);
 
   const handleLangChange = (e) => {
     const newLang = e.target.value;
@@ -62,27 +62,16 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  const handleSearch = async (value) => {
-    setSearch(value);
-
-    if (!value.trim()) {
-      setResults([]);
-      return;
-    }
-
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/services/search?q=${encodeURIComponent(value)}`
-      );
-      setResults(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const handleSearch = (value) => setSearch(value);
 
   const doNavSearch = () => {
     const q = search.trim();
-    setResults([]);
+
+    if (location.pathname === '/') {
+      if (q) window.dispatchEvent(new CustomEvent('sp_landing_search', { detail: q }));
+      return;
+    }
+
     const emergencyType = detectEmergency(q);
     if (emergencyType) {
       navigate(`/emergency${emergencyType !== 'general' ? '?q=' + emergencyType : ''}`);
@@ -109,36 +98,21 @@ const Navbar = () => {
         </div>
 
         {/* CENTER - SEARCH */}
-        <div className="nav-search" ref={dropdownRef}>
+        <div className="nav-search">
           <Search size={18} className="search-icon" onClick={doNavSearch} style={{ cursor: 'pointer' }} />
           <input
             type="text"
-            placeholder="Search for services..."
+            placeholder="Search on landing page..."
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && doNavSearch()}
           />
-
-          {results.length > 0 && (
-            <div className="search-dropdown">
-              {results.map((item) => (
-                <Link
-                  key={item._id}
-                  to={`/services?q=${encodeURIComponent(item.name)}`}
-                  className="search-item"
-                  onClick={() => { setSearch(item.name); setResults([]); }}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          )}
         </div>
 
         {/* LINKS */}
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
           <li className={isActive("/") ? "active" : ""}><Link to="/">Home</Link></li>
-          <li className={isActive("/services") ? "active" : ""}><Link to="/services">Services</Link></li>
+          <li className={isActive("/login") ? "active" : ""}><Link to="/login">Services</Link></li>
           <li>
             {location.pathname === "/" ? (
               <a href="#faq">About</a>

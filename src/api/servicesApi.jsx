@@ -1,34 +1,26 @@
-import axios from "axios";
+﻿import axios from 'axios';
 
-const API_BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api`;
-
-// ✅ Create axios instance
+const API_BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api`;
 const API = axios.create({
   baseURL: API_BASE_URL,
 });
 
-// ✅ Attach token automatically
 API.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
-
+  const token = localStorage.getItem('token');
+  if (token) req.headers.Authorization = `Bearer ${token}`;
   return req;
 });
 
-// ✅ API methods
 const servicesApi = {
   create: async (formData) => {
-    const response = await API.post("/services", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+    const response = await API.post('/services', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },
 
   getAll: async (params = {}) => {
-    const response = await API.get("/services", { params });
+    const response = await API.get('/services', { params });
     return response.data;
   },
 
@@ -49,7 +41,7 @@ const servicesApi = {
 
   update: async (id, formData) => {
     const response = await API.put(`/services/${id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
   },
@@ -65,7 +57,7 @@ const servicesApi = {
   },
 
   getProviderServices: async () => {
-    const response = await API.get(`/services/provider/my-services`);
+    const response = await API.get('/services/provider/my-services');
     return response.data;
   },
 };

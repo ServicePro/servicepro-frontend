@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserNavbar from '../../components/userDashboard/UserNavbar';
 import subscriptionApi from '../../api/subscriptionApi';
+import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './SubscriptionLoyalty.css';
 
 const TABS = ['Plans', 'Loyalty Points', 'Redeem Rewards'];
@@ -186,7 +186,7 @@ export default function SubscriptionLoyalty() {
                         <h2 className="sl-plan-name">{plan.name}</h2>
                         <div className="sl-plan-price">
                           <span className="sl-price-amount">
-                            {plan.price === 0 ? 'Free' : `$${plan.price}`}
+                            {plan.price === 0 ? 'Free' : `Rs. ${plan.price}`}
                           </span>
                           {plan.price > 0 && (
                             <span className="sl-price-billing">{plan.billing}</span>
@@ -220,7 +220,7 @@ export default function SubscriptionLoyalty() {
                           ? '✓ Current Plan'
                           : plan.price === 0
                           ? '🚀 Get Started — Free'
-                          : `💳 Subscribe & Pay $${plan.price}`}
+                          : `💳 Subscribe & Pay Rs. ${plan.price}`}
                       </button>
                     </div>
                   );

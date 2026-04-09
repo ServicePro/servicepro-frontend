@@ -36,7 +36,6 @@ const AdminLayout = () => {
       const userStr = localStorage.getItem('user');
       if (userStr) {
         const user = JSON.parse(userStr);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setAdminData({
           name: user.name || 'System Admin',
           role: 'Platform Admin',

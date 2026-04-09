@@ -1,10 +1,16 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  FaCheckCircle,
-  FaSearch
+  FaCheckCircle
 } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import appReviewApi from "../../api/appReviewApi";
+import {
+  SERVICE_CATEGORIES,
+  getServiceCategoryDisplayName,
+  getServiceCategoryIcon,
+} from "../../constants/serviceCategories";
 import MainLayout from "../../layouts/MainLayout";
+import { resolveAssetUrl } from "../../utils/media";
 import styles from "./Landing.module.css";
 
 /* ── Translations ──────────────────────────────────────── */
@@ -307,12 +313,14 @@ const T = {
 
 
 const LandingPage = () => {
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const navigate = useNavigate();
+  const location = useLocation();
   const [providers, setProviders] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [liveTestimonials, setLiveTestimonials] = useState([]);
   const [activeFAQ, setActiveFAQ] = useState(null);
-  const [heroSearch, setHeroSearch] = useState('');
   const [lang, setLang] = useState(() => localStorage.getItem('sp_lang') || 'EN');
+  const serviceCatalog = SERVICE_CATEGORIES;
 
   // Listen for language changes dispatched by Navbar
   useEffect(() => {
@@ -323,38 +331,155 @@ const LandingPage = () => {
 
   const t = T[lang] || T.EN;
 
-  const CATEGORY_ICONS = {
-    'Plumbing':      '🔧',
-    'Electrician':   '⚡',
-    'Caretaker':     '👨‍⚕️',
-    'Beautician':    '💄',
-    'Cooking Chef':  '👨‍🍳',
-    'Tutor':         '📚',
-    'Helper':        '🙌',
-    'Cleaner':       '🧹',
-    'Cleaning':      '🧹',
-    'Gardening':     '🌿',
-    'Painting':      '🎨',
-    'Carpentry':     '🪚',
-    'AC Repair':     '❄️',
-    'Pest Control':  '🐛',
-    'Security':      '🛡️',
+  const getProviderCategory = (provider) =>
+    provider.category ? getServiceCategoryDisplayName(provider.category) : 'Service Provider';
+  const getProviderBadge = (provider) => {
+    if (provider.status === 'pending') return 'Pending Approval';
+    if (provider.experience) return `${provider.experience} yrs exp`;
+    return 'Approved Provider';
   };
-
-  const getCategoryIcon = (cat) => CATEGORY_ICONS[cat] || '🔨';
-
-  const doHeroSearch = () => {
-    const q = heroSearch.trim();
-    if (q) navigate(`/services?q=${encodeURIComponent(q)}`);
-    else navigate('/services');
+  const getProviderSkills = (provider) => {
+    if (!provider.skills) return 'Trusted professional available on ServicePro.';
+    return provider.skills.length > 90 ? `${provider.skills.slice(0, 87)}...` : provider.skills;
   };
+  const getProviderImage = (provider) => resolveAssetUrl(provider.profile_image);
+  const getProviderInitial = (provider) => provider.name?.[0]?.toUpperCase() || 'P';
+  const getProviderRatingText = (provider) => {
+    const value = Number(provider?.rating);
+    if (!Number.isFinite(value) || value <= 0) return 'No ratings yet';
+    return `${value.toFixed(1)} ⭐`;
+  };
+  const topRatedProviders = Array.isArray(providers)
+    ? [...providers]
+        .filter(p => Number(p.rating) > 0)
+        .sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0) || (Number(b.total_reviews) || 0) - (Number(a.total_reviews) || 0))
+        .slice(0, 3)
+    : [];
+  const clampRating = (value) => {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) return 5;
+    return Math.max(1, Math.min(5, Math.round(parsed)));
+  };
+  const getStars = (value) => '★'.repeat(clampRating(value));
+  const displayedTestimonials = liveTestimonials.length > 0
+    ? liveTestimonials
+    : t.testimonials.map((item) => ({
+        text: item.text,
+        name: item.name,
+        role: item.role,
+        rating: 5,
+      }));
+
+  const runLandingSearch = useCallback((rawQuery) => {
+    const q = String(rawQuery || '').trim().toLowerCase();
+    if (!q) return;
+
+    const candidates = [];
+    const addCandidate = (text, sectionId, label, weight = 1, faqIndex = null) => {
+      if (!text) return;
+      const hay = String(text).toLowerCase();
+      if (!hay.includes(q)) return;
+
+      const starts = hay.startsWith(q) ? 4 : 0;
+      const tighter = hay.includes(` ${q}`) ? 2 : 0;
+      const score = weight + starts + tighter;
+      candidates.push({ sectionId, label, score, faqIndex });
+    };
+
+    addCandidate(`${t.allServices} ${t.allServicesSub}`, 'services', t.allServices, 6);
+    serviceCatalog.forEach((svc) => addCandidate(`${svc.label} ${svc.description} ${svc.value}`, 'services', t.allServices, 10));
+
+    addCandidate(`${t.featuredTitle} ${t.featuredSub}`, 'providers', t.featuredTitle, 6);
+    providers.forEach((pro) => addCandidate(`${pro.name} ${pro.category || ''} ${pro.area || ''} ${pro.skills || ''}`, 'providers', t.featuredTitle, 10));
+
+    addCandidate(`${t.howItWorks} ${t.howItWorksSub}`, 'how-it-works', t.howItWorks, 5);
+    t.steps.forEach((step) => addCandidate(`${step.title} ${step.desc}`, 'how-it-works', t.howItWorks, 8));
+
+    addCandidate(`${t.whyTitle}`, 'why-servicepro', t.whyTitle, 5);
+    t.why.forEach((item) => addCandidate(`${item.title} ${item.desc}`, 'why-servicepro', t.whyTitle, 8));
+
+    addCandidate(`${t.trustTitle} ${t.trustSub}`, 'trust-safety', t.trustTitle, 6);
+    t.trust.forEach((item) => addCandidate(`${item.title} ${item.desc}`, 'trust-safety', t.trustTitle, 8));
+
+    addCandidate(`${t.pricingTitle} ${t.pricingSub}`, 'pricing', t.pricingTitle, 6);
+    addCandidate(`${t.reviewsTitle}`, 'testimonials', t.reviewsTitle, 5);
+    displayedTestimonials.forEach((tt) => addCandidate(`${tt.name} ${tt.role} ${tt.text}`, 'testimonials', t.reviewsTitle, 8));
+
+    addCandidate(`${t.faqTitle} ${t.faqSub}`, 'faq', t.faqTitle, 6);
+    t.faqs.forEach((f, idx) => addCandidate(`${f.q} ${f.a}`, 'faq', t.faqTitle, 9, idx));
+
+    addCandidate(`${t.joinTitle1} ${t.joinTitle2} ${t.joinSub}`, 'join-professional', `${t.joinTitle1} ${t.joinTitle2}`, 7);
+    addCandidate(`${t.ctaTitle1} ${t.ctaTitle2} ${t.ctaSub}`, 'hero', `${t.ctaTitle1} ${t.ctaTitle2}`, 4);
+
+    if (candidates.length === 0) return;
+
+    candidates.sort((a, b) => b.score - a.score);
+    const best = candidates[0];
+    if (best.sectionId === 'faq' && Number.isInteger(best.faqIndex)) {
+      setActiveFAQ(best.faqIndex);
+    }
+
+    const target = document.getElementById(best.sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [providers, displayedTestimonials, t, serviceCatalog]);
+
+  useEffect(() => {
+    const onLandingSearch = (e) => runLandingSearch(e.detail);
+    window.addEventListener('sp_landing_search', onLandingSearch);
+    return () => window.removeEventListener('sp_landing_search', onLandingSearch);
+  }, [runLandingSearch]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get('q');
+    if (!q) return;
+    const timer = setTimeout(() => runLandingSearch(q), 80);
+    return () => clearTimeout(timer);
+  }, [location.search, runLandingSearch]);
+
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    const ensurePlaying = () => {
+      vid.muted = true;
+      vid.loop = true;
+      const playPromise = vid.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {});
+      }
+    };
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') ensurePlaying();
+    };
+
+    ensurePlaying();
+    vid.addEventListener('ended', ensurePlaying);
+    vid.addEventListener('pause', ensurePlaying);
+    vid.addEventListener('canplay', ensurePlaying);
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', ensurePlaying);
+
+    return () => {
+      vid.removeEventListener('ended', ensurePlaying);
+      vid.removeEventListener('pause', ensurePlaying);
+      vid.removeEventListener('canplay', ensurePlaying);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', ensurePlaying);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/providers");
+        const res = await fetch(`${API}/api/providers/featured?limit=12`);
         const data = await res.json();
-        setProviders(data);
+        setProviders(Array.isArray(data?.data) ? data.data : []);
       } catch (error) {
         console.error("API Error:", error);
         setProviders([]);
@@ -372,7 +497,35 @@ const LandingPage = () => {
     };
 
     fetchProviders();
-    fetchCategories();
+    const intervalId = setInterval(fetchProviders, 15000);
+    return () => clearInterval(intervalId);
+  }, [API]);
+
+  useEffect(() => {
+    const fetchLiveReviews = async () => {
+      try {
+        const response = await appReviewApi.getAll();
+        const items = Array.isArray(response?.data) ? response.data : [];
+
+        const normalized = items
+          .slice(0, 4)
+          .map((review) => ({
+            text: review.comment || "",
+            name: review.userName || "Customer",
+            role: "Verified Customer",
+            rating: clampRating(review.rating),
+          }))
+          .filter((review) => review.text);
+
+        setLiveTestimonials(normalized);
+      } catch (error) {
+        console.error("Live reviews fetch error:", error);
+      }
+    };
+
+    fetchLiveReviews();
+    const intervalId = setInterval(fetchLiveReviews, 15000);
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -382,8 +535,8 @@ const LandingPage = () => {
 <section id="hero" className={styles["video-hero"]}>
 
   {/* VIDEO */}
-  <video autoPlay loop muted playsInline className={styles["bg-video"]}>
-    <source src="https://storage.cloud.google.com/servicepro-assets/videos/HeroVideo.mp4" type="video/mp4" />
+  <video ref={videoRef} autoPlay loop muted playsInline preload="auto" controls={false} disablePictureInPicture className={styles["bg-video"]}>
+    <source src="https://storage.googleapis.com/servicepro-assets/videos/HeroVideo.mp4" type="video/mp4" />
   </video>
 
   {/* OVERLAY */}
@@ -406,21 +559,24 @@ const LandingPage = () => {
         {t.heroSub}
       </p>
 
-      <div className={styles["search-box"]}>
-        <input
-          placeholder={t.searchPlaceholder}
-          value={heroSearch}
-          onChange={(e) => setHeroSearch(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && doHeroSearch()}
-        />
-        <button onClick={doHeroSearch}><FaSearch /></button>
+      <div className={styles["hero-highlights"]}>
+        <div className={styles["hero-highlight-card"]}>
+          <strong>2 min</strong>
+          <span>Average booking flow</span>
+        </div>
+        <div className={styles["hero-highlight-card"]}>
+          <strong>4.8/5</strong>
+          <span>Average provider rating</span>
+        </div>
+        <div className={styles["hero-highlight-card"]}>
+          <strong>24/7</strong>
+          <span>Support for urgent needs</span>
+        </div>
       </div>
 
       <div className={styles["hero-buttons"]}>
-        <Link to="/login" className="btn outline">{t.login}</Link>
-        <Link to="/register" className="btn primary">{t.signup}</Link>
-        <Link to="/provider-register" className="btn outline">{t.becomeProvider}</Link>
-        <Link to="/services" className="btn outline">{t.browse}</Link>
+        <Link to="/provider-register" className={styles["hero-btn-primary"]}>Become a Provider</Link>
+        <Link to="/login" className={styles["hero-btn-secondary"]}>Browse Services</Link>
       </div>
 
       <div className={styles["features"]}>
@@ -436,16 +592,24 @@ const LandingPage = () => {
 
         <h3 className={styles["card-title"]}>{t.topRated}</h3>
 
-        {["Sarah", "Mike", "Emma"].map((name, i) => (
-          <div key={i} className={styles["mini-card"]}>
-            <div className={styles["avatar"]}>{name[0]}</div>
-            <div>
-              <p>{name}</p>
-              <small>4.{8 + i} ⭐</small>
+        {topRatedProviders.length > 0 ? topRatedProviders.map((pro) => (
+          <div key={pro._id} className={styles["mini-card"]}>
+            <div className={styles["avatar"]}>
+              {getProviderImage(pro) ? (
+                <img src={getProviderImage(pro)} alt={pro.name} className={styles["mini-avatar-img"]} />
+              ) : (
+                getProviderInitial(pro)
+              )}
             </div>
-            <span>${40 + i * 10}/hr</span>
+            <div className={styles["mini-info"]}>
+              <p>{pro.name}</p>
+              <small>{getProviderCategory(pro)} • {getProviderRatingText(pro)}</small>
+            </div>
+            <span className={styles["mini-meta"]}>{pro.total_reviews || 0} reviews</span>
           </div>
-        ))}
+        )) : (
+          <div className={styles["mini-card-empty"]}>Top rated providers will appear here soon.</div>
+        )}
 
       </div>
     </div>
@@ -465,36 +629,18 @@ const LandingPage = () => {
 
     <div className={styles["services-grid"]}>
 
-      {categories.length > 0
-        ? categories.map((item) => (
-            <div
-              key={item.category}
-              className={styles["service-box"]}
-              onClick={() => navigate(`/services?q=${encodeURIComponent(item.category)}`)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className={styles["service-icon"]}>{getCategoryIcon(item.category)}</div>
-              <h3>{item.category}</h3>
-              <p>{item.count} service{item.count !== 1 ? 's' : ''} available</p>
-            </div>
-          ))
-        : [
-            { name: "Plumbing",      desc: "Leak fix, pipes & more",      icon: "🔧" },
-            { name: "Electrician",   desc: "Wiring, repairs & fitting",   icon: "⚡" },
-            { name: "Caretaker",     desc: "Elderly & patient care",      icon: "👨‍⚕️" },
-            { name: "Beautician",    desc: "Hair, skin & makeup",         icon: "💄" },
-            { name: "Cooking Chef",  desc: "Home & event catering",       icon: "👨‍🍳" },
-            { name: "Tutor",         desc: "All subjects & levels",       icon: "📚" },
-            { name: "Helper",        desc: "Moving, errands & more",      icon: "🙌" },
-            { name: "Cleaner",       desc: "Deep & regular cleaning",     icon: "🧹" },
-          ].map((item, i) => (
-            <div key={i} className={styles["service-box"]}>
-              <div className={styles["service-icon"]}>{item.icon}</div>
-              <h3>{item.name}</h3>
-              <p>{item.desc}</p>
-            </div>
-          ))
-      }
+      {serviceCatalog.map((item) => (
+        <div
+          key={item.value}
+          className={styles["service-box"]}
+          onClick={() => navigate('/login')}
+        >
+          <div className={styles["service-icon"]}>{getServiceCategoryIcon(item.value)}</div>
+          <h3>{item.label}</h3>
+          <p>{item.description}</p>
+          <span className={styles["service-cta"]}>Explore <span className={styles["cta-arrow"]}>→</span></span>
+        </div>
+      ))}
 
     </div>
   </div>
@@ -565,28 +711,38 @@ const LandingPage = () => {
 
     <div className={styles["providers-grid"]}>
 
-      {Array.isArray(providers) && providers.map((pro) => (
+      {Array.isArray(providers) && providers.length > 0 ? providers.map((pro) => (
         <div key={pro._id} className={styles["provider-card"]}>
 
           <div className={styles["provider-img"]}>
-            <img src={pro.image} alt={pro.name} />
-            <span className={styles["badge-top"]}>{pro.badge}</span>
+            {getProviderImage(pro) ? (
+              <img src={getProviderImage(pro)} alt={pro.name} />
+            ) : (
+              <div className={styles["provider-avatar-fallback"]}>{getProviderInitial(pro)}</div>
+            )}
+            <span className={styles["badge-top"]}>{getProviderBadge(pro)}</span>
           </div>
 
           <div className={styles["provider-info"]}>
             <h3>{pro.name}</h3>
-            <p className={styles["role"]}>{pro.service}</p>
+            <p className={styles["role"]}>{getProviderCategory(pro)}</p>
+            <p className={styles["provider-area"]}>📍 {pro.area || 'Available locally'}</p>
+            <p className={styles["provider-skills"]}>{getProviderSkills(pro)}</p>
 
             <div className={styles["provider-meta"]}>
-              ⭐ {pro.rating} ({pro.reviews})
-              <span className={styles["price"]}>${pro.price}/hr</span>
+              <span>{getProviderRatingText(pro)} ({pro.total_reviews || 0} reviews)</span>
+              <span className={styles["price"]}>{getProviderCategory(pro)}</span>
             </div>
 
-            <Link to="/booking" className="btn primary">{t.bookNow}</Link>
+            <Link to="/login" className={styles["provider-action"]}>{t.bookNow}</Link>
           </div>
 
         </div>
-      ))}
+      )) : (
+        <div className={styles["providers-empty"]}>
+          Featured providers will appear here once approved service providers are available.
+        </div>
+      )}
 
     </div>
   </div>
@@ -618,8 +774,8 @@ const LandingPage = () => {
 
       {t.trust.map((item, i) => (
         <div key={i} className={styles["trust-card"]}>
-          <div className={styles["trust-icon"]}>✔</div>
-          <div>
+          <div className={styles["trust-icon"]}>{['🛡', '✅', '🔒'][i] || '✔'}</div>
+          <div className={styles["trust-card-content"]}>
             <h4>{item.title}</h4>
             <p>{item.desc}</p>
           </div>
@@ -724,13 +880,13 @@ const LandingPage = () => {
 
     <div className={styles["testimonial-grid"]}>
 
-      {t.testimonials.map((tt, i) => (
+      {displayedTestimonials.map((tt, i) => (
         <div key={i} className={styles["testimonial-card"]}>
-          <div className={styles["stars"]}>⭐⭐⭐⭐⭐</div>
+          <div className={styles["stars"]}>{getStars(tt.rating || 5)}</div>
           <p>"{tt.text}"</p>
 
-          <div className={styles["user"]}>
-            <div className={styles["avatar"]}>{tt.name[0]}</div>
+          <div className={styles["review-user"]}>
+            <div className={styles["review-avatar"]}>{tt.name[0]}</div>
             <div>
               <h4>{tt.name}</h4>
               <small>{tt.role}</small>
@@ -825,11 +981,12 @@ const LandingPage = () => {
         {t.joinSub}
       </p>
 
-      <button className={`btn primary ${styles["join-btn"]}`}>
-        {t.joinBtn}
-      </button>
+      <Link to="/provider-register" className={styles["join-btn"]}>
+        <span>{t.joinBtn.replace(' →', '')}</span>
+        <span className={styles["join-btn-arrow"]}>→</span>
+      </Link>
 
-      <small>{t.joinSmall}</small>
+      <small className={styles["join-note"]}>{t.joinSmall}</small>
     </div>
 
     {/* RIGHT */}
@@ -866,8 +1023,8 @@ const LandingPage = () => {
       </p>
 
       <div className={styles["cta-buttons"]}>
-        <Link to="/booking" className="btn primary">{t.ctaBook}</Link>
-        <Link to="/services" className="btn outline">{t.ctaBrowse}</Link>
+        <Link to="/login" className={styles["cta-btn-primary"]}>{t.ctaBook}</Link>
+        <Link to="/login" className={styles["cta-btn-secondary"]}>{t.ctaBrowse}</Link>
       </div>
 
       <small>

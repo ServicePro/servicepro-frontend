@@ -1,21 +1,39 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { SERVICE_CATEGORY_OPTIONS } from "../../constants/serviceCategories";
 
 const FilterSidebar = ({ setFilters }) => {
   const [searchParams] = useSearchParams();
-  const [localFilters, setLocalFilters] = useState({});
+  const [localFilters, setLocalFilters] = useState(() => {
+    // Read URL param synchronously on first render so no effect needed
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('category');
+    return category ? { category } : {};
+  });
 
+  // Keep ServiceListing in sync when navigating back to page with category param
   useEffect(() => {
-    // Initialize local filters from URL parameters
     const category = searchParams.get('category');
     if (category) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLocalFilters({ category });
+      setFilters({ category });
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleApply = () => {
     setFilters(localFilters);
+  };
+
+  const handleCategoryChange = (value) => {
+    const next = { ...localFilters, category: value };
+    setLocalFilters(next);
+    setFilters(next);   // immediate apply
+  };
+
+  const applyQuickLocation = (location) => {
+    const next = { ...localFilters, location };
+    setLocalFilters(next);
+    setFilters(next);
   };
 
   return (
@@ -26,19 +44,12 @@ const FilterSidebar = ({ setFilters }) => {
       <label>Category</label>
       <select
         value={localFilters.category || ""}
-        onChange={(e) =>
-          setLocalFilters({ ...localFilters, category: e.target.value })
-        }
+        onChange={(e) => handleCategoryChange(e.target.value)}
       >
         <option value="">All</option>
-        <option>Cleaning</option>
-        <option>Plumbing</option>
-        <option>Electrical</option>
-        <option>Gardening</option>
-        <option>Pet Care</option>
-        <option>Painting</option>
-        <option>Moving</option>
-        <option>Tutoring</option>
+        {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => (
+          <option key={value} value={value}>{label}</option>
+        ))}
       </select>
 
       {/* PRICE */}
@@ -63,6 +74,39 @@ const FilterSidebar = ({ setFilters }) => {
       />
 
       <button onClick={handleApply}>Apply Filters</button>
+
+      <div className="filter-fill-card">
+        <h4>Quick Locations</h4>
+        <div className="quick-location-chips">
+          {['Colombo', 'Kandy', 'Galle', 'Jaffna', 'Kurunegala'].map((city) => (
+            <button
+              key={city}
+              type="button"
+              className="location-chip"
+              onClick={() => applyQuickLocation(city)}
+            >
+              {city}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="filter-fill-card filter-highlight-card">
+        <h4>Why Book with ServicePro</h4>
+        <ul>
+          <li>Verified providers with ratings</li>
+          <li>Transparent pricing before booking</li>
+          <li>Real-time booking status tracking</li>
+          <li>In-app support and chat assistance</li>
+        </ul>
+      </div>
+
+      <div className="filter-fill-card">
+        <h4>Need Help Choosing?</h4>
+        <p>
+          Use category + max price + location together to quickly narrow down to the most relevant services.
+        </p>
+      </div>
     </div>
   );
 };

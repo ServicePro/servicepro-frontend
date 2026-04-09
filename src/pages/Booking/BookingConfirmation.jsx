@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import chatApi from '../../api/chatApi';
 import bookingApi from '../../api/bookingApi';
+import chatApi from '../../api/chatApi';
 import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './BookingConfirmation.css';
 
@@ -62,6 +62,11 @@ export default function BookingConfirmation() {
     );
   }
 
+  const paymentMethodFromState = location.state?.paymentMethod;
+  const paymentMethod = paymentMethodFromState
+    || (booking.paymentId?.startsWith('cash_on_hand_') ? 'cash' : 'card');
+  const paymentStatusText = paymentMethod === 'cash' ? 'Cash on Hand (Pay at Service)' : 'Card Payment (Paid)';
+
   return (
     <div className="confirmation-root">
       <UserNavbar />
@@ -105,7 +110,11 @@ export default function BookingConfirmation() {
           </div>
           <div className="detail-row detail-row--total">
             <span className="detail-label">Total Cost</span>
-            <strong className="detail-amount">${booking.amount.toFixed(2)}</strong>
+            <strong className="detail-amount">Rs. {booking.amount.toFixed(2)}</strong>
+          </div>
+          <div className="detail-row">
+            <span className="detail-label">Payment Method</span>
+            <strong>{paymentStatusText}</strong>
           </div>
         </div>
 

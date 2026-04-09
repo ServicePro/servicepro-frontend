@@ -1,16 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import dashboardApi from '../api/dashboardApi';
+import "../styles/provider.css";
 
 // ── Badge helper ───────────────────────────────────────────────
 const statusBadge = (status) => {
   const map = {
-    confirmed: 'badge badge-info',
-    pending:   'badge badge-warning',
-    completed: 'badge badge-success',
-    cancelled: 'badge badge-danger',
+    confirmed:  'badge badge-info',
+    pending:    'badge badge-warning',
+    ongoing:    'badge badge-info',
+    completed:  'badge badge-success',
+    cancelled:  'badge badge-danger',
+    emergency:  'badge badge-emergency',
   };
   return map[status] || 'badge badge-muted';
+};
+
+const STATUS_LABELS = {
+  pending:   'Pending',
+  confirmed: 'Confirmed',
+  ongoing:   '🔧 In Progress',
+  completed: 'Completed',
+  cancelled: 'Cancelled',
+  emergency: '🚨 Emergency',
 };
 
 // ── Component ──────────────────────────────────────────────────
@@ -67,7 +79,7 @@ const ProviderDashboard = () => {
     },
     {
       label: 'Monthly Revenue',
-      value: `$${data.stats.monthlyRevenue}`,
+      value: `Rs. ${data.stats.monthlyRevenue}`,
       change: `${data.stats.revenueChange}% vs last month`,
       positive: data.stats.revenueChange >= 0,
       icon: '💰',
@@ -84,10 +96,10 @@ const ProviderDashboard = () => {
   ];
 
   const quickActions = [
+    { to: '/provider/bookings', icon: '📋', iconBg: '#fff7ed', title: 'Booking Requests', desc: `${data.statusBreakdown?.pending || 0} pending` },
     { to: '/provider/add-service', icon: '➕', iconBg: '#eff6ff', title: 'Add Service', desc: 'List a new service' },
-    { to: '/provider/appointments', icon: '📅', iconBg: '#ecfdf5', title: 'View Appointments', desc: `${data.statusBreakdown?.pending || 0} pending` },
     { to: '/provider/manage-services', icon: '🛠️', iconBg: '#f5f3ff', title: 'Manage Services', desc: 'Edit your listings' },
-    { to: '/provider/analytics', icon: '📊', iconBg: '#fff7ed', title: 'View Analytics', desc: 'Track performance' },
+    { to: '/provider/analytics', icon: '📊', iconBg: '#ecfdf5', title: 'View Analytics', desc: 'Track performance' },
   ];
 
   return (
@@ -98,7 +110,7 @@ const ProviderDashboard = () => {
           <h1>Welcome back 👋</h1>
           <p>{today}</p>
         </div>
-        <Link to="/provider/add-service" className="btn btn-primary">
+        <Link to="/provider/add-service" className="btn btn-primary_1">
           <span>➕</span> Add New Service
         </Link>
       </div>
@@ -140,7 +152,7 @@ const ProviderDashboard = () => {
         <div className="card">
           <div className="section-header">
             <h2>Recent Appointments</h2>
-            <Link to="/provider/appointments" className="btn btn-secondary btn-sm">
+            <Link to="/provider/bookings" className="btn btn-secondary_1 btn-sm">
               View All →
             </Link>
           </div>
@@ -158,24 +170,25 @@ const ProviderDashboard = () => {
               </thead>
               <tbody>
                 {data.recentAppointments.map((appt) => (
-                  <tr key={appt.id}>
+                  <tr key={appt.id} style={appt.type === 'emergency' ? { background: '#fff7ed' } : {}}>
                     <td>
                       <div className="appointment-row-avatar">
-                        <div className="avatar avatar-sm">{appt.client_name.charAt(0)}</div>
+                        <div className="avatar avatar-sm">{(appt.client_name || '?').charAt(0)}</div>
                         <div className="appointment-row-info">
                           <strong>{appt.client_name}</strong>
+                          {appt.type === 'emergency' && <span style={{ fontSize: '0.7rem', color: '#dc2626', fontWeight: 700 }}>Emergency</span>}
                         </div>
                       </div>
                     </td>
                     <td>{appt.service_name}</td>
                     <td>
                       <div className="appointment-row-info">
-                        <strong>{appt.appointment_date.substring(0, 10)}</strong>
+                        <strong>{new Date(appt.appointment_date).toLocaleDateString()}</strong>
                         <span>{appt.appointment_time}</span>
                       </div>
                     </td>
                     <td>
-                      <strong style={{ color: 'var(--brand-blue)' }}>${appt.amount}</strong>
+                      <strong style={{ color: 'var(--brand-blue)' }}>Rs. {appt.amount}</strong>
                     </td>
                     <td>
                       <span className={statusBadge(appt.status)}>
@@ -204,7 +217,7 @@ const ProviderDashboard = () => {
               {Object.entries(data.statusBreakdown).map(([status, count]) => (
                 <div key={status} className="status-item">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span className={statusBadge(status)}>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                    <span className={statusBadge(status)}>{STATUS_LABELS[status] || status}</span>
                   </div>
                   <span className="status-count">{count}</span>
                 </div>
@@ -227,7 +240,7 @@ const ProviderDashboard = () => {
                   <strong>{s.name}</strong>
                   <span>{s.total_bookings} bookings</span>
                 </div>
-                <div className="top-service-revenue">${s.revenue}</div>
+                <div className="top-service-revenue">Rs. {s.revenue}</div>
               </div>
             ))}
           </div>

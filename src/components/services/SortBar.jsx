@@ -1,10 +1,11 @@
-const SortBar = ({ setSort }) => {
+const SortBar = ({ sort, setSort }) => {
   return (
     <div className="sort-bar">
-      <select onChange={(e) => setSort(e.target.value)}>
-        <option value="">Sort By</option>
-        <option value="price">Price</option>
-        <option value="rating">Popularity</option>
+      <select value={sort} onChange={(e) => setSort(e.target.value)}>
+        <option value="" disabled>Sort By</option>
+        <option value="price_low">Price: Low to High</option>
+        <option value="price_high">Price: High to Low</option>
+        <option value="popular">Most Popular</option>
         <option value="newest">Newest</option>
       </select>
     </div>

@@ -251,35 +251,59 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
+  margin-top: 8px;
 }
 
 .sh-btn {
-  flex: 1;
-  padding: 9px 14px;
-  border-radius: 8px;
-  border: none;
-  font-size: 0.85rem;
+  flex: 0 0 auto;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
+  transition: all 0.18s;
   white-space: nowrap;
-  min-width: 90px;
   text-align: center;
+  line-height: 1.2;
 }
 
 .sh-btn:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.sh-btn:active {
+  transform: translateY(0);
 }
 
 .sh-btn-rebook {
-  background: #2563eb;
-  color: #fff;
+  background: transparent;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.sh-btn-rebook:hover {
+  background: #eff6ff;
 }
 
 .sh-btn-review {
-  background: #f59e0b;
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  border-color: transparent;
   color: #fff;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.sh-btn-review:hover {
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
+}
+
+.sh-btn-review.sh-btn-review-open {
+  background: transparent;
+  border-color: #f59e0b;
+  color: #f59e0b;
+  box-shadow: none;
 }
 
 /* ── Inline Review ───────────────────────────────────────── */
@@ -416,7 +440,14 @@
 
 .sh-btn-invoice {
   background: #10b981;
+  border-color: transparent;
   color: #fff;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.sh-btn-invoice:hover {
+  background: #059669;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
 }
 
 /* ── States ──────────────────────────────────────────────── */
@@ -524,15 +555,39 @@
   background: #fecaca;
 }
 
-.sh-btn-review {
-  background: #f59e0b;
-  color: #fff;
+.sh-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 24px 0 12px;
+  padding-left: 4px;
+  border-left: 3px solid #2563eb;
+  padding-left: 10px;
 }
 
-.sh-btn-review.sh-btn-review-open {
-  background: #e2e8f0;
-  color: #475569;
+.sh-fav-rating-badge {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
 }
+
+.sh-btn-secondary {
+  background: transparent;
+  border-color: #94a3b8;
+  color: #64748b;
+}
+
+.sh-btn-secondary:hover {
+  background: #f1f5f9;
+  border-color: #64748b;
+}
+
+/* sh-btn-review styles defined above in Action Buttons section */
 
 .sh-review-done-badge {
   display: inline-flex;

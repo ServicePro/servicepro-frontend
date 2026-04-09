@@ -72,6 +72,62 @@
   background: var(--primary-dark);
 }
 
+.filter-fill-card {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+}
+
+.filter-fill-card h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: var(--dark);
+}
+
+.filter-fill-card p {
+  margin: 0;
+  color: var(--text-light);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.filter-fill-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-light);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.filter-highlight-card {
+  background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  border-color: rgba(249, 115, 22, 0.25);
+}
+
+.quick-location-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.location-chip {
+  width: auto !important;
+  margin: 0 !important;
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(249, 115, 22, 0.35) !important;
+  background: rgba(249, 115, 22, 0.08) !important;
+  color: var(--primary-dark) !important;
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+.location-chip:hover {
+  background: rgba(249, 115, 22, 0.16) !important;
+}
+
 /* CONTENT */
 .service-content {
   flex: 1;
@@ -98,8 +154,108 @@
 /* GRID */
 .service-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
+}
+
+.service-grid .service-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.service-grid .service-card > img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.service-grid .service-img-placeholder {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #fff3e8 0%, #ffe0c4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+}
+
+.service-grid .service-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 8px;
+  min-height: 180px;
+}
+
+.service-grid .service-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.35;
+}
+
+.service-grid .service-category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  color: var(--primary-dark);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: capitalize;
+}
+
+.service-grid .service-provider,
+.service-grid .service-rating {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-light);
+  line-height: 1.45;
+}
+
+.service-grid .service-location {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.service-grid .price {
+  margin: auto 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.service-grid .service-details-button {
+  margin-top: 10px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.service-grid .service-details-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
 }
 
 /* LOADING & NO SERVICES */
@@ -121,6 +277,18 @@
 }
 
 /* RESPONSIVE */
+@media (max-width: 1440px) {
+  .service-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1080px) {
+  .service-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .main-container {
     flex-direction: column;
@@ -131,8 +299,52 @@
   }
 
   .service-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: 1fr;
   }
+}
+
+/* ── Category Grouped View ───────────────────────────────── */
+.sl-category-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.sl-category-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sl-category-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border);
+}
+
+.sl-category-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.sl-category-heading h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.sl-category-count {
+  margin-left: auto;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: var(--light);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
 }
 
 /* SERVICE DETAILS */
@@ -247,26 +459,42 @@
   background: rgba(249, 115, 22, 0.06);
 }
 
+.service-actions .btn-outline {
+  color: #000;
+}
+
+.service-actions .btn-outline:hover {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
 .service-details-grid {
-  display: grid;
-  grid-template-columns: 1.4fr 0.9fr;
+  display: flex;
+  flex-direction: column;
   gap: 28px;
-  align-items: start;
 }
 
 .service-details-image img {
   width: 100%;
-  height: 100%;
-  min-height: 420px;
+  height: 420px;
   object-fit: cover;
   border-radius: 24px;
   box-shadow: var(--shadow);
+  display: block;
 }
 
 .service-details-summary {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.service-summary-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
 }
 
 .service-price-row {
@@ -393,9 +621,15 @@
   margin-bottom: 18px;
 }
 
+@media (max-width: 768px) {
+  .service-summary-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1024px) {
   .service-details-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .service-details-header {
@@ -437,7 +671,7 @@
   }
 
   .service-details-image img {
-    min-height: 240px;
+    height: 240px;
   }
 
   .service-actions {
@@ -592,6 +826,18 @@
   margin: 0;
   font-size: 0.87rem;
   color: #1e40af;
+}
+
+.sd-review-emergency-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff0f0;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  margin-top: 2px;
 }
 
 /* â”€â”€ Service Details â€” Reviews Section â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */

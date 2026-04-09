@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import UserNavbar from '../../components/userDashboard/UserNavbar';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import emergencyApi from '../../api/emergencyApi';
 import subscriptionApi from '../../api/subscriptionApi';
+import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './CheckoutPage.css';
 
 // Calculate $ discount from a pending reward and a base amount
@@ -163,7 +163,7 @@ export default function CheckoutPage() {
                   : 'Your subscription plan has been activated. Enjoy the benefits!'}
             </p>
             {useReward && rewardDiscount > 0 && (
-              <p className="co-success-reward">🎁 Reward "{pendingReward.title}" applied — saved ${rewardDiscount.toFixed(2)}!</p>
+              <p className="co-success-reward">🎁 Reward "{pendingReward.title}" applied — saved Rs. {rewardDiscount.toFixed(2)}!</p>
             )}
             <p className="co-success-redirect">Redirecting you back…</p>
           </div>
@@ -273,7 +273,7 @@ export default function CheckoutPage() {
                   {error && <p className="co-error">{error}</p>}
 
                   <button className="co-btn" type="submit" disabled={paying}>
-                    {paying ? 'Processing…' : `Pay $${displayTotal.toFixed(2)}`}
+                    {paying ? 'Processing…' : `Pay Rs. ${displayTotal.toFixed(2)}`}
                   </button>
 
                   <p className="co-secure-note">🔒 256-bit SSL encryption · Your data is never stored</p>
@@ -287,7 +287,7 @@ export default function CheckoutPage() {
                   <h3 className="co-cash-title">Cash on Delivery</h3>
                   <p className="co-cash-desc">
                     Your booking will be confirmed immediately. The provider will arrive at your location
-                    and you pay <strong>${displayTotal.toFixed(2)}</strong> in cash after the work is done.
+                    and you pay <strong>Rs. {displayTotal.toFixed(2)}</strong> in cash after the work is done.
                   </p>
                   <ul className="co-cash-list">
                     <li>✅ No upfront payment required</li>
@@ -327,38 +327,38 @@ export default function CheckoutPage() {
                 <>
                   <div className="co-summary-row">
                     <span>Base Service Cost</span>
-                    <span>${base.toFixed(2)}</span>
+                    <span>Rs. {base.toFixed(2)}</span>
                   </div>
                   <div className="co-summary-row" style={{ color: '#ef4444' }}>
                     <span>Emergency Surcharge (×{mult - 1 > 0 ? (mult - 1).toFixed(1) : mult})</span>
-                    <span>+${surcharge.toFixed(2)}</span>
+                    <span>+Rs. {surcharge.toFixed(2)}</span>
                   </div>
                   {useReward && rewardDiscount > 0 && (
                     <div className="co-summary-row co-reward-row">
                       <span>🎁 {pendingReward.title}</span>
-                      <span>-${rewardDiscount.toFixed(2)}</span>
+                      <span>-Rs. {rewardDiscount.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="co-summary-row co-summary-total">
                     <span>Total Due</span>
-                    <span>${displayTotal.toFixed(2)}</span>
+                    <span>Rs. {displayTotal.toFixed(2)}</span>
                   </div>
                 </>
               ) : (
                 <>
                   <div className="co-summary-row">
                     <span>Amount</span>
-                    <span>${amount.toFixed(2)}</span>
+                    <span>Rs. {amount.toFixed(2)}</span>
                   </div>
                   {useReward && rewardDiscount > 0 && (
                     <div className="co-summary-row co-reward-row">
                       <span>🎁 {pendingReward.title}</span>
-                      <span>-${rewardDiscount.toFixed(2)}</span>
+                      <span>-Rs. {rewardDiscount.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="co-summary-row co-summary-total">
                     <span>Total</span>
-                    <span>${displayTotal.toFixed(2)}</span>
+                    <span>Rs. {displayTotal.toFixed(2)}</span>
                   </div>
                 </>
               )}

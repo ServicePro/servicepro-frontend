@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 const navItems = [
   {
@@ -31,28 +31,26 @@ const navItems = [
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
-  const [adminData, setAdminData] = useState({
-    name: 'Admin',
-    role: 'Administrator',
-    avatar: 'AD',
-  });
-
-  useEffect(() => {
+  const [adminData] = useState(() => {
     try {
       const userStr = localStorage.getItem('user');
       if (userStr) {
         const user = JSON.parse(userStr);
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setAdminData({
+        return {
           name: user.name || 'System Admin',
           role: 'Platform Admin',
           avatar: (user.name || 'A').charAt(0).toUpperCase(),
-        });
+        };
       }
     } catch (err) {
       console.error('Error fetching admin data from local storage', err);
     }
-  }, []);
+    return {
+      name: 'Admin',
+      role: 'Administrator',
+      avatar: 'AD',
+    };
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('token');

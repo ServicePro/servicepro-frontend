@@ -1,6 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
+import { resolveAssetUrl } from '../utils/media';
+import "../styles/provider.css";
+
+const ServiceImg = ({ imageUrl, alt }) => {
+  const [imgError, setImgError] = useState(false);
+  if (!imageUrl || imgError) return null;
+  return (
+    <img
+      src={resolveAssetUrl(imageUrl)}
+      alt={alt}
+      style={{
+        height: '160px',
+        width: '100%',
+        objectFit: 'cover',
+        borderTopLeftRadius: '12px',
+        borderTopRightRadius: '12px',
+        display: 'block',
+      }}
+      onError={() => setImgError(true)}
+    />
+  );
+};
 
 const ManageServices = () => {
   const navigate = useNavigate();
@@ -51,11 +73,16 @@ const ManageServices = () => {
 
   const deleteService = async (id) => {
     try {
-      await servicesApi.delete(id);
-      setServices((prev) => prev.filter((s) => s.id !== id));
+      const result = await servicesApi.delete(id);
+      if (!result.success) {
+        alert(result.message || 'Failed to delete service.');
+        return;
+      }
       setDeleteId(null);
+      await fetchServices(); // re-fetch from DB to confirm deletion
     } catch (err) {
-      alert("Error deleting service. It may have active appointments.");
+      const msg = err.response?.data?.message || err.message || 'Error deleting service.';
+      alert(`Delete failed: ${msg}`);
     }
   };
 
@@ -68,7 +95,7 @@ const ManageServices = () => {
           <h1>Manage Services</h1>
           <p>View, edit, and control your listed services.</p>
         </div>
-        <Link to="/provider/add-service" className="btn btn-primary">
+        <Link to="/provider/add-service" className="btn btn-primary_1">
           ➕ Add New Service
         </Link>
       </div>
@@ -110,7 +137,7 @@ const ManageServices = () => {
             <div className="empty-state-icon">🛠️</div>
             <h3>No services found</h3>
             <p>Try changing your search or filter, or add a new service.</p>
-            <Link to="/provider/add-service" className="btn btn-primary" style={{ marginTop: '12px' }}>
+            <Link to="/provider/add-service" className="btn btn-primary_1" style={{ marginTop: '12px' }}>
               ➕ Add Service
             </Link>
           </div>
@@ -119,16 +146,7 @@ const ManageServices = () => {
         <div className="service-card-grid">
           {filtered.map((s) => (
             <div key={s.id} className="service-card">
-              {s.image_url && (
-                <div style={{
-                  height: '160px',
-                  backgroundImage: `url(http://localhost:5000${s.image_url})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  borderTopLeftRadius: '12px',
-                  borderTopRightRadius: '12px',
-                }} />
-              )}
+              <ServiceImg imageUrl={s.image_url} alt={s.name} />
               <div className="service-card-body">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
                   <div className="service-card-title">{s.name}</div>
@@ -142,7 +160,7 @@ const ManageServices = () => {
 
                 <div className="service-card-meta">
                   <div className="service-card-meta-item">
-                    💰 <strong>${s.price}</strong>
+                    💰 <strong>Rs. {s.price}</strong>
                   </div>
                   <div className="service-card-meta-item">
                     ⏱️ {s.duration_minutes} min
@@ -154,11 +172,11 @@ const ManageServices = () => {
               </div>
 
               <div className="service-card-actions">
-                <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/provider/edit-service/${s.id}`)}>
+                <button className="btn btn-secondary_1 btn-sm" onClick={() => navigate(`/provider/edit-service/${s.id}`)}>
                   ✏️ Edit
                 </button>
                 <button
-                  className={`btn btn-sm ${s.status === 'active' ? 'btn-secondary' : 'btn-success'}`}
+                  className={`btn btn-sm ${s.status === 'active' ? 'btn-secondary_1' : 'btn-success'}`}
                   onClick={() => toggleStatus(s.id)}
                 >
                   {s.status === 'active' ? '⏸️ Deactivate' : '▶️ Activate'}
@@ -180,7 +198,7 @@ const ManageServices = () => {
             <h3 style={{ marginBottom: '8px' }}>Delete Service?</h3>
             <p style={{ marginBottom: '24px' }}>This action cannot be undone. All bookings for this service will be affected.</p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button className="btn btn-secondary" onClick={() => setDeleteId(null)}>Cancel</button>
+              <button className="btn btn-secondary_1" onClick={() => setDeleteId(null)}>Cancel</button>
               <button className="btn btn-danger" onClick={() => deleteService(deleteId)}>Delete</button>
             </div>
           </div>

@@ -38,6 +38,20 @@ export default function ProviderEmergencyRequests() {
 
   useEffect(() => { loadRequests(); }, []);
 
+  const handleComplete = async (id) => {
+    setAccepting(id);
+    try {
+      const res = await emergencyApi.completeRequest(id);
+      const updated = res.data?.data;
+      setRequests((prev) => prev.map((r) => (r._id === id ? updated : r)));
+      showToast('Service marked as completed!');
+    } catch (e) {
+      showToast(e.response?.data?.message || 'Failed to mark completed', 'error');
+    } finally {
+      setAccepting(null);
+    }
+  };
+
   const handleAccept = async (id) => {
     setAccepting(id);
     try {
@@ -152,9 +166,19 @@ export default function ProviderEmergencyRequests() {
                       <p className="per-desc">{r.description}</p>
                       <div className="per-meta">
                         <span>📍 {r.location}</span>
-                        <span>💸 ${r.finalPrice}</span>
+                        <span>💸 Rs. {r.finalPrice}</span>
                         <span>⏱ ETA: {r.eta}</span>
+                        <span style={{ color: r.paymentStatus === 'paid' ? '#10b981' : '#f59e0b' }}>
+                          💰 {r.paymentStatus === 'paid' ? 'Paid' : 'Payment Pending'}
+                        </span>
                       </div>
+                      <button
+                        className="per-complete-btn"
+                        onClick={() => handleComplete(r._id)}
+                        disabled={accepting === r._id}
+                      >
+                        {accepting === r._id ? 'Updating…' : '✅ Mark as Completed'}
+                      </button>
                     </div>
                   );
                 })}

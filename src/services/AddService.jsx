@@ -1,11 +1,8 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
-
-const categories = [
-  'Home Repair', 'Plumbing', 'Electrical', 'Cleaning',
-  'Landscaping', 'Painting', 'HVAC', 'Carpentry', 'Moving', 'Other',
-];
+import { SERVICE_CATEGORY_OPTIONS } from '../constants/serviceCategories';
+import "../styles/provider.css";
 
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -188,9 +185,9 @@ const AddService = () => {
                   required
                 >
                   <option value="">Select a category</option>
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
+                  {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => (
+                    <option key={value} value={value}>
+                      {label}
                     </option>
                   ))}
                 </select>
@@ -248,9 +245,9 @@ const AddService = () => {
 
           <div className="form-row">
             <div className="form-group">
-              <label className="form-label">Price ($) *</label>
+              <label className="form-label">Price (Rs.) *</label>
               <div className="price-input-wrap">
-                <span className="price-prefix">$</span>
+                <span className="price-prefix">Rs.</span>
                 <input
                   className="form-input"
                   name="price"
@@ -342,8 +339,8 @@ const AddService = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             style={{
-              border: isDragging ? '2px dashed var(--primary)' : '2px dashed var(--border)',
-              backgroundColor: isDragging ? 'var(--accent)' : 'transparent',
+              border: isDragging ? '2px dashed var(--brand-blue)' : '2px dashed var(--border-color)',
+              backgroundColor: isDragging ? 'var(--info-bg)' : 'transparent',
               borderRadius: 'var(--radius-lg)',
               padding: '40px 20px',
               textAlign: 'center',
@@ -360,7 +357,7 @@ const AddService = () => {
             <h4 style={{ margin: 0, fontWeight: 600 }}>
               {selectedImage ? 'Change Image' : 'Click or Drag & Drop to Upload'}
             </h4>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-light)' }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
               PNG, JPG or WEBP • Max 5MB
             </p>
             
@@ -372,7 +369,7 @@ const AddService = () => {
               style={{ display: 'none' }}
             />
             {selectedImage && (
-              <div style={{ marginTop: '8px', fontSize: '14px', color: 'var(--primary)', fontWeight: 600 }}>
+              <div style={{ marginTop: '8px', fontSize: '14px', color: 'var(--success)', fontWeight: 600 }}>
                 Selected: {selectedImage.name}
               </div>
             )}
@@ -382,14 +379,14 @@ const AddService = () => {
         <div className="form-actions">
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary_1"
             onClick={() => navigate('/provider/manage-services')}
             disabled={loading}
           >
             Cancel
           </button>
 
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <button type="submit" className="btn btn-primary_1" disabled={loading}>
             {loading ? 'Saving...' : '✅ Publish Service'}
           </button>
         </div>
