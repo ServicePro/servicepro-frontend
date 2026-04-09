@@ -28,7 +28,7 @@ export const saveUserToStorage = (user) => {
  * Resolve user avatar URL from various sources
  */
 export const resolveUserAvatar = (user) => {
-  const avatarPath = user?.avatar_url || user?.avatar;
+  const avatarPath = user?.avatar_url || user?.avatarUrl || user?.avatar;
 
   if (avatarPath) {
     // Handle absolute URLs and data URLs

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Bell, Menu, Moon, Sun, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useLang } from "../../context/LangContext";
 import { applyGlobalTheme, emitThemeChange, getInitialDarkMode, onThemeChange } from "../../utils/themeMode";
 import { getStoredUser, resolveUserAvatar } from "../../utils/userPresentation";
@@ -11,6 +11,7 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const UserNavbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const profileRef = useRef(null);
   const moreRef = useRef(null);
   const notifRef = useRef(null);
@@ -91,6 +92,10 @@ const UserNavbar = () => {
     setNotifOpen(false);
   };
 
+  const isPaymentsState = location.pathname === "/service-history" && location.state?.tab === "Payment History";
+  const isMoreActive = ["/subscription", "/emergency", "/video-consultation", "/support"].includes(location.pathname);
+  const navLinkClass = ({ isActive }) => (isActive ? "active" : "");
+
   return (
     <nav className="user-navbar">
       <div className="nav-container">
@@ -102,26 +107,26 @@ const UserNavbar = () => {
 
           {/* Desktop links */}
           <div className="nav-links">
-            <Link to="/user-dashboard">{t.navHome}</Link>
-            <Link to="/services">{t.navServices}</Link>
-            <Link to="/service-history">{t.navHistory}</Link>
-            <Link to="/reviews">{t.navReviews}</Link>
-            <Link to="/service-history" state={{ tab: "Payment History" }}>{t.navPayments}</Link>
-            <Link to="/chat">{t.navMessages}</Link>
+            <NavLink to="/user-dashboard" className={navLinkClass}>{t.navHome}</NavLink>
+            <NavLink to="/services" className={navLinkClass}>{t.navServices}</NavLink>
+            <NavLink to="/service-history" className={() => (location.pathname === "/service-history" && !isPaymentsState ? "active" : "")}>{t.navHistory}</NavLink>
+            <NavLink to="/reviews" className={navLinkClass}>{t.navReviews}</NavLink>
+            <NavLink to="/service-history" state={{ tab: "Payment History" }} className={() => (isPaymentsState ? "active" : "")}>{t.navPayments}</NavLink>
+            <NavLink to="/chat" className={navLinkClass}>{t.navMessages}</NavLink>
 
             <div className="nav-more-wrap" ref={moreRef}>
               <button
-                className={`nav-more-btn${moreOpen ? " nav-more-btn-open" : ""}`}
+                className={`nav-more-btn${moreOpen || isMoreActive ? " nav-more-btn-open" : ""}`}
                 onClick={() => setMoreOpen((v) => !v)}
               >
                 {t.navMore} {moreOpen ? "▴" : "▾"}
               </button>
               {moreOpen && (
                 <div className="nav-more-dropdown">
-                  <Link to="/subscription" onClick={closeAll}>{t.moreSubscription}</Link>
-                  <Link to="/emergency" onClick={closeAll}>{t.moreEmergency}</Link>
-                  <Link to="/video-consultation" onClick={closeAll}>{t.moreVideo}</Link>
-                  <Link to="/support" onClick={closeAll}>{t.moreSupport}</Link>
+                  <NavLink to="/subscription" onClick={closeAll} className={navLinkClass}>{t.moreSubscription}</NavLink>
+                  <NavLink to="/emergency" onClick={closeAll} className={navLinkClass}>{t.moreEmergency}</NavLink>
+                  <NavLink to="/video-consultation" onClick={closeAll} className={navLinkClass}>{t.moreVideo}</NavLink>
+                  <NavLink to="/support" onClick={closeAll} className={navLinkClass}>{t.moreSupport}</NavLink>
                 </div>
               )}
             </div>
@@ -255,17 +260,17 @@ const UserNavbar = () => {
 
       {mobileOpen && (
         <div className="nav-mobile-menu">
-          <Link to="/user-dashboard" onClick={closeAll}>🏠 {t.navHome}</Link>
-          <Link to="/services" onClick={closeAll}>🛠️ {t.navServices}</Link>
-          <Link to="/service-history" onClick={closeAll}>📋 {t.navHistory}</Link>
-          <Link to="/reviews" onClick={closeAll}>⭐ {t.navReviews}</Link>
-          <Link to="/service-history" onClick={closeAll}>💳 {t.navPayments}</Link>
-          <Link to="/chat" onClick={closeAll}>💬 {t.navMessages}</Link>
+          <NavLink to="/user-dashboard" onClick={closeAll} className={navLinkClass}>🏠 {t.navHome}</NavLink>
+          <NavLink to="/services" onClick={closeAll} className={navLinkClass}>🛠️ {t.navServices}</NavLink>
+          <NavLink to="/service-history" onClick={closeAll} className={() => (location.pathname === "/service-history" && !isPaymentsState ? "active" : "")}>📋 {t.navHistory}</NavLink>
+          <NavLink to="/reviews" onClick={closeAll} className={navLinkClass}>⭐ {t.navReviews}</NavLink>
+          <NavLink to="/service-history" state={{ tab: "Payment History" }} onClick={closeAll} className={() => (isPaymentsState ? "active" : "")}>💳 {t.navPayments}</NavLink>
+          <NavLink to="/chat" onClick={closeAll} className={navLinkClass}>💬 {t.navMessages}</NavLink>
           <div className="nav-mobile-divider">{t.navMore}</div>
-          <Link to="/subscription" onClick={closeAll}>{t.moreSubscription}</Link>
-          <Link to="/emergency" onClick={closeAll}>{t.moreEmergency}</Link>
-          <Link to="/video-consultation" onClick={closeAll}>{t.moreVideo}</Link>
-          <Link to="/support" onClick={closeAll}>{t.moreSupport}</Link>
+          <NavLink to="/subscription" onClick={closeAll} className={navLinkClass}>{t.moreSubscription}</NavLink>
+          <NavLink to="/emergency" onClick={closeAll} className={navLinkClass}>{t.moreEmergency}</NavLink>
+          <NavLink to="/video-consultation" onClick={closeAll} className={navLinkClass}>{t.moreVideo}</NavLink>
+          <NavLink to="/support" onClick={closeAll} className={navLinkClass}>{t.moreSupport}</NavLink>
         </div>
       )}
     </nav>

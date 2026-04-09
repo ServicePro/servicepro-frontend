@@ -459,6 +459,11 @@
   transition: background 0.15s;
 }
 .nav-more-dropdown a:hover { background: #f8fafc; color: var(--primary); }
+.nav-more-dropdown a.active {
+  background: rgba(249,115,22,0.12);
+  color: var(--primary);
+  font-weight: 600;
+}
 
 /* â”€â”€ Search dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .nav-search-dropdown {
@@ -521,6 +526,11 @@
   transition: background 0.15s;
 }
 .nav-mobile-menu a:hover { background: #fef3e2; color: var(--primary); }
+.nav-mobile-menu a.active {
+  background: #fef3e2;
+  color: var(--primary);
+  font-weight: 700;
+}
 .nav-mobile-divider {
   padding: 10px 24px 6px;
   font-size: 0.75rem;

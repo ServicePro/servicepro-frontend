@@ -131,7 +131,11 @@ const ServiceDetails = () => {
   const durationText = service.duration_minutes ? `${service.duration_minutes} min` : (service.duration || "Flexible duration");
   const locationText = typeof service.location === "string"
     ? service.location
-    : [service.location?.city, service.location?.district].filter(Boolean).join(", ") || service.area || "Not specified";
+    : [service.location?.city, service.location?.district].filter(Boolean).join(", ")
+      || service.providerLocation
+      || service.providerId?.area
+      || service.area
+      || "Not specified";
   const availabilityText = Array.isArray(service.available_days) && service.available_days.length > 0
     ? service.available_days.join(", ")
     : (service.availability || "Check availability during booking");

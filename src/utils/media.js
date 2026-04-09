@@ -9,21 +9,38 @@ export const resolveAssetUrl = (pathOrUrl) => {
 
   if (typeof pathOrUrl !== "string") return "";
 
+  const cleaned = pathOrUrl.trim();
+  if (!cleaned) return "";
+
   // Already an absolute URL or data URI — use as-is
-  if (/^https?:\/\//i.test(pathOrUrl) || pathOrUrl.startsWith("data:")) {
-    return pathOrUrl;
+  if (/^https?:\/\//i.test(cleaned) || cleaned.startsWith("data:")) {
+    return cleaned;
   }
 
-  // Paths starting with /uploads are served via Vite proxy → backend
-  // Keep them relative so the Vite dev server proxy handles forwarding
-  if (pathOrUrl.startsWith("/uploads")) {
-    return pathOrUrl;
+  // Normalize Windows and relative upload paths stored in DB (e.g. uploads\service-1.jpg)
+  const normalized = cleaned.replace(/\\/g, "/");
+  const uploadsIndex = normalized.toLowerCase().indexOf("/uploads/");
+  const startsWithUploads = normalized.toLowerCase().startsWith("uploads/");
+
+  if (uploadsIndex >= 0) {
+    const uploadPath = normalized.slice(uploadsIndex);
+    return `${API_ORIGIN}${uploadPath}`;
+  }
+
+  if (startsWithUploads) {
+    return `${API_ORIGIN}/${normalized}`;
+  }
+
+  // Always resolve uploads against backend origin so all users see images,
+  // even when frontend is hosted separately and Vite proxy is unavailable.
+  if (normalized.startsWith("/uploads")) {
+    return `${API_ORIGIN}${normalized}`;
   }
 
   // Other relative paths — prefix with API origin
-  if (pathOrUrl.startsWith("/")) {
-    return `${API_ORIGIN}${pathOrUrl}`;
+  if (normalized.startsWith("/")) {
+    return `${API_ORIGIN}${normalized}`;
   }
 
-  return `${API_ORIGIN}/${pathOrUrl}`;
+  return `${API_ORIGIN}/${normalized}`;
 };
