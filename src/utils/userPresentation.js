@@ -36,7 +36,12 @@ export const resolveUserAvatar = (user) => {
       return avatarPath;
     }
 
-    // Handle relative paths
+    // /uploads paths are proxied via Vite → backend, keep relative
+    if (avatarPath.startsWith("/uploads")) {
+      return avatarPath;
+    }
+
+    // Other relative paths — prefix with API origin
     if (avatarPath.startsWith("/")) {
       return `${API_ORIGIN}${avatarPath}`;
     }

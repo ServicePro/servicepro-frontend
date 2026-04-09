@@ -274,7 +274,6 @@ export default function EmergencyServices() {
                         >
                           <span className="em-svc-icon">{svc.icon}</span>
                           <p className="em-svc-label">{svc.label}</p>
-                          <p className="em-svc-price">from Rs. {svc.basePrice}</p>
                         </div>
                       ))}
                     </div>
@@ -329,7 +328,6 @@ export default function EmergencyServices() {
                                 <span className="em-prov-rating">⭐ {p.rating?.toFixed(1) || '4.5'}</span>
                                 <span className="em-prov-base-price">Rs. {p.baseServicePrice}/hr</span>
                                 <span className="em-prov-em-price">🚨 Rs. {emPrice} emergency</span>
-                                <span className="em-prov-badge">✅ Accepts Emergency</span>
                               </div>
                             </div>
                           );

@@ -1,9 +1,10 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/userDashboard/UserNavbar";
 import Categories from "../../components/userDashboard/Categories";
 import FeaturedServices from "../../components/userDashboard/FeaturedServices";
 import SearchBar from "../../components/userDashboard/SearchBar";
 import Footer from "../../components/userDashboard/UserFooter";
-import Navbar from "../../components/userDashboard/UserNavbar";
 import { SERVICE_CATEGORIES } from "../../constants/serviceCategories";
 import { useLang } from "../../context/LangContext";
 import { getStoredUser } from "../../utils/userPresentation";
@@ -36,7 +37,7 @@ const UserDashboard = () => {
         error: false,
       });
     }
-  })();
+  };
 
   const firstName = user.name ? user.name.split(" ")[0] : "there";
 

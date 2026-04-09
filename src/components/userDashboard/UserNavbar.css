@@ -275,6 +275,28 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-initials {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--primary, #F97316);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+.profile-initials-lg {
+  width: 42px;
+  height: 42px;
+  font-size: 15px;
 }
 
 .profile-dropdown {
@@ -300,9 +322,11 @@
 }
 
 .profile-info img {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
 } 
 
 .profile-info strong {

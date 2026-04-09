@@ -149,3 +149,19 @@
 }
 .per-accept-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .per-accept-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.per-complete-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px 24px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+.per-complete-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+.per-complete-btn:disabled { opacity: 0.6; cursor: not-allowed; }

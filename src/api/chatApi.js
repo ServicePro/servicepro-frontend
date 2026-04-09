@@ -48,6 +48,14 @@ const chatApi = {
     );
     return res.data;
   },
+
+  // Fetch approved providers filtered by service category
+  getProvidersByCategory: async (category = "") => {
+    const res = await axiosInstance.get(
+      `/providers/search?category=${encodeURIComponent(category)}`
+    );
+    return res.data;
+  },
 };
 
 export default chatApi;

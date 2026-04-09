@@ -1,7 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import servicesApi from '../api/servicesApi';
+import { resolveAssetUrl } from '../utils/media';
 import "../styles/provider.css";
+
+const ServiceImg = ({ imageUrl, alt }) => {
+  const [imgError, setImgError] = useState(false);
+  if (!imageUrl || imgError) return null;
+  return (
+    <img
+      src={resolveAssetUrl(imageUrl)}
+      alt={alt}
+      style={{
+        height: '160px',
+        width: '100%',
+        objectFit: 'cover',
+        borderTopLeftRadius: '12px',
+        borderTopRightRadius: '12px',
+        display: 'block',
+      }}
+      onError={() => setImgError(true)}
+    />
+  );
+};
 
 const ManageServices = () => {
   const navigate = useNavigate();
@@ -52,11 +73,16 @@ const ManageServices = () => {
 
   const deleteService = async (id) => {
     try {
-      await servicesApi.delete(id);
-      setServices((prev) => prev.filter((s) => s.id !== id));
+      const result = await servicesApi.delete(id);
+      if (!result.success) {
+        alert(result.message || 'Failed to delete service.');
+        return;
+      }
       setDeleteId(null);
+      await fetchServices(); // re-fetch from DB to confirm deletion
     } catch (err) {
-      alert("Error deleting service. It may have active appointments.");
+      const msg = err.response?.data?.message || err.message || 'Error deleting service.';
+      alert(`Delete failed: ${msg}`);
     }
   };
 
@@ -120,16 +146,7 @@ const ManageServices = () => {
         <div className="service-card-grid">
           {filtered.map((s) => (
             <div key={s.id} className="service-card">
-              {s.image_url && (
-                <div style={{
-                  height: '160px',
-                  backgroundImage: `url(http://localhost:5000${s.image_url})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  borderTopLeftRadius: '12px',
-                  borderTopRightRadius: '12px',
-                }} />
-              )}
+              <ServiceImg imageUrl={s.image_url} alt={s.name} />
               <div className="service-card-body">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
                   <div className="service-card-title">{s.name}</div>

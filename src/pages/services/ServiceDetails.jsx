@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import reviewsApi from "../../api/reviewsApi";
 import servicesApi from "../../api/servicesApi";
 import Navbar from "../../components/userDashboard/UserNavbar";
+import { getServiceCategoryIcon } from "../../constants/serviceCategories";
 import { resolveAssetUrl } from "../../utils/media";
 import "./ServiceListing.css";
 
@@ -26,6 +27,7 @@ const ServiceDetails = () => {
   const [error, setError] = useState("");
   const [reviews, setReviews] = useState([]);
   const [reviewsAvg, setReviewsAvg] = useState(null);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
     const loadService = async () => {
@@ -134,12 +136,13 @@ const ServiceDetails = () => {
     ? service.available_days.join(", ")
     : (service.availability || "Check availability during booking");
   const bookingText = service.bookingType || durationText;
-  const resolvedRating = Number(reviewsAvg ?? service.rating ?? service.averageRating);
-  const resolvedRatingText = Number.isFinite(resolvedRating) && resolvedRating > 0
+  const resolvedRating = reviewsAvg !== null ? reviewsAvg : Number(service.rating ?? service.averageRating);
+  const resolvedRatingText = Number.isFinite(resolvedRating) && resolvedRating > 0 && reviews.length > 0
     ? `⭐ ${resolvedRating.toFixed(1)}`
-    : 'No ratings yet';
-  const imageSrc = resolveAssetUrl(service.image || service.image_url || service.cover)
-    || "https://via.placeholder.com/680x420?text=Service+Image";
+    : reviews.length === 0 ? 'No reviews yet' : `⭐ ${resolvedRating.toFixed(1)}`;
+  const imageSrc = resolveAssetUrl(service.image || service.image_url || service.cover);
+  const hasServiceImage = !!imageSrc && !imgError;
+  const detailCategoryIcon = getServiceCategoryIcon(service.category);
 
   return (
     <>
@@ -170,68 +173,83 @@ const ServiceDetails = () => {
 
         <div className="service-details-grid">
           <div className="service-details-image">
-            <img
-              src={imageSrc}
-              alt={serviceName}
-            />
+            {hasServiceImage ? (
+              <img
+                src={imageSrc}
+                alt={serviceName}
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <div className="service-img-placeholder service-img-placeholder-lg">
+                <span>{detailCategoryIcon}</span>
+              </div>
+            )}
           </div>
 
           <div className="service-details-summary">
-            <div className="service-price-row">
-              <div>
-                <span className="service-price">Rs. {priceText}</span>
-                <span className="service-duration">{durationText}</span>
+            <div className="service-summary-row">
+              {/* Left column: price box + quick facts */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div className="service-price-row">
+                  <div>
+                    <span className="service-price">Rs. {priceText}</span>
+                    <span className="service-duration">{durationText}</span>
+                  </div>
+                  <span className="service-rating">{resolvedRatingText}</span>
+                </div>
+
+                <div className="service-summary-card">
+                  <div className="summary-row">
+                    <span>Provider</span>
+                    <strong>{providerName}</strong>
+                  </div>
+                  <div className="summary-row">
+                    <span>Location</span>
+                    <strong>{locationText}</strong>
+                  </div>
+                  <div className="summary-row">
+                    <span>Category</span>
+                    <strong>{categoryName}</strong>
+                  </div>
+                  <div className="summary-row">
+                    <span>Booking</span>
+                    <strong>{bookingText}</strong>
+                  </div>
+                </div>
+
+                <section className="service-benefits">
+                  <h3>Why choose this service</h3>
+                  <ul>
+                    <li>{service.benefitOne || "Verified professionals"}</li>
+                    <li>{service.benefitTwo || "Secure payment"}</li>
+                    <li>{service.benefitThree || "Fast booking confirmation"}</li>
+                  </ul>
+                </section>
               </div>
-              <span className="service-rating">{resolvedRatingText}</span>
+
+              {/* Right column: description + meta */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <section className="service-description">
+                  <h2>What this service includes</h2>
+                  <p>{service.description || service.summary || "No description available for this service."}</p>
+                </section>
+
+                <section className="service-meta">
+                  <div>
+                    <strong>Category</strong>
+                    <span>{categoryName}</span>
+                  </div>
+                  <div>
+                    <strong>Provider location</strong>
+                    <span>{locationText}</span>
+                  </div>
+                  <div>
+                    <strong>Available</strong>
+                    <span>{availabilityText}</span>
+                  </div>
+                </section>
+              </div>
             </div>
-
-            <div className="service-summary-card">
-              <div className="summary-row">
-                <span>Provider</span>
-                <strong>{providerName}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Location</span>
-                <strong>{locationText}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Category</span>
-                <strong>{categoryName}</strong>
-              </div>
-              <div className="summary-row">
-                <span>Booking</span>
-                <strong>{bookingText}</strong>
-              </div>
-            </div>
-
-            <section className="service-description">
-              <h2>What this service includes</h2>
-              <p>{service.description || service.summary || "No description available for this service."}</p>
-            </section>
-
-            <section className="service-meta">
-              <div>
-                <strong>Category</strong>
-                <span>{categoryName}</span>
-              </div>
-              <div>
-                <strong>Provider location</strong>
-                <span>{locationText}</span>
-              </div>
-              <div>
-                <strong>Available</strong>
-                <span>{availabilityText}</span>
-              </div>
-            </section>
-
-            <section className="service-benefits">
-              <h3>Why choose this service</h3>
-              <ul>
-                <li>{service.benefitOne || "Verified professionals"}</li>
-                <li>{service.benefitTwo || "Secure payment"}</li>
-                <li>{service.benefitThree || "Fast booking confirmation"}</li>
-              </ul>
-            </section>
           </div>
         </div>
 
@@ -263,6 +281,9 @@ const ServiceDetails = () => {
                     <div className="sd-review-meta">
                       <span className="sd-review-name">{r.clientId?.name || 'Anonymous'}</span>
                       <span className="sd-review-date">{new Date(r.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                      {!r.bookingId && (
+                        <span className="sd-review-emergency-badge">🚨 Emergency service</span>
+                      )}
                     </div>
                     <div className="sd-review-stars">
                       <StarRow rating={r.rating} size="1rem" />

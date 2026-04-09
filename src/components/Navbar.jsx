@@ -66,19 +66,12 @@ const Navbar = () => {
 
   const doNavSearch = () => {
     const q = search.trim();
-    if (!q) return;
 
-    if (location.pathname === "/") {
-      window.dispatchEvent(new CustomEvent("sp_landing_search", { detail: q }));
+    if (location.pathname === '/') {
+      if (q) window.dispatchEvent(new CustomEvent('sp_landing_search', { detail: q }));
       return;
     }
 
-    navigate(`/?q=${encodeURIComponent(q)}`);
-  };
-
-  const doNavSearch = () => {
-    const q = search.trim();
-    setResults([]);
     const emergencyType = detectEmergency(q);
     if (emergencyType) {
       navigate(`/emergency${emergencyType !== 'general' ? '?q=' + emergencyType : ''}`);

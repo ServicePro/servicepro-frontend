@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import chatApi from "../../api/chatApi";
+import { SERVICE_CATEGORIES as SERVICE_CATEGORIES_ALL } from "../../constants/serviceCategories";
 import UserNavbar from "../../components/userDashboard/UserNavbar";
 import "./ChatPage.css";
 
 const BASE_URL = "http://localhost:5000";
 const POLL_INTERVAL = 4000; // ms between message polls
+
+// Use the shared canonical category list (value = DB-stored category name)
+const SERVICE_CATEGORIES = SERVICE_CATEGORIES_ALL.map(({ value, label }) => ({ value, label }));
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -82,10 +86,11 @@ export default function ChatPage() {
   });
   const [newFormLoading, setNewFormLoading] = useState(false);
 
-  // Provider dropdown state (inside New Conversation modal)
-  const [allProviders, setAllProviders]         = useState([]);
-  const [providersLoading, setProvidersLoading] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState(null);
+  // Category + provider state inside New Conversation modal
+  const [newCategory, setNewCategory]                     = useState("");
+  const [categoryProviders, setCategoryProviders]         = useState([]);
+  const [categoryProvidersLoading, setCategoryProvidersLoading] = useState(false);
+  const [selectedProvider, setSelectedProvider]           = useState(null);
 
   // Current user role from token (decode payload)
   const currentRole = (() => {
@@ -224,22 +229,31 @@ export default function ChatPage() {
   };
 
   // ── Load all approved providers when modal opens ─────────────────────
-  const openNewModal = async () => {
+  const openNewModal = () => {
     setShowNewModal(true);
-    if (allProviders.length > 0) return; // already loaded
-    setProvidersLoading(true);
+  };
+
+  // Category selected → fetch providers for that category
+  const handleNewCategoryChange = async (label) => {
+    const cat = SERVICE_CATEGORIES.find((c) => c.label === label);
+    setNewCategory(label);
+    setSelectedProvider(null);
+    setCategoryProviders([]);
+    setNewForm((f) => ({ ...f, providerId: "", serviceName: label }));
+    if (!cat) return;
+    setCategoryProvidersLoading(true);
     try {
-      const res = await chatApi.searchProviders("");
-      setAllProviders(res.data || []);
+      const res = await chatApi.getProvidersByCategory(cat.value);
+      setCategoryProviders(res.data || []);
     } catch {
-      setAllProviders([]);
+      setCategoryProviders([]);
     } finally {
-      setProvidersLoading(false);
+      setCategoryProvidersLoading(false);
     }
   };
 
   const pickProvider = (providerId) => {
-    const provider = allProviders.find((p) => p._id === providerId) || null;
+    const provider = categoryProviders.find((p) => p._id === providerId) || null;
     setSelectedProvider(provider);
     setNewForm((f) => ({ ...f, providerId }));
   };
@@ -247,6 +261,8 @@ export default function ChatPage() {
   const resetModal = () => {
     setShowNewModal(false);
     setSelectedProvider(null);
+    setNewCategory("");
+    setCategoryProviders([]);
     setNewForm({ providerId: "", userId: "", serviceName: "", bookingId: "" });
     setInputError("");
   };
@@ -535,45 +551,69 @@ export default function ChatPage() {
             </div>
 
             {currentRole === "user" ? (
-              /* ── Provider dropdown ── */
-              <div className="chat-modal-field">
-                <label>Select Provider</label>
-                {providersLoading ? (
-                  <div className="chat-provider-loading">
-                    <div className="chat-spinner" /> Loading providers…
-                  </div>
-                ) : (
+              /* ── Step 1: category, Step 2: provider ── */
+              <>
+                {/* Step 1: Category */}
+                <div className="chat-modal-field">
+                  <label>Step 1 — Select Service Category</label>
                   <select
                     className="chat-provider-select"
-                    value={newForm.providerId}
-                    onChange={(e) => pickProvider(e.target.value)}
+                    value={newCategory}
+                    onChange={(e) => handleNewCategoryChange(e.target.value)}
                   >
-                    <option value="">— Choose a service provider —</option>
-                    {allProviders.map((p) => (
-                      <option key={p._id} value={p._id}>
-                        {p.name}{p.category ? ` · ${p.category}` : ""}{p.area ? ` (${p.area})` : ""}
-                      </option>
+                    <option value="">— Choose a category —</option>
+                    {SERVICE_CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.label}>{c.label}</option>
                     ))}
                   </select>
-                )}
+                </div>
 
-                {/* Selected provider info card */}
-                {selectedProvider && (
-                  <div className="chat-provider-selected">
-                    <div className="chat-provider-selected-avatar">
-                      {selectedProvider.name[0].toUpperCase()}
-                    </div>
-                    <div className="chat-provider-selected-info">
-                      <span>{selectedProvider.name}</span>
-                      <small>
-                        {selectedProvider.category || "General"}
-                        {selectedProvider.area ? ` · ${selectedProvider.area}` : ""}
-                        {selectedProvider.rating ? ` · ⭐ ${selectedProvider.rating}` : ""}
-                      </small>
-                    </div>
+                {/* Step 2: Provider (shown after category is selected) */}
+                {newCategory && (
+                  <div className="chat-modal-field">
+                    <label>Step 2 — Choose Service Provider</label>
+                    {categoryProvidersLoading ? (
+                      <div className="chat-provider-loading">
+                        <div className="chat-spinner" /> Loading providers…
+                      </div>
+                    ) : (
+                      <select
+                        className="chat-provider-select"
+                        value={newForm.providerId}
+                        onChange={(e) => pickProvider(e.target.value)}
+                      >
+                        <option value="">
+                          {categoryProviders.length === 0
+                            ? `No providers found for ${newCategory}`
+                            : "— Choose a provider —"}
+                        </option>
+                        {categoryProviders.map((p) => (
+                          <option key={p._id} value={p._id}>
+                            {p.name}{p.area ? ` (${p.area})` : ""}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+
+                    {/* Selected provider info card */}
+                    {selectedProvider && (
+                      <div className="chat-provider-selected">
+                        <div className="chat-provider-selected-avatar">
+                          {selectedProvider.name[0].toUpperCase()}
+                        </div>
+                        <div className="chat-provider-selected-info">
+                          <span>{selectedProvider.name}</span>
+                          <small>
+                            {selectedProvider.category || newCategory}
+                            {selectedProvider.area ? ` · ${selectedProvider.area}` : ""}
+                            {selectedProvider.rating ? ` · ⭐ ${selectedProvider.rating}` : ""}
+                          </small>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
+              </>
             ) : (
               /* ── Provider side: enter user ID ── */
               <div className="chat-modal-field">

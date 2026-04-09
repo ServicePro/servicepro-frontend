@@ -351,7 +351,8 @@ const LandingPage = () => {
   };
   const topRatedProviders = Array.isArray(providers)
     ? [...providers]
-        .sort((a, b) => (Number(b.total_reviews) || 0) - (Number(a.total_reviews) || 0) || (Number(b.rating) || 0) - (Number(a.rating) || 0))
+        .filter(p => Number(p.rating) > 0)
+        .sort((a, b) => (Number(b.rating) || 0) - (Number(a.rating) || 0) || (Number(b.total_reviews) || 0) - (Number(a.total_reviews) || 0))
         .slice(0, 3)
     : [];
   const clampRating = (value) => {

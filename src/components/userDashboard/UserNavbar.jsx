@@ -26,6 +26,12 @@ const UserNavbar = () => {
 
   const [user] = useState(() => getStoredUser() || { name: "User", email: "", role: "User" });
   const avatarUrl = resolveUserAvatar(user);
+  const hasRealAvatar = !!(user?.avatar_url || user?.avatar);
+  const initials = (user?.name || 'U')
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() || '')
+    .join('');
 
   useEffect(() => {
     applyGlobalTheme(darkMode);
@@ -207,14 +213,21 @@ const UserNavbar = () => {
               aria-label="Open profile menu"
               aria-expanded={profileOpen}
             >
-              <img src={user.avatar} alt={user.name} />
-              <span>{user.name.split(" ")[0]}</span>
+              {hasRealAvatar ? (
+                <img src={avatarUrl} alt={user.name} />
+              ) : (
+                <div className="profile-initials">{initials}</div>
+              )}
             </button>
 
             {profileOpen && (
               <div className="profile-dropdown">
                 <div className="profile-info">
-                  <img src={user.avatar} alt={user.name} />
+                  {hasRealAvatar ? (
+                    <img src={avatarUrl} alt={user.name} />
+                  ) : (
+                    <div className="profile-initials profile-initials-lg">{initials}</div>
+                  )}
                   <div>
                     <strong>{user.name}</strong>
                     <span>{user.email}</span>
@@ -222,9 +235,9 @@ const UserNavbar = () => {
                   </div>
                 </div>
                 <div className="profile-actions">
-                  <Link to="/view-profile" onClick={() => setProfileOpen(false)}>{t.profileView}</Link>
-                  <Link to="/account-settings" onClick={() => setProfileOpen(false)}>{t.profileSettings}</Link>
-                  <button onClick={handleLogout}>{t.profileLogout}</button>
+                  <Link to="/view-profile" className="dropdown-item" onClick={() => setProfileOpen(false)}>👤 {t.profileView}</Link>
+                  <Link to="/account-settings" className="dropdown-item" onClick={() => setProfileOpen(false)}>⚙️ {t.profileSettings}</Link>
+                  <button className="dropdown-item logout-item" onClick={handleLogout}>🚪 {t.profileLogout}</button>
                 </div>
               </div>
             )}
