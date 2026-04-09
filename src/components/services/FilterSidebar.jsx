@@ -4,19 +4,30 @@ import { SERVICE_CATEGORY_OPTIONS } from "../../constants/serviceCategories";
 
 const FilterSidebar = ({ setFilters }) => {
   const [searchParams] = useSearchParams();
-  const [localFilters, setLocalFilters] = useState({});
+  const [localFilters, setLocalFilters] = useState(() => {
+    // Read URL param synchronously on first render so no effect needed
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('category');
+    return category ? { category } : {};
+  });
 
+  // Keep ServiceListing in sync when navigating back to page with category param
   useEffect(() => {
-    // Initialize local filters from URL parameters
     const category = searchParams.get('category');
     if (category) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLocalFilters({ category });
+      setFilters({ category });
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleApply = () => {
     setFilters(localFilters);
+  };
+
+  const handleCategoryChange = (value) => {
+    const next = { ...localFilters, category: value };
+    setLocalFilters(next);
+    setFilters(next);   // immediate apply
   };
 
   const applyQuickLocation = (location) => {
@@ -33,9 +44,7 @@ const FilterSidebar = ({ setFilters }) => {
       <label>Category</label>
       <select
         value={localFilters.category || ""}
-        onChange={(e) =>
-          setLocalFilters({ ...localFilters, category: e.target.value })
-        }
+        onChange={(e) => handleCategoryChange(e.target.value)}
       >
         <option value="">All</option>
         {SERVICE_CATEGORY_OPTIONS.map(({ value, label }) => (

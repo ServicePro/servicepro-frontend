@@ -259,11 +259,12 @@ p { color: var(--text-secondary); }
   font-weight: 600;
 }
 
-.badge-success { background: var(--success-bg); color: var(--success); }
-.badge-warning { background: var(--warning-bg); color: var(--warning); }
-.badge-danger  { background: var(--danger-bg);  color: var(--danger);  }
-.badge-info    { background: var(--info-bg);     color: var(--info);    }
-.badge-muted   { background: #f1f5f9;            color: var(--text-secondary); }
+.badge-success   { background: var(--success-bg); color: var(--success); }
+.badge-warning   { background: var(--warning-bg); color: var(--warning); }
+.badge-danger    { background: var(--danger-bg);  color: var(--danger);  }
+.badge-info      { background: var(--info-bg);     color: var(--info);    }
+.badge-muted     { background: #f1f5f9;            color: var(--text-secondary); }
+.badge-emergency { background: #fee2e2;            color: #dc2626;        font-weight: 700; }
 
 /* ===================== TABLE ===================== */
 .table-container {

@@ -31,23 +31,6 @@ export default function BookingConfirmation() {
     }
   };
 
-  const handleChatWithProvider = async () => {
-    try {
-      setChatLoading(true);
-      const res = await chatApi.createThread({
-        providerId: booking.providerId?._id,
-        bookingId: booking._id,
-        serviceName: booking.serviceId?.name || 'Service',
-      });
-      const threadId = res.data?._id || res._id;
-      navigate(`/chat?threadId=${threadId}`);
-    } catch (err) {
-      console.error('Failed to open chat:', err);
-    } finally {
-      setChatLoading(false);
-    }
-  };
-
   useEffect(() => {
     const loadBooking = async () => {
       try {

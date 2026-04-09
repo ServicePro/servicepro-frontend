@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import bookingApi from '../../api/bookingApi';
+import emergencyApi from '../../api/emergencyApi';
 import reviewsApi from '../../api/reviewsApi';
 import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './ServiceHistory.css';
@@ -117,7 +118,7 @@ function BookingCard({ booking, isFav, onToggleFav, onRebook, existingReview }) 
   const provName = booking.providerId?.name || 'Provider';
   const sColor = STATUS_COLOR[booking.status] || STATUS_COLOR.PENDING;
   const pColor = PAYMENT_COLOR[booking.paymentState] || PAYMENT_COLOR.UNPAID;
-  const isCompleted = ['ACCEPTED', 'ONGOING', 'COMPLETED'].includes(booking.status);
+  const isCompleted = booking.status?.toUpperCase() === 'COMPLETED';
 
   const [reviewOpen, setReviewOpen] = useState(false);
   const [hovered, setHovered] = useState(0);
@@ -280,11 +281,168 @@ function BookingCard({ booking, isFav, onToggleFav, onRebook, existingReview }) 
   );
 }
 
+const EM_STATUS = {
+  pending:   { label: 'Waiting for Provider', bg: '#fef3c7', text: '#92400e', icon: '🔍' },
+  assigned:  { label: 'Provider Accepted',    bg: '#dbeafe', text: '#1e40af', icon: '👷' },
+  en_route:  { label: 'En Route',             bg: '#ede9fe', text: '#5b21b6', icon: '🚗' },
+  completed: { label: 'Completed',            bg: '#d1fae5', text: '#065f46', icon: '✅' },
+  cancelled: { label: 'Cancelled',            bg: '#fee2e2', text: '#991b1b', icon: '❌' },
+};
+
+function EmergencyCard({ request, navigate, onRated }) {
+  const st = EM_STATUS[request.status] || EM_STATUS.pending;
+  const label = request.serviceType?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Emergency Service';
+  const isPaid = ['paid', 'cash_pending'].includes(request.paymentStatus);
+  const isCompleted = request.status === 'completed';
+  const alreadyRated = !!request.userRating;
+
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [hovered, setHovered] = useState(0);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+
+  const handleSubmitRating = async () => {
+    if (rating === 0) { setReviewError('Please select a star rating.'); return; }
+    setSubmitting(true);
+    setReviewError('');
+    try {
+      await emergencyApi.rateRequest(request._id, { rating, comment: comment.trim() });
+      setSubmitted(true);
+      onRated && onRated(request._id, rating);
+    } catch (err) {
+      setReviewError(err.response?.data?.message || 'Could not submit rating. Try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="sh-card sh-card-emergency">
+      <div className="sh-card-top">
+        <div className="sh-card-icon">🚨</div>
+        <div className="sh-card-title-block">
+          <h3 className="sh-card-service">{label}</h3>
+          <p className="sh-card-provider">
+            {request.providerId?.name
+              ? `👷 ${request.providerId.name}`
+              : request.urgency === 'critical' ? '🔴 Critical / ASAP' : '🔥 High Priority'}
+          </p>
+        </div>
+        <span className="sh-badge" style={{ background: st.bg, color: st.text }}>
+          {st.icon} {st.label}
+        </span>
+      </div>
+
+      <div className="sh-card-details">
+        <div className="sh-detail"><span className="sh-detail-label">📅 Requested</span><span>{new Date(request.createdAt).toLocaleString()}</span></div>
+        <div className="sh-detail"><span className="sh-detail-label">📍 Location</span><span>{request.location}</span></div>
+        <div className="sh-detail"><span className="sh-detail-label">📝 Problem</span><span>{request.description}</span></div>
+        <div className="sh-detail"><span className="sh-detail-label">⏱ ETA</span><span>{request.eta || '—'}</span></div>
+        <div className="sh-detail"><span className="sh-detail-label">💰 Amount</span><span className="sh-amount">Rs. {Number(request.finalPrice).toFixed(2)}</span></div>
+        <div className="sh-detail">
+          <span className="sh-detail-label">Payment</span>
+          <span className="sh-badge" style={isPaid ? { background: '#d1fae5', color: '#065f46' } : { background: '#fef3c7', color: '#92400e' }}>
+            {request.paymentStatus === 'paid' ? '✅ Paid' : request.paymentStatus === 'cash_pending' ? '💵 Cash on Delivery' : 'Unpaid'}
+          </span>
+        </div>
+        {(alreadyRated || submitted) && (
+          <div className="sh-detail">
+            <span className="sh-detail-label">Your Rating</span>
+            <span><StarDisplay rating={submitted ? rating : request.userRating} /> {request.userComment && `· "${request.userComment}"`}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Inline Rating (completed, not yet rated) */}
+      {isCompleted && reviewOpen && !alreadyRated && (
+        <div className="sh-inline-review">
+          {submitted ? (
+            <div className="sh-review-thanks">
+              <span className="sh-review-thanks-icon">🎉</span>
+              <div>
+                <strong>Thank you for your rating!</strong>
+                <p>{'★'.repeat(rating)}{'☆'.repeat(5 - rating)} · {RATING_LABELS[rating]}</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="sh-review-prompt">How was the emergency service?</p>
+              <div className="sh-star-row" onMouseLeave={() => setHovered(0)}>
+                {[1,2,3,4,5].map(star => (
+                  <button
+                    key={star}
+                    className={`sh-star ${(hovered || rating) >= star ? 'lit' : ''}`}
+                    onMouseEnter={() => setHovered(star)}
+                    onClick={() => { setRating(star); setReviewError(''); }}
+                    type="button"
+                  >★</button>
+                ))}
+                {(hovered || rating) > 0 && <span className="sh-star-label">{RATING_LABELS[hovered || rating]}</span>}
+              </div>
+              {rating > 0 && (
+                <div className="sh-review-comment-row">
+                  <textarea
+                    className="sh-review-textarea"
+                    rows={2}
+                    placeholder="Add a comment (optional)…"
+                    value={comment}
+                    onChange={e => setComment(e.target.value)}
+                    maxLength={500}
+                  />
+                  {reviewError && <p className="sh-review-error">{reviewError}</p>}
+                  <button className="sh-review-submit" onClick={handleSubmitRating} disabled={submitting}>
+                    {submitting ? 'Submitting…' : 'Submit Rating'}
+                  </button>
+                </div>
+              )}
+              {reviewError && rating === 0 && <p className="sh-review-error">{reviewError}</p>}
+            </>
+          )}
+        </div>
+      )}
+
+      <div className="sh-card-actions">
+        {isCompleted && isPaid && (
+          <button className="sh-btn sh-btn-invoice" onClick={() => {
+            const invoiceNo = request._id.slice(-8).toUpperCase();
+            const date = new Date(request.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const lbl = request.serviceType?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Emergency Service';
+            const urgencyLabel = request.urgency === 'critical' ? 'Critical / ASAP' : 'High Priority';
+            const html = `<!DOCTYPE html><html><head><title>Emergency Invoice #${invoiceNo}</title><style>body{font-family:'Segoe UI',sans-serif;padding:48px;color:#1e293b}h1{color:#dc2626}table{width:100%;border-collapse:collapse;margin-top:24px}th{background:#f1f5f9;padding:12px 16px;text-align:left}td{padding:14px 16px;border-bottom:1px solid #f1f5f9}.total-row td{font-weight:700;border-top:2px solid #e2e8f0}.paid-badge{background:#d1fae5;color:#065f46;padding:4px 12px;border-radius:20px;font-weight:600}</style></head><body><h1>🚨 ServicePro — Emergency Invoice</h1><p>#${invoiceNo} · ${date} · ${urgencyLabel}</p><table><thead><tr><th>Service</th><th>Provider</th><th>Location</th><th>Amount</th></tr></thead><tbody><tr><td>${lbl}</td><td>${request.providerId?.name || '—'}</td><td>${request.location}</td><td>Rs. ${Number(request.finalPrice).toFixed(2)}</td></tr><tr class="total-row"><td colspan="3">Total Paid</td><td>Rs. ${Number(request.finalPrice).toFixed(2)}</td></tr></tbody></table><span class="paid-badge">✓ Payment Confirmed</span></body></html>`;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+            a.download = `emergency-invoice-${invoiceNo}.html`;
+            a.click();
+          }}>
+            📄 Invoice
+          </button>
+        )}
+        {isCompleted && !alreadyRated && !submitted && (
+          <button
+            className={`sh-btn sh-btn-review${reviewOpen ? ' sh-btn-review-open' : ''}`}
+            onClick={() => setReviewOpen(v => !v)}
+          >
+            ✍️ Rate Service
+          </button>
+        )}
+        {(alreadyRated || submitted) && <span className="sh-review-done-badge">⭐ Rated</span>}
+        <button className="sh-btn sh-btn-secondary" onClick={() => navigate('/emergency')}>
+          🚨 New Emergency
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function ServiceHistory() {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.state?.tab || 'All Bookings');
   const [bookings, setBookings] = useState([]);
+  const [emergencies, setEmergencies] = useState([]);
   const [myReviews, setMyReviews] = useState({});  // keyed by bookingId
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -293,9 +451,10 @@ export default function ServiceHistory() {
   useEffect(() => {
     (async () => {
       try {
-        const [bookRes, revRes] = await Promise.allSettled([
+        const [bookRes, revRes, emRes] = await Promise.allSettled([
           bookingApi.getMyBookings(),
           reviewsApi.getMyReviews(),
+          emergencyApi.getMy(),
         ]);
         if (bookRes.status === 'fulfilled' && bookRes.value.success)
           setBookings(bookRes.value.data);
@@ -310,11 +469,18 @@ export default function ServiceHistory() {
           });
           setMyReviews(map);
         }
+
+        if (emRes.status === 'fulfilled')
+          setEmergencies(emRes.value.data?.data || []);
       } finally {
         setLoading(false);
       }
     })();
   }, []);
+
+  const handleEmergencyRated = (id, rating) => {
+    setEmergencies(prev => prev.map(e => e._id === id ? { ...e, userRating: rating } : e));
+  };
 
   const toggleFav = (providerId, providerName) => {
     if (!providerId) return;
@@ -328,17 +494,44 @@ export default function ServiceHistory() {
 
   const isFav = (providerId) => favourites.some(f => f.id === providerId);
 
+  // Favourite Providers: built from reviews — grouped by provider+service, sorted by avg rating
+  const favouriteProviders = (() => {
+    const map = {};
+    Object.values(myReviews).forEach(r => {
+      const pid = r.providerId?._id?.toString() || r.providerId?.toString();
+      const sid = r.serviceId?._id?.toString() || r.serviceId?.toString();
+      const pname = r.providerId?.name || 'Provider';
+      const sname = r.serviceId?.name || null;
+      if (!pid) return;
+      const key = `${pid}_${sid || 'ns'}`;
+      if (!map[key]) map[key] = { id: pid, name: pname, ratings: [], serviceName: sname };
+      map[key].ratings.push(r.rating);
+    });
+    emergencies.forEach(e => {
+      if (!e.userRating || !e.providerId) return;
+      const pid = e.providerId?._id?.toString() || e.providerId?.toString();
+      const pname = e.providerId?.name || 'Emergency Provider';
+      const sname = e.serviceType?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Emergency Service';
+      if (!pid) return;
+      const key = `${pid}_emergency`;
+      if (!map[key]) map[key] = { id: pid, name: pname, ratings: [], serviceName: sname };
+      map[key].ratings.push(e.userRating);
+    });
+    return Object.values(map)
+      .map(p => ({ ...p, avgRating: p.ratings.reduce((s, r) => s + r, 0) / p.ratings.length }))
+      .sort((a, b) => b.avgRating - a.avgRating);
+  })();
+
   const visibleBookings = () => {
-    if (activeTab === 'Completed') return bookings.filter(b => b.status === 'COMPLETED');
     if (activeTab === 'Payment History') return bookings.filter(b => b.paymentState === 'PAID');
     return bookings;
   };
 
   const counts = {
     'All Bookings': bookings.length,
-    'Completed': bookings.filter(b => b.status === 'COMPLETED').length,
+    'Completed': bookings.filter(b => b.status === 'COMPLETED').length + emergencies.filter(e => e.status === 'completed').length,
     'Payment History': bookings.filter(b => b.paymentState === 'PAID').length,
-    'Favourite Providers': favourites.length,
+    'Favourite Providers': favouriteProviders.length,
   };
 
   return (
@@ -355,7 +548,7 @@ export default function ServiceHistory() {
             <div className="sh-stat"><span className="sh-stat-num">{bookings.length}</span><span>Total</span></div>
             <div className="sh-stat"><span className="sh-stat-num">{counts['Completed']}</span><span>Completed</span></div>
             <div className="sh-stat"><span className="sh-stat-num">{counts['Payment History']}</span><span>Paid</span></div>
-            <div className="sh-stat"><span className="sh-stat-num">{favourites.length}</span><span>Favourites</span></div>
+            <div className="sh-stat"><span className="sh-stat-num">{favouriteProviders.length}</span><span>Favourites</span></div>
           </div>
         </div>
 
@@ -389,7 +582,8 @@ export default function ServiceHistory() {
             </div>
           )}
 
-          {!loading && !error && activeTab !== 'Favourite Providers' && (
+          {/* All Bookings / Payment History tabs */}
+          {!loading && !error && (activeTab === 'All Bookings' || activeTab === 'Payment History') && (
             visibleBookings().length === 0
               ? (
                 <div className="sh-state sh-empty">
@@ -418,36 +612,78 @@ export default function ServiceHistory() {
               )
           )}
 
-          {!loading && !error && activeTab === 'Favourite Providers' && (
-            favourites.length === 0
-              ? (
-                <div className="sh-state sh-empty">
-                  <div className="sh-empty-icon">💖</div>
-                  <p>No favourite providers yet.</p>
-                  <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginTop: 8 }}>
-                    Tap the 🤍 heart icon on any booking card to save a provider.
-                  </p>
-                </div>
-              )
-              : (
-                <div className="sh-fav-grid">
-                  {favourites.map(prov => (
-                    <div key={prov.id} className="sh-fav-card">
-                      <div className="sh-fav-avatar">{prov.name.charAt(0).toUpperCase()}</div>
-                      <div className="sh-fav-info">
-                        <h3>{prov.name}</h3>
-                        <p>Service Provider</p>
-                      </div>
-                      <button
-                        className="sh-fav-remove"
-                        onClick={() => toggleFav(prov.id, prov.name)}
-                      >
-                        Remove ✕
-                      </button>
+          {/* Completed tab — shows completed bookings + completed emergency requests */}
+          {!loading && !error && activeTab === 'Completed' && (() => {
+            const cBookings = bookings.filter(b => b.status === 'COMPLETED');
+            const cEmergencies = emergencies.filter(e => e.status === 'completed');
+            if (cBookings.length === 0 && cEmergencies.length === 0) return (
+              <div className="sh-state sh-empty">
+                <div className="sh-empty-icon">📋</div>
+                <p>No completed services yet.</p>
+              </div>
+            );
+            return (
+              <>
+                {cBookings.length > 0 && (
+                  <>
+                    <h3 className="sh-section-title">Completed Bookings</h3>
+                    <div className="sh-grid">
+                      {cBookings.map(b => (
+                        <BookingCard
+                          key={b._id}
+                          booking={b}
+                          isFav={isFav(b.providerId?._id)}
+                          onToggleFav={toggleFav}
+                          onRebook={(sId) => navigate(`/book/${sId}`)}
+                          existingReview={myReviews[b._id?.toString()] || null}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )
+                  </>
+                )}
+                {cEmergencies.length > 0 && (
+                  <>
+                    <h3 className="sh-section-title">Completed Emergency Requests</h3>
+                    <div className="sh-grid">
+                      {cEmergencies.map(em => (
+                        <EmergencyCard key={em._id} request={em} navigate={navigate} onRated={handleEmergencyRated} />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            );
+          })()}
+
+          {!loading && !error && activeTab === 'Favourite Providers' && (
+            favouriteProviders.length === 0 ? (
+              <div className="sh-state sh-empty">
+                <div className="sh-empty-icon">💖</div>
+                <p>No favourite providers yet.</p>
+                <p style={{ fontSize: '0.9rem', color: '#94a3b8', marginTop: 8 }}>
+                  Providers you rate will automatically appear here, sorted by your highest ratings.
+                </p>
+              </div>
+            ) : (
+              <div className="sh-fav-grid">
+                {favouriteProviders.map(prov => (
+                  <div key={`${prov.id}_${prov.serviceName}`} className="sh-fav-card">
+                    <div className="sh-fav-avatar">{prov.name.charAt(0).toUpperCase()}</div>
+                    <div className="sh-fav-info">
+                      <h3>{prov.name}</h3>
+                      {prov.serviceName && <p>{prov.serviceName}</p>}
+                      <div style={{ marginTop: 4 }}>
+                        <StarDisplay rating={Math.round(prov.avgRating)} size="1.2rem" />
+                        <span style={{ fontSize: '0.85rem', color: '#64748b', marginLeft: 6 }}>
+                          {prov.avgRating.toFixed(1)} avg · {prov.ratings.length} review{prov.ratings.length > 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="sh-fav-rating-badge">{prov.avgRating.toFixed(1)} ⭐</span>
+                  </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>

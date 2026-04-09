@@ -15,7 +15,11 @@ const emergencyApi = {
   // Provider: list requests directed at them
   getForProvider:   ()           => axios.get(`${BASE}/for-provider`,         headers()),
   // Provider: accept a request
-  acceptRequest:    (id)         => axios.patch(`${BASE}/${id}/accept`, {},   headers()),
+  acceptRequest:    (id)         => axios.patch(`${BASE}/${id}/accept`,   {}, headers()),
+  // Provider: mark completed
+  completeRequest:  (id)         => axios.patch(`${BASE}/${id}/complete`,  {}, headers()),
+  // User: rate a completed emergency
+  rateRequest:      (id, data)   => axios.patch(`${BASE}/${id}/rate`, data, headers()),
 };
 
 export default emergencyApi;

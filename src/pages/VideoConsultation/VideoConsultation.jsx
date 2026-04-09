@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import consultationApi from '../../api/consultationApi';
+import { SERVICE_CATEGORIES as SERVICE_CATEGORIES_ALL } from '../../constants/serviceCategories';
 import UserNavbar from '../../components/userDashboard/UserNavbar';
 import './VideoConsultation.css';
 
 const TABS = ['Schedule Session', 'My Sessions', 'Join Call'];
 
 const DURATION_OPTIONS = [15, 30, 45, 60];
+
+// Use the shared canonical category list (value = DB-stored category name)
+const SERVICE_CATEGORIES = SERVICE_CATEGORIES_ALL.map(({ value, label }) => ({ value, label }));
 
 const STATUS_CONFIG = {
   scheduled:   { label: 'Scheduled',   color: '#2563eb', bg: '#dbeafe', icon: 'scheduled' },
@@ -24,7 +28,6 @@ const PROVIDER_STATUS_CONFIG = {
 export default function VideoConsultation() {
   const [activeTab, setActiveTab] = useState('Schedule Session');
   const [filteredProviders, setFilteredProviders] = useState([]);
-  const [services, setServices]         = useState([]);
   const [sessions, setSessions]         = useState([]);
   const [loading, setLoading]           = useState(true);
   const [submitting, setSubmitting]     = useState(false);
@@ -48,11 +51,7 @@ export default function VideoConsultation() {
   useEffect(() => {
     (async () => {
       try {
-        const [svcRes, sessRes] = await Promise.all([
-          consultationApi.getServices(),
-          consultationApi.getMy(),
-        ]);
-        setServices(svcRes.data?.data  || []);
+        const sessRes = await consultationApi.getMy();
         setSessions(sessRes.data?.data || []);
       } catch (e) {
         console.error(e);
@@ -62,13 +61,14 @@ export default function VideoConsultation() {
     })();
   }, []);
 
-  // Step 1: category chosen → fetch providers for that category from API
-  const handleCategoryChange = async (cat) => {
-    setSelectedCategory(cat);
+  // Step 1: category label chosen → fetch providers that match the category value
+  const handleCategoryChange = async (label) => {
+    setSelectedCategory(label);
     setForm((f) => ({ ...f, providerId: '', serviceId: '' }));
-    if (!cat) { setFilteredProviders([]); return; }
+    if (!label) { setFilteredProviders([]); return; }
+    const cat = SERVICE_CATEGORIES.find((c) => c.label === label);
     try {
-      const res = await consultationApi.getProviders(cat);
+      const res = await consultationApi.getProviders(cat ? cat.value : label);
       setFilteredProviders(res.data?.data || []);
     } catch {
       setFilteredProviders([]);
@@ -218,8 +218,8 @@ export default function VideoConsultation() {
                       required
                     >
                       <option value="">Choose a category</option>
-                      {[...new Set(services.map((s) => s.category).filter(Boolean))].sort().map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
+                      {SERVICE_CATEGORIES.map((c) => (
+                        <option key={c.value} value={c.label}>{c.label}</option>
                       ))}
                     </select>
                   </div>

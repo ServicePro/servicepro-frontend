@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { SERVICE_CATEGORY_OPTIONS } from '../constants/serviceCategories';
 import { applyGlobalTheme, emitThemeChange, getInitialDarkMode, onThemeChange } from '../utils/themeMode';
@@ -56,6 +56,108 @@ const Layout = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  // ── Notification bell state ──────────────────────────────────
+  const API = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const notifRef = useRef(null);
+  // Track which IDs were already shown when the bell was last opened (session only)
+  const shownRef = useRef(new Set());
+
+  const fetchNotifications = useCallback(async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      const [bookRes, emergRes, consultRes, chatRes] = await Promise.allSettled([
+        axios.get(`${API}/api/bookings/provider/all?status=PENDING`, { headers }),
+        axios.get(`${API}/api/emergency/for-provider`, { headers }),
+        axios.get(`${API}/api/consultations/provider`, { headers }),
+        axios.get(`${API}/api/chat/threads`, { headers }),
+      ]);
+
+      const bookings   = bookRes.status   === 'fulfilled' ? (bookRes.value.data?.data   || []) : [];
+      const emergency  = emergRes.status  === 'fulfilled' ? (emergRes.value.data?.data  || []) : [];
+      const consults   = consultRes.status === 'fulfilled' ? (consultRes.value.data?.data || []) : [];
+      const threads    = chatRes.status   === 'fulfilled' ? (chatRes.value.data?.data   || []) : [];
+
+      const items = [
+        ...bookings.map(b => ({
+          id:   `book_${b._id}`,
+          type: 'booking',
+          icon: '📋',
+          title: 'New Booking Request',
+          sub:  `${b.userId?.name || 'A client'} — ${b.serviceId?.name || 'your service'}`,
+          time: b.createdAt,
+          link: '/provider/bookings',
+          tag:  'Pending',
+          tagColor: { bg: '#fef3c7', txt: '#92400e' },
+        })),
+        ...emergency.filter(e => ['pending', 'assigned'].includes(e.status)).map(e => ({
+          id:   `emrg_${e._id}`,
+          type: 'emergency',
+          icon: '🚨',
+          title: 'Emergency Request',
+          sub:  `${e.serviceType?.replace(/_/g, ' ') || 'Service'} — ${e.urgency || 'high'} urgency`,
+          time: e.createdAt,
+          link: '/provider/emergency-requests',
+          tag:  'Urgent',
+          tagColor: { bg: '#fee2e2', txt: '#991b1b' },
+        })),
+        ...consults.filter(c => c.providerStatus === 'pending').map(c => ({
+          id:   `cons_${c._id}`,
+          type: 'consultation',
+          icon: '💬',
+          title: 'Consultation Request',
+          sub:  `${c.userId?.name || 'A client'} requested a consultation`,
+          time: c.createdAt,
+          link: '/provider/consultations',
+          tag:  'New',
+          tagColor: { bg: '#dbeafe', txt: '#1d4ed8' },
+        })),
+        ...threads.filter(t => (t.unreadCountProvider || 0) > 0).map(t => ({
+          id:   `chat_${t._id}`,
+          type: 'chat',
+          icon: '💬',
+          title: 'New Message',
+          sub:  `${t.userId?.name || 'A client'} sent you a message`,
+          time: t.updatedAt,
+          link: '/provider/chat',
+          tag:  `${t.unreadCountProvider}`,
+          tagColor: { bg: '#d1fae5', txt: '#065f46' },
+        })),
+      ].sort((a, b) => new Date(b.time) - new Date(a.time));
+
+      setNotifications(items);
+    } catch { /* silent */ }
+  }, [API]);
+
+  // New = any item whose ID isn't in shownRef (i.e., appeared since last bell open)
+  const newCount = notifications.filter(n => !shownRef.current.has(n.id)).length;
+
+  const handleBellClick = () => {
+    if (!notifOpen) {
+      fetchNotifications();
+      setNotifOpen(true);
+    } else {
+      // Mark all currently shown as "seen"
+      notifications.forEach(n => shownRef.current.add(n.id));
+      setNotifOpen(false);
+    }
+  };
+
+  const handleNotifItemClick = (link) => {
+    notifications.forEach(n => shownRef.current.add(n.id));
+    setNotifOpen(false);
+    navigate(link);
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
+
   useEffect(() => {
     const isDark = theme === 'dark';
     applyGlobalTheme(isDark);
@@ -68,6 +170,9 @@ const Layout = () => {
     const handler = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -149,10 +254,68 @@ const Layout = () => {
           </div>
 
           <div className="header-right">
-            <button className="header-notification-btn" title="Notifications">
-              🔔
-              <span className="notif-dot"></span>
-            </button>
+            {/* ── Notification Bell ── */}
+            <div className="admin-notif-wrap" ref={notifRef}>
+              <button
+                className="header-notification-btn"
+                title="Notifications"
+                onClick={handleBellClick}
+              >
+                🔔
+                {newCount > 0 && (
+                  <span className="admin-notif-badge">{newCount > 9 ? '9+' : newCount}</span>
+                )}
+              </button>
+
+              {notifOpen && (
+                <div className="admin-notif-dropdown">
+                  <div className="admin-notif-header">
+                    <strong>Notifications</strong>
+                    {notifications.length > 0 && (
+                      <span className="admin-notif-count">{notifications.length} active</span>
+                    )}
+                  </div>
+
+                  {notifications.length === 0 ? (
+                    <div className="admin-notif-empty">No new notifications</div>
+                  ) : (
+                    <div className="admin-notif-list">
+                      {notifications.slice(0, 8).map(n => (
+                        <button
+                          key={n.id}
+                          className="admin-notif-item"
+                          onClick={() => handleNotifItemClick(n.link)}
+                        >
+                          <div
+                            className="admin-notif-avatar"
+                            style={{ background: n.tagColor.bg, color: n.tagColor.txt, fontSize: '1.1rem' }}
+                          >
+                            {n.icon}
+                          </div>
+                          <div className="admin-notif-body">
+                            <p className="admin-notif-name">{n.title}</p>
+                            <p className="admin-notif-sub">{n.sub}</p>
+                          </div>
+                          <span
+                            className="admin-notif-new"
+                            style={{ background: n.tagColor.bg, color: n.tagColor.txt }}
+                          >
+                            {n.tag}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    className="admin-notif-footer"
+                    onClick={() => { notifications.forEach(n => shownRef.current.add(n.id)); setNotifOpen(false); navigate('/provider/bookings'); }}
+                  >
+                    View All Requests →
+                  </button>
+                </div>
+              )}
+            </div>
 
             <div
               className="header-user"

@@ -1,16 +1,23 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { getServiceCategoryIcon } from "../../constants/serviceCategories";
 import { resolveAssetUrl } from "../../utils/media";
 
 const ServiceCard = ({ service }) => {
-  const imageSrc = resolveAssetUrl(service.image || service.image_url || service.cover) || "https://via.placeholder.com/520x320/FFE7D4/2B2D42?text=Service";
+  const [imgError, setImgError] = useState(false);
+  const rawImg = service.image || service.image_url || service.cover;
+  const imageSrc = resolveAssetUrl(rawImg);
+  const hasImage = !!imageSrc && !imgError;
   const category = service.category || "General";
+  const categoryIcon = getServiceCategoryIcon(category);
   const providerName = service.provider || service.providerId?.name || service.provider_id?.name || 'Trusted Expert';
   const serviceName = service.name || service.title || 'Service';
   const serviceId = service._id || service.id;
   const priceValue = Number(service.price);
   const priceText = Number.isFinite(priceValue) ? priceValue.toFixed(2) : 'N/A';
   const ratingValue = Number(service.rating ?? service.averageRating);
-  const ratingText = Number.isFinite(ratingValue) && ratingValue > 0
+  const reviewsCount = Number(service.reviews_count ?? service.reviewsCount ?? 0);
+  const ratingText = reviewsCount > 0 && Number.isFinite(ratingValue) && ratingValue > 0
     ? `⭐ ${ratingValue.toFixed(1)}`
     : 'No ratings yet';
   const rawLocation = service.location;
@@ -22,7 +29,13 @@ const ServiceCard = ({ service }) => {
 
   return (
     <div className="service-card">
-      <img src={imageSrc} alt={serviceName} />
+      {hasImage ? (
+        <img src={imageSrc} alt={serviceName} onError={() => setImgError(true)} />
+      ) : (
+        <div className="service-img-placeholder">
+          <span>{categoryIcon}</span>
+        </div>
+      )}
 
       <div className="service-content">
         <span className="service-category-badge">{category}</span>
