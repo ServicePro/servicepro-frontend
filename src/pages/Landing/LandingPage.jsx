@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  FaCheckCircle
+    FaCheckCircle
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import appReviewApi from "../../api/appReviewApi";
 import {
-  SERVICE_CATEGORIES,
-  getServiceCategoryDisplayName,
-  getServiceCategoryIcon,
+    SERVICE_CATEGORIES,
+    getServiceCategoryDisplayName,
+    getServiceCategoryIcon,
 } from "../../constants/serviceCategories";
 import MainLayout from "../../layouts/MainLayout";
 import { resolveAssetUrl } from "../../utils/media";
@@ -477,9 +477,10 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchProviders = async () => {
       try {
-        const res = await fetch(`${API}/api/providers/featured?limit=12`);
+        const res = await fetch(`${API}/api/providers/featured?limit=3`);
         const data = await res.json();
-        setProviders(Array.isArray(data?.data) ? data.data : []);
+        const list = Array.isArray(data?.data) ? data.data : [];
+        setProviders(list.slice(0, 3));
       } catch (error) {
         console.error("API Error:", error);
         setProviders([]);
